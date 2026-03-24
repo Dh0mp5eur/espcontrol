@@ -190,8 +190,6 @@
     "display:flex;align-items:center;justify-content:center;cursor:pointer}" +
     ".sp-add-btn:hover{border-color:#03a9f4}" +
     ".sp-add-icon{font-size:5cqw;color:rgba(255,255,255,.35)}" +
-    ".sp-btn.sp-dragging{width:0;height:0;padding:0;margin:0;overflow:hidden;" +
-    "opacity:0;border:none;pointer-events:none}" +
     ".sp-drop-placeholder{border:2px dashed rgba(3,169,244,.5) !important;" +
     "background:rgba(3,169,244,.08) !important;cursor:default;pointer-events:none}" +
 
@@ -1214,12 +1212,12 @@
     var container = els.previewMain;
 
     container.addEventListener("dragover", function (e) {
-      if (dragSrcPos < 0) return;
+      if (dragSrcPos < 0 || !previewPlaceholder) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
 
       var buttons = container.querySelectorAll(
-        ".sp-btn:not(.sp-drop-placeholder):not(.sp-add-btn):not(.sp-dragging)"
+        ".sp-btn:not(.sp-drop-placeholder):not(.sp-add-btn)"
       );
       var dropIdx = buttons.length;
       for (var i = 0; i < buttons.length; i++) {
@@ -1235,11 +1233,6 @@
       if (dropIdx === previewDropIdx) return;
       previewDropIdx = dropIdx;
 
-      if (!previewPlaceholder) {
-        previewPlaceholder = document.createElement("div");
-        previewPlaceholder.className = "sp-btn sp-drop-placeholder";
-      }
-
       var refNodes = Array.from(buttons);
       if (dropIdx < refNodes.length) {
         container.insertBefore(previewPlaceholder, refNodes[dropIdx]);
@@ -1250,8 +1243,18 @@
     });
 
     container.addEventListener("dragleave", function (e) {
-      if (!container.contains(e.relatedTarget)) {
-        removePreviewPlaceholder();
+      if (!container.contains(e.relatedTarget) && previewPlaceholder && dragSrcPos >= 0) {
+        var buttons = container.querySelectorAll(
+          ".sp-btn:not(.sp-drop-placeholder):not(.sp-add-btn)"
+        );
+        var refNodes = Array.from(buttons);
+        if (dragSrcPos < refNodes.length) {
+          container.insertBefore(previewPlaceholder, refNodes[dragSrcPos]);
+        } else {
+          var addBtn = container.querySelector(".sp-add-btn");
+          container.insertBefore(previewPlaceholder, addBtn);
+        }
+        previewDropIdx = dragSrcPos;
       }
     });
 
@@ -1260,10 +1263,17 @@
       var toIdx = previewDropIdx;
       removePreviewPlaceholder();
       if (dragSrcPos < 0 || toIdx < 0) return;
-      if (dragSrcPos === toIdx) return;
+      if (dragSrcPos === toIdx) {
+        renderPreview();
+        dragSrcPos = -1;
+        return;
+      }
       var newOrder = state.order.slice();
       var moved = newOrder.splice(dragSrcPos, 1)[0];
       newOrder.splice(toIdx, 0, moved);
+      state.order = newOrder;
+      renderPreview();
+      renderButtonList();
       postText("button_order", newOrder.join(","));
       dragSrcPos = -1;
     });
@@ -1275,11 +1285,19 @@
       didDrag = true;
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.setData("text/plain", String(idx));
-      setTimeout(function () { btn.classList.add("sp-dragging"); }, 0);
+      setTimeout(function () {
+        previewPlaceholder = document.createElement("div");
+        previewPlaceholder.className = "sp-btn sp-drop-placeholder";
+        previewDropIdx = idx;
+        btn.parentNode.replaceChild(previewPlaceholder, btn);
+      }, 0);
     });
     btn.addEventListener("dragend", function () {
-      btn.classList.remove("sp-dragging");
       removePreviewPlaceholder();
+      if (dragSrcPos >= 0) {
+        renderPreview();
+        dragSrcPos = -1;
+      }
     });
   }
 
