@@ -333,15 +333,28 @@
     updateClock();
     setInterval(updateClock, 30000);
 
-    // Diagnostic: probe different URL formats
-    ["button_order", "Button Order", "Button%20Order"].forEach(function (id) {
-      fetch("/text/" + id).then(function (r) {
-        console.log("[PROBE] GET /text/" + id + " →", r.status);
-      }).catch(function (e) { console.log("[PROBE] GET /text/" + id + " → error", e); });
+    // Diagnostic: probe POST formats for text entities
+    var probes = [
+      { url: "/text/button_order?value=", method: "POST" },
+      { url: "/text/Button Order?value=", method: "POST" },
+      { url: "/text/button_order/set?value=", method: "POST" },
+      { url: "/text/Button Order/set?value=", method: "POST" },
+      { url: "/text/button_order", method: "POST", body: "value=" },
+      { url: "/text/button_order", method: "POST", json: true },
+    ];
+    probes.forEach(function (p) {
+      var opts = { method: p.method };
+      if (p.body) {
+        opts.body = p.body;
+        opts.headers = { "Content-Type": "application/x-www-form-urlencoded" };
+      } else if (p.json) {
+        opts.body = JSON.stringify({ value: "" });
+        opts.headers = { "Content-Type": "application/json" };
+      }
+      fetch(p.url, opts).then(function (r) {
+        console.log("[PROBE]", p.method, p.url, (p.body || p.json ? "(body)" : ""), "→", r.status);
+      }).catch(function (e) { console.log("[PROBE]", p.method, p.url, "→ error"); });
     });
-    fetch("/text").then(function (r) {
-      return r.text().then(function (t) { console.log("[PROBE] GET /text →", r.status, t.substring(0, 500)); });
-    }).catch(function (e) { console.log("[PROBE] GET /text → error", e); });
   }
 
   // ── Build UI ─────────────────────────────────────────────────────────
