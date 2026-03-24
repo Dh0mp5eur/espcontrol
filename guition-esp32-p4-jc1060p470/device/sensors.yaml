@@ -83,55 +83,105 @@ esphome:
 
             static const char* icon_codepoints[] = {
               "\U000F0493",  //  0: Auto (cog fallback)
-              "\U000F001B",  //  1: Air Conditioner
-              "\U000F009E",  //  2: Alarm
-              "\U000F0079",  //  3: Battery
-              "\U000F02E3",  //  4: Bed
-              "\U000F1A2C",  //  5: Blinds Closed
-              "\U000F1A2B",  //  6: Blinds Open
-              "\U000F0100",  //  7: Camera
-              "\U000F1797",  //  8: Ceiling Fan
-              "\U000F0769",  //  9: Ceiling Light
-              "\U000F109F",  // 10: Coffee Maker
-              "\U000F095F",  // 11: Desk Lamp
-              "\U000F0AAC",  // 12: Dishwasher
-              "\U000F081A",  // 13: Door
-              "\U000F0869",  // 14: Doorbell
-              "\U000F0917",  // 15: Dryer
-              "\U000F05F1",  // 16: EV Charger
-              "\U000F0210",  // 17: Fan
-              "\U000F0238",  // 18: Fire
-              "\U000F0E2E",  // 19: Fireplace
-              "\U000F08DD",  // 20: Floor Lamp
-              "\U000F0290",  // 21: Fridge
-              "\U000F0372",  // 22: Garage
-              "\U000F0299",  // 23: Gate
-              "\U000F0438",  // 24: Heater
-              "\U000F0828",  // 25: Hot Tub
-              "\U000F1099",  // 26: Humidifier
-              "\U000F06B5",  // 27: Lamp
-              "\U000F11F7",  // 28: Lawnmower
-              "\U000F07D6",  // 29: LED Strip
-              "\U000F0335",  // 30: Lightbulb
-              "\U000F033E",  // 31: Lock
-              "\U000F0C99",  // 32: Microwave
-              "\U000F0D91",  // 33: Motion Sensor
-              "\U000F04DE",  // 34: Oven
-              "\U000F0606",  // 35: Pool
-              "\U000F0425",  // 36: Power
-              "\U000F0654",  // 37: Power Plug
-              "\U000F070D",  // 38: Robot Vacuum
-              "\U000F068A",  // 39: Security
-              "\U000F0392",  // 40: Smoke Detector
-              "\U000F0D9B",  // 41: Solar Panel
-              "\U000F04C3",  // 42: Speaker
-              "\U000F105F",  // 43: Sprinkler
-              "\U000F0502",  // 44: Television
-              "\U000F050F",  // 45: Thermometer
-              "\U000F072A",  // 46: Washer
-              "\U000F058C",  // 47: Water
-              "\U000F0F92",  // 48: Water Heater
-              "\U000F111C",  // 49: Window
+              "\U000F0004",  //  1: Account
+              "\U000F001B",  //  2: Air Conditioner
+              "\U000F0D44",  //  3: Air Purifier
+              "\U000F009E",  //  4: Alarm
+              "\U000F078F",  //  5: Alarm Light
+              "\U000F0079",  //  6: Battery
+              "\U000F02E3",  //  7: Bed
+              "\U000F009A",  //  8: Bell
+              "\U000F1A2C",  //  9: Blinds Closed
+              "\U000F1A2B",  // 10: Blinds Open
+              "\U000F00AF",  // 11: Bluetooth
+              "\U000F00E2",  // 12: Broom
+              "\U000F0100",  // 13: Camera
+              "\U000F0B6C",  // 14: Car Electric
+              "\U000F0118",  // 15: Cast
+              "\U000F07AE",  // 16: CCTV
+              "\U000F1797",  // 17: Ceiling Fan
+              "\U000F0769",  // 18: Ceiling Light
+              "\U000F1793",  // 19: Chandelier
+              "\U000F0150",  // 20: Clock
+              "\U000F109F",  // 21: Coffee Maker
+              "\U000F1846",  // 22: Curtains
+              "\U000F1847",  // 23: Curtains Closed
+              "\U000F095F",  // 24: Desk Lamp
+              "\U000F0AAC",  // 25: Dishwasher
+              "\U000F0A43",  // 26: Dog
+              "\U000F081A",  // 27: Door
+              "\U000F081C",  // 28: Door Open
+              "\U000F0869",  // 29: Doorbell
+              "\U000F0917",  // 30: Dryer
+              "\U000F05F1",  // 31: EV Charger
+              "\U000F0210",  // 32: Fan
+              "\U000F0238",  // 33: Fire
+              "\U000F0E2E",  // 34: Fireplace
+              "\U000F0241",  // 35: Flash
+              "\U000F08DD",  // 36: Floor Lamp
+              "\U000F096B",  // 37: Fountain
+              "\U000F0290",  // 38: Fridge
+              "\U000F0297",  // 39: Gamepad
+              "\U000F0372",  // 40: Garage
+              "\U000F06DA",  // 41: Garage Open
+              "\U000F0299",  // 42: Gate
+              "\U000F116A",  // 43: Gate Open
+              "\U000F02CB",  // 44: Headphones
+              "\U000F0438",  // 45: Heater
+              "\U000F02DC",  // 46: Home
+              "\U000F0828",  // 47: Hot Tub
+              "\U000F1099",  // 48: Humidifier
+              "\U000F1824",  // 49: Iron
+              "\U000F05FA",  // 50: Kettle
+              "\U000F030B",  // 51: Key
+              "\U000F06B5",  // 52: Lamp
+              "\U000F11F7",  // 53: Lawnmower
+              "\U000F032A",  // 54: Leaf
+              "\U000F07D6",  // 55: LED Strip
+              "\U000F097E",  // 56: Light Switch
+              "\U000F0335",  // 57: Lightbulb
+              "\U000F1253",  // 58: Lightbulb Group
+              "\U000F033E",  // 59: Lock
+              "\U000F06EE",  // 60: Mailbox
+              "\U000F0C99",  // 61: Microwave
+              "\U000F0379",  // 62: Monitor
+              "\U000F0D91",  // 63: Motion Sensor
+              "\U000F075A",  // 64: Music
+              "\U000F1020",  // 65: Outdoor Lamp
+              "\U000F04DE",  // 66: Oven
+              "\U000F03D6",  // 67: Package
+              "\U000F0606",  // 68: Pool
+              "\U000F0425",  // 69: Power
+              "\U000F0654",  // 70: Power Plug
+              "\U000F042A",  // 71: Printer
+              "\U000F042E",  // 72: Projector
+              "\U000F070D",  // 73: Robot Vacuum
+              "\U000F1A6B",  // 74: Roller Shade
+              "\U000F1A6C",  // 75: Roller Shade Closed
+              "\U000F0469",  // 76: Router
+              "\U000F068A",  // 77: Security
+              "\U000F09A1",  // 78: Shower
+              "\U000F0392",  // 79: Smoke Detector
+              "\U000F0717",  // 80: Snowflake
+              "\U000F04B9",  // 81: Sofa
+              "\U000F0D9B",  // 82: Solar Panel
+              "\U000F04C3",  // 83: Speaker
+              "\U000F04C9",  // 84: Spotlight
+              "\U000F105F",  // 85: Sprinkler
+              "\U000F12BA",  // 86: String Lights
+              "\U000F05A8",  // 87: Sun
+              "\U000F0502",  // 88: Television
+              "\U000F050F",  // 89: Thermometer
+              "\U000F0393",  // 90: Thermostat
+              "\U000F051B",  // 91: Timer
+              "\U000F09AB",  // 92: Toilet
+              "\U000F0A79",  // 93: Trash Can
+              "\U000F0427",  // 94: Wall Outlet
+              "\U000F072A",  // 95: Washer
+              "\U000F058C",  // 96: Water
+              "\U000F0F92",  // 97: Water Heater
+              "\U000F0595",  // 98: Weather
+              "\U000F111C",  // 99: Window
             };
 
             int pos = 0;
@@ -172,15 +222,15 @@ esphome:
                 size_t icon_idx = s.icon->active_index().value_or(0);
                 if (icon_idx == 0) {
                   std::string domain = entity_id.substr(0, entity_id.find('.'));
-                  if (domain == "light")              icon_idx = 30;
-                  else if (domain == "switch")        icon_idx = 37;
-                  else if (domain == "fan")           icon_idx = 17;
-                  else if (domain == "lock")          icon_idx = 31;
-                  else if (domain == "cover")         icon_idx = 6;
-                  else if (domain == "climate")       icon_idx = 1;
-                  else if (domain == "media_player")  icon_idx = 42;
-                  else if (domain == "camera")        icon_idx = 7;
-                  else if (domain == "binary_sensor") icon_idx = 33;
+                  if (domain == "light")              icon_idx = 57;
+                  else if (domain == "switch")        icon_idx = 70;
+                  else if (domain == "fan")           icon_idx = 32;
+                  else if (domain == "lock")          icon_idx = 59;
+                  else if (domain == "cover")         icon_idx = 10;
+                  else if (domain == "climate")       icon_idx = 2;
+                  else if (domain == "media_player")  icon_idx = 83;
+                  else if (domain == "camera")        icon_idx = 13;
+                  else if (domain == "binary_sensor") icon_idx = 63;
                 }
                 lv_label_set_text(icon_lbl, icon_codepoints[icon_idx]);
 

@@ -11,54 +11,104 @@
 
   var ICON_MAP = {
     Auto: "cog",
+    Account: "account",
     "Air Conditioner": "air-conditioner",
+    "Air Purifier": "air-purifier",
     Alarm: "bell-ring",
+    "Alarm Light": "alarm-light",
     Battery: "battery",
     Bed: "bed",
+    Bell: "bell",
     "Blinds Closed": "blinds-horizontal-closed",
     "Blinds Open": "blinds-horizontal",
+    Bluetooth: "bluetooth",
+    Broom: "broom",
     Camera: "camera",
+    "Car Electric": "car-electric",
+    Cast: "cast",
+    CCTV: "cctv",
     "Ceiling Fan": "ceiling-fan",
     "Ceiling Light": "ceiling-light",
+    Chandelier: "chandelier",
+    Clock: "clock-outline",
     "Coffee Maker": "coffee-maker",
+    Curtains: "curtains",
+    "Curtains Closed": "curtains-closed",
     "Desk Lamp": "desk-lamp",
     Dishwasher: "dishwasher",
+    Dog: "dog",
     Door: "door",
+    "Door Open": "door-open",
     Doorbell: "doorbell-video",
     Dryer: "tumble-dryer",
     "EV Charger": "ev-station",
     Fan: "fan",
     Fire: "fire",
     Fireplace: "fireplace",
+    Flash: "flash",
     "Floor Lamp": "floor-lamp",
+    Fountain: "fountain",
     Fridge: "fridge",
+    Gamepad: "gamepad-variant",
     Garage: "garage",
+    "Garage Open": "garage-open",
     Gate: "gate",
+    "Gate Open": "gate-open",
+    Headphones: "headphones",
     Heater: "radiator",
+    Home: "home",
     "Hot Tub": "hot-tub",
     Humidifier: "air-humidifier",
+    Iron: "iron",
+    Kettle: "kettle",
+    Key: "key-variant",
     Lamp: "lamp",
     Lawnmower: "robot-mower",
+    Leaf: "leaf",
     "LED Strip": "led-strip",
+    "Light Switch": "light-switch",
     Lightbulb: "lightbulb",
+    "Lightbulb Group": "lightbulb-group",
     Lock: "lock",
+    Mailbox: "mailbox",
     Microwave: "microwave",
+    Monitor: "monitor",
     "Motion Sensor": "motion-sensor",
+    Music: "music",
+    "Outdoor Lamp": "coach-lamp",
     Oven: "stove",
+    Package: "package-variant",
     Pool: "pool",
     Power: "power",
     "Power Plug": "power-plug",
+    Printer: "printer",
+    Projector: "projector",
     "Robot Vacuum": "robot-vacuum",
+    "Roller Shade": "roller-shade",
+    "Roller Shade Closed": "roller-shade-closed",
+    Router: "router-wireless",
     Security: "shield-home",
+    Shower: "shower-head",
     "Smoke Detector": "smoke-detector",
+    Snowflake: "snowflake",
+    Sofa: "sofa",
     "Solar Panel": "solar-panel",
     Speaker: "speaker",
+    Spotlight: "spotlight-beam",
     Sprinkler: "sprinkler",
+    "String Lights": "string-lights",
+    Sun: "white-balance-sunny",
     Television: "television",
     Thermometer: "thermometer",
+    Thermostat: "thermostat",
+    Timer: "timer-outline",
+    Toilet: "toilet",
+    "Trash Can": "trash-can",
+    "Wall Outlet": "power-socket",
     Washer: "washing-machine",
     Water: "water",
     "Water Heater": "water-boiler",
+    Weather: "weather-partly-cloudy",
     Window: "window-open-variant",
   };
 
@@ -75,16 +125,26 @@
   };
 
   var ICON_OPTIONS = [
-    "Auto", "Air Conditioner", "Alarm", "Battery", "Bed",
-    "Blinds Closed", "Blinds Open", "Camera", "Ceiling Fan", "Ceiling Light",
-    "Coffee Maker", "Desk Lamp", "Dishwasher", "Door", "Doorbell",
+    "Auto", "Account", "Air Conditioner", "Air Purifier", "Alarm",
+    "Alarm Light", "Battery", "Bed", "Bell", "Blinds Closed",
+    "Blinds Open", "Bluetooth", "Broom", "Camera", "Car Electric",
+    "Cast", "CCTV", "Ceiling Fan", "Ceiling Light", "Chandelier",
+    "Clock", "Coffee Maker", "Curtains", "Curtains Closed", "Desk Lamp",
+    "Dishwasher", "Dog", "Door", "Door Open", "Doorbell",
     "Dryer", "EV Charger", "Fan", "Fire", "Fireplace",
-    "Floor Lamp", "Fridge", "Garage", "Gate", "Heater",
-    "Hot Tub", "Humidifier", "Lamp", "Lawnmower", "LED Strip",
-    "Lightbulb", "Lock", "Microwave", "Motion Sensor", "Oven",
-    "Pool", "Power", "Power Plug", "Robot Vacuum", "Security",
-    "Smoke Detector", "Solar Panel", "Speaker", "Sprinkler", "Television",
-    "Thermometer", "Washer", "Water", "Water Heater", "Window",
+    "Flash", "Floor Lamp", "Fountain", "Fridge", "Gamepad",
+    "Garage", "Garage Open", "Gate", "Gate Open", "Headphones",
+    "Heater", "Home", "Hot Tub", "Humidifier", "Iron",
+    "Kettle", "Key", "Lamp", "Lawnmower", "Leaf",
+    "LED Strip", "Light Switch", "Lightbulb", "Lightbulb Group", "Lock",
+    "Mailbox", "Microwave", "Monitor", "Motion Sensor", "Music",
+    "Outdoor Lamp", "Oven", "Package", "Pool", "Power",
+    "Power Plug", "Printer", "Projector", "Robot Vacuum", "Roller Shade",
+    "Roller Shade Closed", "Router", "Security", "Shower", "Smoke Detector",
+    "Snowflake", "Sofa", "Solar Panel", "Speaker", "Spotlight",
+    "Sprinkler", "String Lights", "Sun", "Television", "Thermometer",
+    "Thermostat", "Timer", "Toilet", "Trash Can", "Wall Outlet",
+    "Washer", "Water", "Water Heater", "Weather", "Window",
   ];
 
   var CSS =
@@ -115,7 +175,7 @@
     ".sp-clock{position:absolute;left:50%;transform:translateX(-50%);" +
     "color:#fff;font-size:1.95cqw;white-space:nowrap}" +
     ".sp-main{position:absolute;top:4.1cqw;left:0.49cqw;right:0.49cqw;bottom:0.49cqw;" +
-    "display:flex;flex-direction:column;flex-wrap:wrap;align-content:flex-start;gap:0.98cqw;padding:0.49cqw}" +
+    "display:flex;flex-direction:column;flex-wrap:wrap;align-content:flex-start;gap:0.98cqw}" +
 
     // Preview buttons
     ".sp-btn{width:19cqw;height:12.7cqw;border-radius:0.78cqw;padding:1.37cqw;" +
@@ -130,9 +190,10 @@
     "display:flex;align-items:center;justify-content:center;cursor:pointer}" +
     ".sp-add-btn:hover{border-color:#03a9f4}" +
     ".sp-add-icon{font-size:5cqw;color:rgba(255,255,255,.35)}" +
-    ".sp-btn.sp-dragging{opacity:.35;cursor:grabbing}" +
-    ".sp-btn.sp-drop-before{border-top:2px solid #03a9f4 !important}" +
-    ".sp-btn.sp-drop-after{border-bottom:2px solid #03a9f4 !important}" +
+    ".sp-btn.sp-dragging{width:0;height:0;padding:0;margin:0;overflow:hidden;" +
+    "opacity:0;border:none;pointer-events:none}" +
+    ".sp-drop-placeholder{border:2px dashed rgba(3,169,244,.5) !important;" +
+    "background:rgba(3,169,244,.08) !important;cursor:default;pointer-events:none}" +
 
     // Hint
     ".sp-hint{text-align:center;font-size:11px;opacity:.4;padding:6px 0 12px}" +
@@ -229,6 +290,15 @@
     "border-radius:50%;background:#03a9f4;cursor:pointer}" +
     ".sp-range-val{font-size:13px;color:#aaa;min-width:32px;text-align:right}" +
 
+    // Color picker
+    ".sp-color-row{display:flex;align-items:center;gap:8px}" +
+    ".sp-color-swatch{width:40px;height:38px;border-radius:6px;border:1px solid #444;" +
+    "cursor:pointer;flex-shrink:0;position:relative;overflow:hidden;transition:border-color .2s}" +
+    ".sp-color-swatch:hover{border-color:#03a9f4}" +
+    ".sp-color-swatch input{position:absolute;inset:-8px;width:calc(100% + 16px);" +
+    "height:calc(100% + 16px);cursor:pointer;opacity:0}" +
+    ".sp-color-row .sp-input{flex:1}" +
+
     // Number input
     ".sp-number-row{display:flex;align-items:center;gap:8px}" +
     ".sp-number{width:80px;padding:8px 10px;background:#2a2a2a;border:1px solid #444;" +
@@ -291,6 +361,8 @@
   var els = {};
   var dragSrcPos = -1;
   var didDrag = false;
+  var previewPlaceholder = null;
+  var previewDropIdx = -1;
   var orderReceived = false;
   var migrationTimer = null;
 
@@ -386,6 +458,7 @@
     document.head.appendChild(roboto);
 
     buildUI();
+    setupPreviewDropZone();
     renderPreview();
     renderButtonList();
     connectEvents();
@@ -522,42 +595,49 @@
 
     // On Color
     appearPanel.appendChild(fieldLabel("On Color"));
-    var onInp = textInput("sp-set-on-color", "FF8C00", "6-digit hex e.g. FF8C00");
-    appearPanel.appendChild(onInp);
-    onInp.addEventListener("blur", function () { postText("button_on_color", this.value); });
-    onInp.addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
-    els.setOnColor = onInp;
+    var onColor = colorField("sp-set-on-color", "FF8C00", function (hex) {
+      postText("button_on_color", hex);
+    });
+    appearPanel.appendChild(onColor);
+    els.setOnColor = onColor;
 
     // Off Color
     appearPanel.appendChild(fieldLabel("Off Color"));
-    var offInp = textInput("sp-set-off-color", "313131", "6-digit hex e.g. 313131");
-    appearPanel.appendChild(offInp);
-    offInp.addEventListener("blur", function () { postText("button_off_color", this.value); });
-    offInp.addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
-    els.setOffColor = offInp;
+    var offColor = colorField("sp-set-off-color", "313131", function (hex) {
+      postText("button_off_color", hex);
+    });
+    appearPanel.appendChild(offColor);
+    els.setOffColor = offColor;
 
-    // Backlight
-    appearPanel.appendChild(fieldLabel("Display Backlight"));
+    config.appendChild(appearPanel);
+
+    // --- Backlight ---
+    config.appendChild(sectionTitle("Backlight"));
+
+    var blPanel = document.createElement("div");
+    blPanel.className = "sp-panel";
+
+    blPanel.appendChild(fieldLabel("Display Backlight"));
     var blRow = document.createElement("div");
     blRow.className = "sp-range-row";
     var blRange = document.createElement("input");
     blRange.type = "range";
     blRange.className = "sp-range";
     blRange.min = "0";
-    blRange.max = "255";
-    blRange.value = "255";
+    blRange.max = "100";
+    blRange.value = "100";
     var blVal = document.createElement("span");
     blVal.className = "sp-range-val";
-    blVal.textContent = "255";
-    blRange.addEventListener("input", function () { blVal.textContent = this.value; });
-    blRange.addEventListener("change", function () { postLight("display_backlight", this.value); });
+    blVal.textContent = "100%";
+    blRange.addEventListener("input", function () { blVal.textContent = this.value + "%"; });
+    blRange.addEventListener("change", function () { postLight("display_backlight", Math.round(this.value * 255 / 100)); });
     blRow.appendChild(blRange);
     blRow.appendChild(blVal);
-    appearPanel.appendChild(blRow);
+    blPanel.appendChild(blRow);
     els.setBacklight = blRange;
     els.setBacklightVal = blVal;
 
-    config.appendChild(appearPanel);
+    config.appendChild(blPanel);
 
     // --- Temperature ---
     config.appendChild(sectionTitle("Temperature"));
@@ -671,6 +751,55 @@
     el.placeholder = placeholder || "";
     el.style.marginBottom = "4px";
     return el;
+  }
+
+  function colorField(id, value, onChange) {
+    var row = document.createElement("div");
+    row.className = "sp-color-row";
+
+    var swatch = document.createElement("div");
+    swatch.className = "sp-color-swatch";
+    swatch.style.backgroundColor = "#" + (value.length === 6 ? value : "000000");
+
+    var picker = document.createElement("input");
+    picker.type = "color";
+    picker.value = "#" + (value.length === 6 ? value : "000000");
+    swatch.appendChild(picker);
+    row.appendChild(swatch);
+
+    var inp = document.createElement("input");
+    inp.type = "text";
+    inp.className = "sp-input";
+    inp.id = id;
+    inp.value = value;
+    inp.placeholder = "6-digit hex e.g. FF8C00";
+    inp.style.marginBottom = "4px";
+    row.appendChild(inp);
+
+    picker.addEventListener("input", function () {
+      var hex = this.value.replace("#", "").toUpperCase();
+      inp.value = hex;
+      swatch.style.backgroundColor = "#" + hex;
+      onChange(hex);
+    });
+
+    inp.addEventListener("blur", function () {
+      var hex = this.value.replace(/^#/, "").toUpperCase();
+      if (/^[0-9A-F]{6}$/i.test(hex)) {
+        swatch.style.backgroundColor = "#" + hex;
+        picker.value = "#" + hex;
+      }
+      onChange(hex);
+    });
+    inp.addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
+
+    row._syncColor = function (hex) {
+      if (document.activeElement !== inp) inp.value = hex;
+      swatch.style.backgroundColor = "#" + (hex.length === 6 ? hex : "000000");
+      picker.value = "#" + (hex.length === 6 ? hex : "000000");
+    };
+
+    return row;
   }
 
   function toggleRow(label, id, checked) {
@@ -1073,9 +1202,71 @@
 
   // ── Preview drag and drop ─────────────────────────────────────────
 
-  function clearPreviewDropIndicators() {
-    els.previewMain.querySelectorAll(".sp-drop-before,.sp-drop-after")
-      .forEach(function (el) { el.classList.remove("sp-drop-before", "sp-drop-after"); });
+  function removePreviewPlaceholder() {
+    if (previewPlaceholder && previewPlaceholder.parentNode) {
+      previewPlaceholder.parentNode.removeChild(previewPlaceholder);
+    }
+    previewPlaceholder = null;
+    previewDropIdx = -1;
+  }
+
+  function setupPreviewDropZone() {
+    var container = els.previewMain;
+
+    container.addEventListener("dragover", function (e) {
+      if (dragSrcPos < 0) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+
+      var buttons = container.querySelectorAll(
+        ".sp-btn:not(.sp-drop-placeholder):not(.sp-add-btn):not(.sp-dragging)"
+      );
+      var dropIdx = buttons.length;
+      for (var i = 0; i < buttons.length; i++) {
+        var rect = buttons[i].getBoundingClientRect();
+        if (e.clientX < rect.left) { dropIdx = i; break; }
+        if (e.clientX <= rect.right) {
+          var midY = rect.top + rect.height / 2;
+          if (e.clientY < midY) { dropIdx = i; break; }
+          if (e.clientY <= rect.bottom) { dropIdx = i + 1; break; }
+        }
+      }
+
+      if (dropIdx === previewDropIdx) return;
+      previewDropIdx = dropIdx;
+
+      if (!previewPlaceholder) {
+        previewPlaceholder = document.createElement("div");
+        previewPlaceholder.className = "sp-btn sp-drop-placeholder";
+      }
+
+      var refNodes = Array.from(buttons);
+      if (dropIdx < refNodes.length) {
+        container.insertBefore(previewPlaceholder, refNodes[dropIdx]);
+      } else {
+        var addBtn = container.querySelector(".sp-add-btn");
+        container.insertBefore(previewPlaceholder, addBtn);
+      }
+    });
+
+    container.addEventListener("dragleave", function (e) {
+      if (!container.contains(e.relatedTarget)) {
+        removePreviewPlaceholder();
+      }
+    });
+
+    container.addEventListener("drop", function (e) {
+      e.preventDefault();
+      var toIdx = previewDropIdx;
+      removePreviewPlaceholder();
+      if (dragSrcPos < 0 || toIdx < 0) return;
+      if (dragSrcPos === toIdx) return;
+      var newOrder = state.order.slice();
+      var moved = newOrder.splice(dragSrcPos, 1)[0];
+      newOrder.splice(toIdx, 0, moved);
+      postText("button_order", newOrder.join(","));
+      dragSrcPos = -1;
+    });
   }
 
   function setupPreviewDrag(btn, idx) {
@@ -1088,35 +1279,7 @@
     });
     btn.addEventListener("dragend", function () {
       btn.classList.remove("sp-dragging");
-      clearPreviewDropIndicators();
-    });
-    btn.addEventListener("dragover", function (e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "move";
-      clearPreviewDropIndicators();
-      var rect = btn.getBoundingClientRect();
-      if (e.clientY < rect.top + rect.height / 2) {
-        btn.classList.add("sp-drop-before");
-      } else {
-        btn.classList.add("sp-drop-after");
-      }
-    });
-    btn.addEventListener("dragleave", function () {
-      btn.classList.remove("sp-drop-before", "sp-drop-after");
-    });
-    btn.addEventListener("drop", function (e) {
-      e.preventDefault();
-      clearPreviewDropIndicators();
-      if (dragSrcPos < 0) return;
-      var rect = btn.getBoundingClientRect();
-      var toIdx = e.clientY < rect.top + rect.height / 2 ? idx : idx + 1;
-      if (dragSrcPos < toIdx) toIdx--;
-      if (dragSrcPos === toIdx) return;
-      var newOrder = state.order.slice();
-      var moved = newOrder.splice(dragSrcPos, 1)[0];
-      newOrder.splice(toIdx, 0, moved);
-      postText("button_order", newOrder.join(","));
-      dragSrcPos = -1;
+      removePreviewPlaceholder();
     });
   }
 
@@ -1203,13 +1366,13 @@
       // --- Shared colors ---
       if (id === "text-button_on_color") {
         state.onColor = val;
-        syncInput(els.setOnColor, val);
+        if (els.setOnColor && els.setOnColor._syncColor) els.setOnColor._syncColor(val);
         renderPreview();
         return;
       }
       if (id === "text-button_off_color") {
         state.offColor = val;
-        syncInput(els.setOffColor, val);
+        if (els.setOffColor && els.setOffColor._syncColor) els.setOffColor._syncColor(val);
         renderPreview();
         return;
       }
@@ -1293,9 +1456,10 @@
       // --- Backlight ---
       if (id === "light-display_backlight") {
         var br = d.brightness != null ? d.brightness : 255;
+        var pct = Math.round(br * 100 / 255);
         state.backlight = br;
-        els.setBacklight.value = br;
-        els.setBacklightVal.textContent = br;
+        els.setBacklight.value = pct;
+        els.setBacklightVal.textContent = pct + "%";
         return;
       }
 
