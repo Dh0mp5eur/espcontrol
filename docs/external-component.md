@@ -6,7 +6,7 @@ description:
 
 # External ESPHome component
 
-[`device/device.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/device/device.yaml) registers an **external_components** source pointing at this repository:
+[`device/device.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/devices/guition-esp32-p4-jc1060p470/device/device.yaml) registers an **external_components** source pointing at this repository:
 
 ```yaml
 external_components:
@@ -28,9 +28,9 @@ espcontrol:
 
 [`components/espcontrol/sun_calc.h`](https://github.com/jtenniswood/espcontrol/blob/main/components/espcontrol/sun_calc.h) provides:
 
-- **`TzCoord`** table — representative **lat/lon** for each **IANA timezone** option matching **`Clock: Timezone`** in [`addon/time.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/addon/time.yaml)
+- **`TzCoord`** table — representative **lat/lon** for each **IANA timezone** option matching **`Clock: Timezone`** in [`addon/time.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/common/addon/time.yaml)
 - **`lookup_tz_coords`** — resolve coordinates for a timezone id string
-- **`calc_sunrise_sunset`** — astronomical sunrise/sunset for a calendar date and position (used by [`addon/backlight_schedule.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/addon/backlight_schedule.yaml) lambdas)
+- **`calc_sunrise_sunset`** — astronomical sunrise/sunset for a calendar date and position (used by [`addon/backlight_schedule.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/common/addon/backlight_schedule.yaml) lambdas)
 
 This keeps **sunrise/sunset** and **day/night brightness** on-device **without** calling external APIs.
 

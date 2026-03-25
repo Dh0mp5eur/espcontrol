@@ -6,7 +6,7 @@ description:
 
 # Hardware & connectivity
 
-This firmware targets the **Guition ESP32-P4 JC1060P470** module: **ESP32-P4** for application code and display, plus **ESP32-C6** for WiFi via **ESP32 Hosted** (`esp32_hosted` in [`device/device.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/device/device.yaml)).
+This firmware targets the **Guition ESP32-P4 JC1060P470** module: **ESP32-P4** for application code and display, plus **ESP32-C6** for WiFi via **ESP32 Hosted** (`esp32_hosted` in [`device/device.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/devices/guition-esp32-p4-jc1060p470/device/device.yaml)).
 
 ## MCU and memory
 

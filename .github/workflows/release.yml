@@ -28,12 +28,12 @@ jobs:
           -v "${PWD}:/config"
           ghcr.io/esphome/esphome:latest
           -s firmware_version "${VERSION}"
-          compile /config/guition-esp32-p4-jc1060p470/factory.yaml
+          compile /config/devices/guition-esp32-p4-jc1060p470/factory.yaml
 
       - name: Collect firmware files and generate manifest
         id: firmware
         run: |
-          BUILD_DIR="guition-esp32-p4-jc1060p470/.esphome/build/espcontrol-7inch/.pioenvs/espcontrol-7inch"
+          BUILD_DIR="devices/guition-esp32-p4-jc1060p470/.esphome/build/espcontrol-7inch/.pioenvs/espcontrol-7inch"
           mkdir -p output
 
           if [ ! -f "${BUILD_DIR}/firmware.factory.bin" ]; then

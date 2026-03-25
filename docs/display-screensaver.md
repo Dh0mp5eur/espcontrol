@@ -6,7 +6,7 @@ description:
 
 # Display & Screensaver
 
-Display-related settings are driven by template entities in [`config/display.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/config/display.yaml) and scripts in [`addon/backlight.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/addon/backlight.yaml). They appear under **Display Configuration**, **Screensaver**, and related groups in the web UI and in Home Assistant.
+Display-related settings are driven by template entities in [`config/display.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/common/config/display.yaml) and scripts in [`addon/backlight.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/common/addon/backlight.yaml). They appear under **Display Configuration**, **Screensaver**, and related groups in the web UI and in Home Assistant.
 
 ## Temperature row
 

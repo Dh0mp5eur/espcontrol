@@ -6,7 +6,7 @@ description:
 
 # Buttons & Icons
 
-The firmware defines **20 button slots** (`btn_1` … `btn_20` in [`package.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/package.yaml)). Each slot has template entities for:
+The firmware defines **20 button slots** (`btn_1` … `btn_20` in [`package.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/devices/guition-esp32-p4-jc1060p470/package.yaml)). Each slot has template entities for:
 
 | Purpose | Entity name pattern |
 | --- | --- |
@@ -38,11 +38,11 @@ When **Icon** is **Auto**, the custom web UI resolves the icon from the **entity
 | `camera` | camera |
 | `binary_sensor` | motion-sensor |
 
-Any other domain falls back to **cog**. On the LVGL device, the same logic uses glyphs from [`assets/icons.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/assets/icons.yaml).
+Any other domain falls back to **cog**. On the LVGL device, the same logic uses glyphs from [`assets/icons.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/common/assets/icons.yaml).
 
 ## Icon picker list
 
-The **select** options for each **Button N Icon** are defined in [`config/button_template.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/config/button_template.yaml). There are **many** named choices (Material Design Icons **v7.4.47**), including lighting, climate, security, weather, media, and more — not a fixed count of 19. The on-device font in `icons.yaml` includes the glyph codepoints needed for the LVGL UI; the web preview uses the CDN stylesheet referenced in `www.js`.
+The **select** options for each **Button N Icon** are defined in [`config/button_template.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/common/config/button_template.yaml). There are **many** named choices (Material Design Icons **v7.4.47**), including lighting, climate, security, weather, media, and more — not a fixed count of 19. The on-device font in `icons.yaml` includes the glyph codepoints needed for the LVGL UI; the web preview uses the CDN stylesheet referenced in `www.js`.
 
 If you need an icon that is not in the list, [open an issue](https://github.com/jtenniswood/espcontrol/issues) with the MDI name and use case.
 

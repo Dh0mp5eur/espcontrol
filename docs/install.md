@@ -36,7 +36,7 @@ If you prefer to compile locally with ESPHome (for customisation or development)
 
 ### 1. Create the device config
 
-Copy the template from the repo's [`esphome.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/esphome.yaml) and adjust:
+Copy the template from the repo's [`esphome.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/devices/guition-esp32-p4-jc1060p470/esphome.yaml) and adjust:
 
 - `substitutions.name` — ESPHome hostname (e.g. `my-panel`)
 - `substitutions.friendly_name` — human-readable name
@@ -48,7 +48,7 @@ The **packages** block pulls the full firmware from GitHub:
 packages:
   setup:
     url: https://github.com/jtenniswood/espcontrol/
-    file: guition-esp32-p4-jc1060p470/package.yaml
+    file: devices/guition-esp32-p4-jc1060p470/package.yaml
     refresh: 1sec
 ```
 

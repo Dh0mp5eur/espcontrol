@@ -6,7 +6,7 @@ description:
 
 # Firmware Updates
 
-OTA behaviour is defined in [`addon/firmware_update.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/guition-esp32-p4-jc1060p470/addon/firmware_update.yaml).
+OTA behaviour is defined in [`addon/firmware_update.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/common/addon/firmware_update.yaml).
 
 ## Update source
 

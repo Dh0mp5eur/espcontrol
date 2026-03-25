@@ -53,7 +53,7 @@ The built-in web interface has three tabs:
 
 ## Icons
 
-Per-button icons use **Material Design Icons** (v7.4.47). The full list is defined in [`config/button_template.yaml`](config/button_template.yaml); see the [Buttons & Icons](https://jtenniswood.github.io/espcontrol/buttons-and-icons) page for **Auto** domain mapping.
+Per-button icons use **Material Design Icons** (v7.4.47). The full list is defined in [`common/config/button_template.yaml`](../../common/config/button_template.yaml); see the [Buttons & Icons](https://jtenniswood.github.io/espcontrol/buttons-and-icons) page for **Auto** domain mapping.
 
 ## Firmware Updates
 
@@ -74,11 +74,14 @@ OTA updates are delivered via an HTTP manifest hosted on GitHub Pages. Update be
 ## Folder Structure
 
 ```
-guition-esp32-p4-jc1060p470/
-├── addon/          # Connectivity, time, backlight, network, firmware update
-├── assets/         # Fonts and icons
-├── config/         # User-configurable button, display, and screensaver settings
+devices/guition-esp32-p4-jc1060p470/
+├── addon/          # Device-specific addons (connectivity / page navigation)
 ├── device/         # Hardware, LVGL UI, sensors, setup screens
-├── theme/          # Button and UI styling
+├── theme/          # Button dimensions and UI styling
 └── esphome.yaml    # ESPHome config template
+
+common/             # Shared across all devices
+├── addon/          # Time, backlight, network, firmware update
+├── assets/         # Fonts and icons
+└── config/         # User-configurable button, display, and screensaver settings
 ```
