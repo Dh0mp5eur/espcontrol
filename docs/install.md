@@ -30,9 +30,17 @@ Connect the display to your computer with the USB-C cable, then click the button
 
 <EspInstallButton slug="guition-esp32-p4-jc4880p443" />
 
+::: warning Active development
+Support for the JC4880P443 is in active development. Expect rough edges and breaking changes.
+:::
+
 **4-inch square (4848S040):**
 
 <EspInstallButton slug="guition-esp32-s3-4848s040" />
+
+::: warning Active development
+Support for the 4848S040 is in active development. Expect rough edges and breaking changes.
+:::
 
 ::: tip Which cable?
 If the install button doesn't detect your device, try a different USB-C cable. Charge-only cables (often thinner and cheaper) won't work — you need one that supports data transfer.
