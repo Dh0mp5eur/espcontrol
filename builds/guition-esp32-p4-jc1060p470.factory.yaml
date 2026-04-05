@@ -2,7 +2,7 @@ substitutions:
   firmware_version: "0.0.0"
 
 packages:
-  core: !include espcontrol-7inch.yaml
+  core: !include guition-esp32-p4-jc1060p470.yaml
 
 esphome:
   project:

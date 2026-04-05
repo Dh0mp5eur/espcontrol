@@ -63,9 +63,18 @@ See [Firmware Updates](/firmware-updates) for more details.
 
 The panel includes hundreds of icons from the Material Design Icons set. If the one you need isn't there, [open an issue on GitHub](https://github.com/jtenniswood/espcontrol/issues) with the icon name (from [pictogrammers.com/library/mdi](https://pictogrammers.com/library/mdi/)) and what you'd use it for. We'll look into adding it.
 
-## Can I have more than 20 buttons?
+## How many buttons can I have?
 
-The current firmware supports a maximum of 20 buttons. This covers most setups, but if you need more, [open an issue](https://github.com/jtenniswood/espcontrol/issues) and let us know your use case.
+The firmware supports up to **30 buttons** per panel. The 7-inch display shows around 20 at once (with horizontal scrolling for more), while the 4.3-inch display shows around 15 at once (with vertical scrolling for more).
+
+## Which panels are supported?
+
+Espcontrol currently supports two Guition ESP32-P4 panels:
+
+- **JC1060P470** — 7-inch, 1024x600, landscape orientation
+- **JC4880P443** — 4.3-inch, 480x800, portrait orientation
+
+Both use the same firmware features, button configuration, and web UI. The layout automatically matches each panel's screen size and orientation.
 
 ## Does the panel work with other smart home platforms?
 

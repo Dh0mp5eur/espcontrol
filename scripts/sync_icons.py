@@ -14,10 +14,13 @@ ROOT = Path(__file__).resolve().parent.parent
 
 SOURCE = ROOT / "common" / "assets" / "icons.json"
 
-TARGETS = {
+DEVICES = [
+    {"slug": "guition-esp32-p4-jc1060p470"},
+    {"slug": "guition-esp32-p4-jc4880p443"},
+]
+
+SHARED_TARGETS = {
     "icons_yaml": ROOT / "common" / "assets" / "icons.yaml",
-    "sensors": ROOT / "devices" / "guition-esp32-p4-jc1060p470" / "device" / "sensors.yaml",
-    "www_js": ROOT / "docs" / "public" / "webserver" / "guition-esp32-p4-jc1060p470" / "www.js",
 }
 
 
@@ -119,36 +122,24 @@ def sync(check_only=False):
 
     patches = [
         (
-            TARGETS["icons_yaml"],
+            SHARED_TARGETS["icons_yaml"],
             "GENERATED:ICONS START",
             "GENERATED:ICONS END",
             gen_icons_yaml_glyphs,
         ),
-        (
-            TARGETS["sensors"],
-            "GENERATED:ICONS START",
-            "GENERATED:ICONS END",
-            gen_sensors_icon_entries,
-        ),
-        (
-            TARGETS["sensors"],
-            "GENERATED:DOMAIN_ICONS START",
-            "GENERATED:DOMAIN_ICONS END",
-            gen_sensors_domain_icons,
-        ),
-        (
-            TARGETS["www_js"],
-            "GENERATED:ICONS START",
-            "GENERATED:ICONS END",
-            gen_www_js_icon_map,
-        ),
-        (
-            TARGETS["www_js"],
-            "GENERATED:DOMAIN_ICONS START",
-            "GENERATED:DOMAIN_ICONS END",
-            gen_www_js_domain_icons,
-        ),
     ]
+
+    for device in DEVICES:
+        slug = device["slug"]
+        sensors_path = ROOT / "devices" / slug / "device" / "sensors.yaml"
+        www_js_path = ROOT / "docs" / "public" / "webserver" / slug / "www.js"
+
+        patches.extend([
+            (sensors_path, "GENERATED:ICONS START", "GENERATED:ICONS END", gen_sensors_icon_entries),
+            (sensors_path, "GENERATED:DOMAIN_ICONS START", "GENERATED:DOMAIN_ICONS END", gen_sensors_domain_icons),
+            (www_js_path, "GENERATED:ICONS START", "GENERATED:ICONS END", gen_www_js_icon_map),
+            (www_js_path, "GENERATED:DOMAIN_ICONS START", "GENERATED:DOMAIN_ICONS END", gen_www_js_domain_icons),
+        ])
 
     file_contents = {}
 

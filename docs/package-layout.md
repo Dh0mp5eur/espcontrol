@@ -29,4 +29,4 @@ Shared resources (fonts, icons, config templates, generic addons) live under [`c
 | `devices/<slug>/device/` | Board pins, display/touch, LVGL pages, scripts |
 | `devices/<slug>/theme/` | Button styles and shared LVGL theming |
 
-The device [`esphome.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/devices/guition-esp32-p4-jc1060p470/esphome.yaml) only sets substitutions, WiFi, and the remote **`packages.setup`** include — everything else comes from this tree.
+Each device's `esphome.yaml` (e.g. [JC1060P470](https://github.com/jtenniswood/espcontrol/blob/main/devices/guition-esp32-p4-jc1060p470/esphome.yaml), [JC4880P443](https://github.com/jtenniswood/espcontrol/blob/main/devices/guition-esp32-p4-jc4880p443/esphome.yaml)) only sets substitutions, WiFi, and the remote **`packages.setup`** include — everything else comes from this tree.

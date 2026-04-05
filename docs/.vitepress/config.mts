@@ -5,7 +5,7 @@ const hostname = 'https://jtenniswood.github.io/espcontrol/'
 export default defineConfig({
   title: 'Espcontrol',
   description:
-    'Touchscreen control panel for Home Assistant on Guition ESP32-P4 — up to 20 buttons, web configuration, automatic updates.',
+    'Touchscreen control panel for Home Assistant on Guition ESP32-P4 — up to 30 buttons, web configuration, automatic updates.',
   base: '/espcontrol/',
   lang: 'en-US',
   cleanUrls: true,
@@ -40,7 +40,7 @@ export default defineConfig({
             url: hostname,
             name: 'Espcontrol',
             description:
-              'ESPHome firmware for a 7-inch Guition ESP32-P4 touchscreen: up to 20 Home Assistant entity buttons, web UI, OTA updates.',
+              'ESPHome firmware for Guition ESP32-P4 touchscreens: up to 30 Home Assistant entity buttons, web UI, OTA updates.',
             inLanguage: 'en-US',
           },
           {
@@ -50,7 +50,7 @@ export default defineConfig({
             applicationCategory: 'UtilitiesApplication',
             operatingSystem: 'ESP32',
             description:
-              'Home Assistant control panel firmware for Guition ESP32-P4 JC1060P470. Configure buttons and display from the built-in web UI.',
+              'Home Assistant control panel firmware for Guition ESP32-P4 touchscreens. Configure buttons and display from the built-in web UI.',
             url: hostname,
             author: {
               '@type': 'Person',

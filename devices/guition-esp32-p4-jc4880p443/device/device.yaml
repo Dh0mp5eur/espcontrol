@@ -1,0 +1,179 @@
+# =============================================================================
+# DEVICE - Guition ESP32-P4 JC4880P443 hardware definition
+# =============================================================================
+# Pin assignments, peripherals, and platform config for the 4.3" touch panel.
+# Includes the ESP32-P4 main SoC, ESP32-C6 hosted WiFi co-processor, MIPI
+# DSI display, GT911 capacitive touchscreen, and backlight PWM.
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# ESP32-P4 platform (16MB flash, ESP-IDF framework)
+# ---------------------------------------------------------------------------
+esp32:
+  variant: esp32p4
+  flash_size: 16MB
+  engineering_sample: true
+  framework:
+    type: esp-idf
+    advanced:
+      enable_idf_experimental_features: yes
+
+# ---------------------------------------------------------------------------
+# External component (sun_calc.h for on-device sunrise/sunset)
+# ---------------------------------------------------------------------------
+external_components:
+  - source:
+      type: git
+      url: https://github.com/jtenniswood/espcontrol
+      ref: main
+      path: components
+    components: [espcontrol]
+    refresh: 0s
+
+espcontrol:
+
+# ---------------------------------------------------------------------------
+# ESPHome core (device name from substitutions)
+# ---------------------------------------------------------------------------
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  platformio_options:
+    build_flags:
+      - "-Wno-deprecated-declarations"
+    build_src_flags:
+      - "-Wno-literal-suffix"
+
+# ---------------------------------------------------------------------------
+# ESP32-C6 co-processor (provides WiFi/BLE via SDIO)
+# ---------------------------------------------------------------------------
+esp32_hosted:
+  active_high: true
+  variant: ESP32C6
+  reset_pin: GPIO54
+  cmd_pin: GPIO19
+  clk_pin: GPIO18
+  d0_pin: GPIO14
+  d1_pin: GPIO15
+  d2_pin: GPIO16
+  d3_pin: GPIO17
+
+# ---------------------------------------------------------------------------
+# PSRAM (video frame buffer memory)
+# ---------------------------------------------------------------------------
+psram:
+  speed: 200MHz
+
+# ---------------------------------------------------------------------------
+# OTA updates (ESPHome native + HTTP-based)
+# ---------------------------------------------------------------------------
+ota:
+  - platform: esphome
+  - platform: http_request
+
+# ---------------------------------------------------------------------------
+# Home Assistant API
+# ---------------------------------------------------------------------------
+api:
+  reboot_timeout: 0s
+  homeassistant_states: true
+
+# ---------------------------------------------------------------------------
+# Logging (light component silenced to WARN to reduce noise)
+# ---------------------------------------------------------------------------
+logger:
+  logs:
+    light: WARN
+
+# ---------------------------------------------------------------------------
+# HTTP client (used by firmware_update.yaml for OTA from GitHub)
+# ---------------------------------------------------------------------------
+http_request:
+  id: http_req
+  timeout: 10s
+
+# ---------------------------------------------------------------------------
+# Web server (v3 UI with custom JS and sorted config groups)
+# ---------------------------------------------------------------------------
+web_server:
+  port: 80
+  version: 3
+  js_url: https://jtenniswood.github.io/espcontrol/webserver/${device_slug}/www.js
+  sorting_groups:
+    - id: sg_button
+      name: "Button Configuration"
+      sorting_weight: 10
+    - id: sg_display
+      name: "Display Configuration"
+      sorting_weight: 20
+    - id: sg_brightness
+      name: "Brightness"
+      sorting_weight: 25
+    - id: sg_screensaver
+      name: "Screensaver"
+      sorting_weight: 30
+    - id: sg_firmware
+      name: "Firmware"
+      sorting_weight: 40
+
+# ---------------------------------------------------------------------------
+# Restart button (triggers reboot to apply config changes)
+# ---------------------------------------------------------------------------
+button:
+  - platform: restart
+    name: "Apply Configuration"
+    icon: mdi:restart
+    entity_category: config
+
+# ---------------------------------------------------------------------------
+# Power management (LDO channel for DSI PHY)
+# ---------------------------------------------------------------------------
+esp_ldo:
+  - channel: 3
+    voltage: 2.5V
+
+# ---------------------------------------------------------------------------
+# Backlight (LEDC PWM output + monochromatic light entity)
+# ---------------------------------------------------------------------------
+output:
+  - platform: ledc
+    pin: GPIO23
+    id: gpio_backlight_pwm
+    frequency: 100Hz
+    inverted: false
+    min_power: 0.0
+    max_power: 0.8
+
+light:
+  - platform: monochromatic
+    output: gpio_backlight_pwm
+    name: Display Backlight
+    icon: mdi:lightbulb-on
+    id: display_backlight
+    restore_mode: ALWAYS_ON
+    default_transition_length: 0s
+    gamma_correct: 1.0
+
+# ---------------------------------------------------------------------------
+# I2C bus and touchscreen (GT911 capacitive, wakes screensaver on touch)
+# ---------------------------------------------------------------------------
+i2c:
+  sda: GPIO7
+  scl: GPIO8
+  scan: false
+  frequency: 400kHz
+
+touchscreen:
+  - platform: gt911
+    id: my_touchscreen
+    display: my_display
+    on_touch:
+      - script.execute: screensaver_wake
+
+# ---------------------------------------------------------------------------
+# Display (4.3" 480x800 MIPI DSI panel)
+# ---------------------------------------------------------------------------
+display:
+  - platform: mipi_dsi
+    id: my_display
+    model: JC4880P443

@@ -17,7 +17,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-const manifestUrl = './firmware/espcontrol-7inch/manifest.json'
+const props = defineProps({
+  slug: { type: String, default: 'guition-esp32-p4-jc1060p470' }
+})
+const manifestUrl = `./firmware/${props.slug}/manifest.json`
 const supported = ref(false)
 const loadError = ref(null)
 

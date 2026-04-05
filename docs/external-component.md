@@ -6,7 +6,7 @@ description:
 
 # External ESPHome component
 
-[`device/device.yaml`](https://github.com/jtenniswood/espcontrol/blob/main/devices/guition-esp32-p4-jc1060p470/device/device.yaml) registers an **external_components** source pointing at this repository:
+Each device's `device/device.yaml` (e.g. [JC1060P470](https://github.com/jtenniswood/espcontrol/blob/main/devices/guition-esp32-p4-jc1060p470/device/device.yaml), [JC4880P443](https://github.com/jtenniswood/espcontrol/blob/main/devices/guition-esp32-p4-jc4880p443/device/device.yaml)) registers an **external_components** source pointing at this repository:
 
 ```yaml
 external_components:

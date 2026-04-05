@@ -19,7 +19,10 @@ jobs:
       matrix:
         include:
           - device: guition-esp32-p4-jc1060p470
-            slug: espcontrol-7inch
+            slug: guition-esp32-p4-jc1060p470
+            chip: ESP32-P4
+          - device: guition-esp32-p4-jc4880p443
+            slug: guition-esp32-p4-jc4880p443
             chip: ESP32-P4
     steps:
       - uses: actions/checkout@v6

@@ -7,8 +7,8 @@
 # =============================================================================
 
 substitutions:
-  device_slug: "guition-esp32-p4-jc1060p470"
-  firmware_manifest_slug: "guition-esp32-p4-jc1060p470"
+  device_slug: "guition-esp32-p4-jc4880p443"
+  firmware_manifest_slug: "guition-esp32-p4-jc4880p443"
 
 packages:
   # ---------------------------------------------------------------------------
@@ -24,7 +24,7 @@ packages:
   # ---------------------------------------------------------------------------
   button_config:   !include ../../common/config/button.yaml
   display_config:  !include ../../common/config/display.yaml
-  # Per-button entity/label/icon (20 slots)
+  # Per-button entity/label/icon (30 slots)
   btn_1:           !include { file: ../../common/config/button_template.yaml, vars: { num: "1" } }
   btn_2:           !include { file: ../../common/config/button_template.yaml, vars: { num: "2" } }
   btn_3:           !include { file: ../../common/config/button_template.yaml, vars: { num: "3" } }

@@ -1,0 +1,14 @@
+substitutions:
+  name: "guition-esp32-p4-jc4880p443"
+  friendly_name: "Espcontrol 4inch"
+
+esphome:
+  name_add_mac_suffix: true
+
+packages:
+  espcontrol: !include ../devices/guition-esp32-p4-jc4880p443/packages.yaml
+
+wifi:
+  ap:
+
+captive_portal:

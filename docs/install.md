@@ -6,20 +6,28 @@ description:
 
 # Install
 
-Flash the Espcontrol firmware to your Guition ESP32-P4 7-inch display directly from your browser — no special software or technical knowledge required.
+Flash the Espcontrol firmware to your Guition ESP32-P4 display directly from your browser — no special software or technical knowledge required.
 
 ## What you need
 
-- **Guition ESP32-P4 JC1060P470** (7-inch display)
+- **A supported Guition ESP32-P4 panel:**
+  - **JC1060P470** — 7-inch, 1024x600, landscape
+  - **JC4880P443** — 4.3-inch, 480x800, portrait
 - **USB-C cable** — must be a data cable, not a charge-only cable
 - **A computer** running Chrome or Edge (desktop). Safari and Firefox are not supported for flashing.
 - **Home Assistant** running on your network
 
 ## Flash the firmware
 
-Connect the display to your computer with the USB-C cable, then click the button below.
+Connect the display to your computer with the USB-C cable, then click the button for your panel.
 
-<EspInstallButton />
+**7-inch (JC1060P470):**
+
+<EspInstallButton slug="guition-esp32-p4-jc1060p470" />
+
+**4.3-inch (JC4880P443):**
+
+<EspInstallButton slug="guition-esp32-p4-jc4880p443" />
 
 ::: tip Which cable?
 If the install button doesn't detect your device, try a different USB-C cable. Charge-only cables (often thinner and cheaper) won't work — you need one that supports data transfer.

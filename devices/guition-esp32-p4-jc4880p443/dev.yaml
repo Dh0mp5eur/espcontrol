@@ -1,0 +1,16 @@
+substitutions:
+  name: "jc4880p443-dev"
+  friendly_name: "Espcontrol JC4880P443 Dev"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+external_components:
+  - source:
+      type: local
+      path: ../../components
+    components: [espcontrol]
+
+packages:
+  espcontrol: !include packages.yaml

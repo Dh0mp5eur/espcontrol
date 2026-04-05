@@ -8,7 +8,6 @@
 // Custom UI: three-page layout (Screen / Settings / Logs)
 (function () {
   var NUM_SLOTS = 30;
-  var DEVICE_ID = "guition-esp32-p4-jc1060p470";
 
   var ICON_MAP = {
     Auto: "cog",
@@ -253,35 +252,35 @@
 
     // Screen preview
     ".sp-wrap{display:flex;justify-content:center;padding:20px var(--gap) 4px}" +
-    ".sp-screen{width:100%;aspect-ratio:1024/600;background:#000;" +
+    ".sp-screen{width:100%;aspect-ratio:480/800;background:#000;" +
     "border-radius:var(--radius);position:relative;overflow:hidden;" +
     "box-shadow:0 2px 20px rgba(0,0,0,.35);border:2px solid var(--surface);" +
     "container-type:inline-size;font-family:Roboto,sans-serif;user-select:none}" +
-    ".sp-topbar{position:absolute;top:0;left:0;right:0;height:3.2cqw;" +
-    "display:flex;align-items:center;padding:0.39cqw;z-index:1}" +
-    ".sp-temp{color:#fff;font-size:1.95cqw;white-space:nowrap;opacity:0;transition:opacity .3s}" +
+    ".sp-topbar{position:absolute;top:0;left:0;right:0;height:7.5cqw;" +
+    "display:flex;align-items:center;padding:0.83cqw;z-index:1}" +
+    ".sp-temp{color:#fff;font-size:4.17cqw;white-space:nowrap;opacity:0;transition:opacity .3s}" +
     ".sp-temp.sp-visible{opacity:1}" +
     ".sp-clock{position:absolute;left:50%;transform:translateX(-50%);" +
-    "color:#fff;font-size:1.95cqw;white-space:nowrap}" +
-    ".sp-main{position:absolute;top:3.9cqw;left:0.49cqw;right:0.49cqw;bottom:0.49cqw;" +
-    "display:flex;flex-direction:column;flex-wrap:wrap;align-content:flex-start;gap:0.98cqw;" +
-    "overflow-x:auto;overflow-y:hidden}" +
+    "color:#fff;font-size:4.17cqw;white-space:nowrap}" +
+    ".sp-main{position:absolute;top:7.5cqw;left:1.04cqw;right:1.04cqw;bottom:1.04cqw;" +
+    "display:flex;flex-direction:row;flex-wrap:wrap;align-content:flex-start;gap:2.08cqw;" +
+    "overflow-y:auto;overflow-x:hidden}" +
 
     // Preview buttons
-    ".sp-btn{width:20.02cqw;height:12.7cqw;border-radius:0.78cqw;padding:1.37cqw;" +
+    ".sp-btn{width:31.25cqw;height:29.58cqw;border-radius:1.67cqw;padding:2.92cqw;" +
     "display:flex;flex-direction:column;justify-content:space-between;" +
     "cursor:pointer;transition:all .2s;box-sizing:border-box;border:2px solid transparent;" +
     "position:relative}" +
     ".sp-btn:hover{filter:brightness(1.15)}" +
     ".sp-btn.sp-selected{border-color:var(--accent)}" +
-    ".sp-btn-icon{font-size:4.69cqw;line-height:1;color:#fff}" +
-    ".sp-btn-label{font-size:1.8cqw;line-height:1.2;color:#fff;" +
+    ".sp-btn-icon{font-size:10cqw;line-height:1;color:#fff}" +
+    ".sp-btn-label{font-size:4.58cqw;line-height:1.2;color:#fff;" +
     "white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
-    ".sp-sensor-badge{position:absolute;top:1cqw;right:1cqw;font-size:1.6cqw;opacity:.5}" +
+    ".sp-sensor-badge{position:absolute;top:2.08cqw;right:2.08cqw;font-size:3.33cqw;opacity:.5}" +
     ".sp-add-btn{border:2px dashed rgba(255,255,255,.25);background:transparent !important;" +
     "display:flex;align-items:center;justify-content:center;cursor:pointer}" +
     ".sp-add-btn:hover{border-color:var(--accent)}" +
-    ".sp-add-icon{font-size:5cqw;color:rgba(255,255,255,.35)}" +
+    ".sp-add-icon{font-size:10.42cqw;color:rgba(255,255,255,.35)}" +
     ".sp-drop-placeholder{border:2px dashed rgba(92,156,245,.5) !important;" +
     "background:rgba(92,156,245,.08) !important;cursor:default;pointer-events:none}" +
 
@@ -1855,7 +1854,6 @@
   function exportConfig() {
     var data = {
       version: 1,
-      device: DEVICE_ID,
       exported_at: new Date().toISOString(),
       button_order: state.order.join(","),
       button_on_color: state.onColor,
