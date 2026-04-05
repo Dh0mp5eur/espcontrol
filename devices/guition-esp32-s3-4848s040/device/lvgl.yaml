@@ -113,6 +113,8 @@ lvgl:
         flex_flow: row_wrap
         pad_row: 8
         pad_column: 10
+      scrollbar_mode: "off"
+      scrollable: false
       width: 100%
       bg_color: Black
       bg_opa: cover
@@ -140,6 +142,8 @@ lvgl:
         flex_flow: row_wrap
         pad_row: 8
         pad_column: 10
+      scrollbar_mode: "off"
+      scrollable: false
       width: 100%
       bg_color: Black
       bg_opa: cover
@@ -167,6 +171,8 @@ lvgl:
         flex_flow: row_wrap
         pad_row: 8
         pad_column: 10
+      scrollbar_mode: "off"
+      scrollable: false
       width: 100%
       bg_color: Black
       bg_opa: cover
@@ -194,6 +200,8 @@ lvgl:
         flex_flow: row_wrap
         pad_row: 8
         pad_column: 10
+      scrollbar_mode: "off"
+      scrollable: false
       width: 100%
       bg_color: Black
       bg_opa: cover
@@ -221,6 +229,8 @@ lvgl:
         flex_flow: row_wrap
         pad_row: 8
         pad_column: 10
+      scrollbar_mode: "off"
+      scrollable: false
       width: 100%
       bg_color: Black
       bg_opa: cover
