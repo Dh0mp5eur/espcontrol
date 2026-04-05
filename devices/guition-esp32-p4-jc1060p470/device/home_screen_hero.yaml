@@ -6,7 +6,7 @@
 # =============================================================================
 
 image:
-  - file: home_screen_hero.jpg
+  - file: ../devices/guition-esp32-p4-jc1060p470/device/home_screen_hero.jpg
     id: home_screen_hero_img
     type: RGB565
     # Photo is ~1024×902; this box preserves aspect ratio so width stays usable
