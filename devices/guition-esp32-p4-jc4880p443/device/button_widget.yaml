@@ -9,8 +9,6 @@
 # =============================================================================
 
 button:
-  height: $button_height
-  width: $button_width
   id: button_${num}
   hidden: true
   styles: control

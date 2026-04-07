@@ -17,9 +17,9 @@ The address is shown on the display screen when no buttons are configured. You c
 This is where you set up your buttons.
 
 - **Live preview** — see your button layout as it will appear on the display, including the top bar with clock and temperatures.
-- **Add buttons** — tap an empty slot to assign a Home Assistant device to it. Choose the device you want to control (its entity ID in Home Assistant, like `light.living_room`).
-- **Remove buttons** — remove a button to free up the slot.
-- **Reorder buttons** — drag and drop buttons to rearrange them.
+- **Add buttons** — tap any empty cell in the grid to add a new button at that position. Choose the device you want to control (its entity ID in Home Assistant, like `light.living_room`).
+- **Remove buttons** — remove a button to free up the cell.
+- **Move buttons** — drag and drop a button to any cell. If the target cell is occupied, the existing button is displaced to the next empty cell.
 - **Set an icon** — pick from hundreds of icons, or choose **Auto** to let the panel pick one based on the device type (lights get a lightbulb, fans get a fan, etc.).
 - **Custom label** — give the button a name, or leave it blank to use the device's name from Home Assistant.
 - **Sensor readout** — optionally show a sensor value on the button (like a temperature reading) by entering a sensor entity and unit.

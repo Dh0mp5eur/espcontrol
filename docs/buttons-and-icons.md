@@ -23,7 +23,7 @@ These settings apply to all buttons:
 
 - **On colour** — the colour shown when a device is switched on. Default: orange (`FF8C00`).
 - **Off colour** — the colour shown when a device is switched off. Default: dark grey (`313131`).
-- **Button order** — the arrangement of buttons on the screen. You don't need to edit this manually — just drag and drop buttons in the web page to rearrange them.
+- **Button order** — the arrangement of buttons on the grid. Each button can be placed at any grid cell. Drag and drop buttons to move them — if you drop onto an occupied cell, the existing button is displaced to the next empty cell.
 
 ## Auto icons
 

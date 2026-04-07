@@ -65,7 +65,7 @@ The panel includes hundreds of icons from the Material Design Icons set. If the 
 
 ## How many buttons can I have?
 
-Each panel has a fixed grid of buttons sized to fill the screen:
+Each panel has a grid of cells sized to fill the screen. Buttons can be placed at any cell, and empty cells are left visible. The grid sizes are:
 
 - **7-inch JC1060P470** — 20 buttons (4 rows x 5 columns)
 - **4.3-inch JC4880P443** — 15 buttons (5 rows x 3 columns)

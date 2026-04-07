@@ -8,6 +8,8 @@
 // Custom UI: three-page layout (Screen / Settings / Logs)
 (function () {
   var NUM_SLOTS = 20;
+  var GRID_COLS = 5;
+  var GRID_ROWS = 4;
   var DEVICE_ID = "guition-esp32-p4-jc1060p470";
 
   var ICON_MAP = {
@@ -264,11 +266,11 @@
     ".sp-clock{position:absolute;left:50%;transform:translateX(-50%);" +
     "color:#fff;font-size:1.95cqw;white-space:nowrap}" +
     ".sp-main{position:absolute;top:3.9cqw;left:0.49cqw;right:0.49cqw;bottom:0.49cqw;" +
-    "display:flex;flex-direction:row;flex-wrap:wrap;align-content:flex-start;gap:0.98cqw;" +
-    "overflow:hidden}" +
+    "display:grid;grid-template-columns:repeat(" + GRID_COLS + ",1fr);" +
+    "grid-template-rows:repeat(" + GRID_ROWS + ",1fr);gap:0.98cqw;overflow:hidden}" +
 
     // Preview buttons
-    ".sp-btn{width:18.95cqw;height:12.7cqw;border-radius:0.78cqw;padding:1.37cqw;" +
+    ".sp-btn{border-radius:0.78cqw;padding:1.37cqw;" +
     "display:flex;flex-direction:column;justify-content:space-between;" +
     "cursor:pointer;transition:all .2s;box-sizing:border-box;border:2px solid transparent;" +
     "position:relative}" +
@@ -278,11 +280,12 @@
     ".sp-btn-label{font-size:1.8cqw;line-height:1.2;color:#fff;" +
     "white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
     ".sp-sensor-badge{position:absolute;top:1cqw;right:1cqw;font-size:1.6cqw;opacity:.5}" +
-    ".sp-btn-double{height:26.38cqw}" +
-    ".sp-add-btn{border:2px dashed rgba(255,255,255,.25);background:transparent !important;" +
-    "display:flex;align-items:center;justify-content:center;cursor:pointer}" +
-    ".sp-add-btn:hover{border-color:var(--accent)}" +
-    ".sp-add-icon{font-size:5cqw;color:rgba(255,255,255,.35)}" +
+    ".sp-btn-double{grid-row:span 2}" +
+    ".sp-empty-cell{border:2px dashed rgba(255,255,255,.15);background:transparent;" +
+    "border-radius:0.78cqw;display:flex;align-items:center;justify-content:center;" +
+    "cursor:pointer;transition:border-color .2s}" +
+    ".sp-empty-cell:hover{border-color:var(--accent)}" +
+    ".sp-empty-cell .sp-add-icon{font-size:5cqw;color:rgba(255,255,255,.2)}" +
     ".sp-drop-placeholder{border:2px dashed rgba(92,156,245,.5) !important;" +
     "background:rgba(92,156,245,.08) !important;cursor:default;pointer-events:none}" +
 
@@ -489,7 +492,7 @@
     ".sp-fw-btn:disabled{opacity:.4;cursor:not-allowed}";
 
   var state = {
-    order: [],
+    grid: [],
     sizes: {},
     buttons: [],
     onColor: "FF8C00",
@@ -516,6 +519,7 @@
   };
 
   for (var i = 0; i < NUM_SLOTS; i++) {
+    state.grid.push(0);
     state.buttons.push({ entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "" });
   }
 
@@ -531,22 +535,32 @@
   // ── Helpers ──────────────────────────────────────────────────────────
 
   function parseOrder(str) {
-    if (!str || !str.trim()) return [];
+    var grid = [];
+    for (var i = 0; i < NUM_SLOTS; i++) grid.push(0);
     state.sizes = {};
-    return str
-      .split(",")
-      .map(function (s) {
-        s = s.trim();
-        var dbl = s.charAt(s.length - 1) === "d";
-        var n = parseInt(s, 10);
-        if (dbl && n >= 1 && n <= NUM_SLOTS) state.sizes[n] = 2;
-        return n;
-      })
-      .filter(function (n) { return n >= 1 && n <= NUM_SLOTS && !isNaN(n); });
+    if (!str || !str.trim()) return grid;
+    var parts = str.split(",");
+    for (var i = 0; i < parts.length && i < NUM_SLOTS; i++) {
+      var s = parts[i].trim();
+      if (!s) continue;
+      var dbl = s.charAt(s.length - 1) === "d";
+      var n = parseInt(s, 10);
+      if (n >= 1 && n <= NUM_SLOTS && !isNaN(n)) {
+        grid[i] = n;
+        if (dbl) state.sizes[n] = 2;
+      }
+    }
+    return grid;
   }
 
-  function buildOrderStr() {
-    return state.order.map(function (slot) {
+  function serializeGrid(grid) {
+    var last = -1;
+    for (var i = grid.length - 1; i >= 0; i--) {
+      if (grid[i] > 0) { last = i; break; }
+    }
+    if (last < 0) return "";
+    return grid.slice(0, last + 1).map(function (slot) {
+      if (slot === 0) return "";
       return slot + (state.sizes[slot] === 2 ? "d" : "");
     }).join(",");
   }
@@ -1212,70 +1226,81 @@
     var main = els.previewMain;
     main.innerHTML = "";
 
-    state.order.forEach(function (slot, idx) {
-      var b = state.buttons[slot - 1];
-      var iconName = resolveIcon(slot);
-      var label = b.label || b.entity || "Configure";
-      var color = state.offColor;
+    for (var pos = 0; pos < NUM_SLOTS; pos++) {
+      var slot = state.grid[pos];
 
-      var btn = document.createElement("div");
-      btn.className = "sp-btn" + (state.sizes[slot] === 2 ? " sp-btn-double" : "") + (state.selectedSlots.indexOf(slot) !== -1 ? " sp-selected" : "");
-      btn.style.backgroundColor = "#" + (color.length === 6 ? color : "313131");
-      btn.draggable = true;
-      var hasWhenOn = b.sensor || (b.icon_on && b.icon_on !== "Auto");
-      var badgeIcon = b.sensor ? "gauge" : "swap-horizontal";
-      var sensorBadge = hasWhenOn
-        ? '<span class="sp-sensor-badge mdi mdi-' + badgeIcon + '"></span>'
-        : '';
-      btn.innerHTML =
-        sensorBadge +
-        '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>' +
-        '<span class="sp-btn-label">' + escHtml(label) + "</span>";
-      btn.addEventListener("click", function (e) {
-        if (didDrag) { didDrag = false; return; }
-        if (e.shiftKey && state.lastClickedSlot > 0) {
-          var anchorIdx = state.order.indexOf(state.lastClickedSlot);
-          var curIdx = state.order.indexOf(slot);
-          if (anchorIdx !== -1 && curIdx !== -1) {
-            var from = Math.min(anchorIdx, curIdx);
-            var to = Math.max(anchorIdx, curIdx);
-            state.selectedSlots = state.order.slice(from, to + 1);
-            renderPreview();
-            renderButtonSettings();
-            return;
-          }
-        }
-        if (e.ctrlKey || e.metaKey) {
-          var pos = state.selectedSlots.indexOf(slot);
-          if (pos !== -1) {
-            state.selectedSlots.splice(pos, 1);
-          } else {
-            state.selectedSlots.push(slot);
-            state.lastClickedSlot = slot;
-          }
-          renderPreview();
-          renderButtonSettings();
-          return;
-        }
-        if (state.selectedSlots.length === 1 && state.selectedSlots[0] === slot) {
-          selectButton(-1);
-        } else {
-          selectButton(slot);
-        }
-      });
-      btn.addEventListener("contextmenu", function (e) {
-        showContextMenu(e, slot);
-      });
-      setupPreviewDrag(btn, idx);
-      main.appendChild(btn);
-    });
+      if (slot > 0) {
+        var b = state.buttons[slot - 1];
+        var iconName = resolveIcon(slot);
+        var label = b.label || b.entity || "Configure";
+        var color = state.offColor;
 
-    if (state.order.length < NUM_SLOTS) {
-      var add = document.createElement("div");
-      add.className = "sp-btn sp-add-btn";
-      add.innerHTML = '<span class="sp-add-icon mdi mdi-plus"></span>';
-      add.addEventListener("click", addButton);
-      main.appendChild(add);
+        var btn = document.createElement("div");
+        btn.className = "sp-btn" + (state.sizes[slot] === 2 ? " sp-btn-double" : "") + (state.selectedSlots.indexOf(slot) !== -1 ? " sp-selected" : "");
+        btn.style.backgroundColor = "#" + (color.length === 6 ? color : "313131");
+        btn.draggable = true;
+        btn.setAttribute("data-pos", pos);
+        var hasWhenOn = b.sensor || (b.icon_on && b.icon_on !== "Auto");
+        var badgeIcon = b.sensor ? "gauge" : "swap-horizontal";
+        var sensorBadge = hasWhenOn
+          ? '<span class="sp-sensor-badge mdi mdi-' + badgeIcon + '"></span>'
+          : '';
+        btn.innerHTML =
+          sensorBadge +
+          '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>' +
+          '<span class="sp-btn-label">' + escHtml(label) + "</span>";
+        (function (s, p) {
+          btn.addEventListener("click", function (e) {
+            if (didDrag) { didDrag = false; return; }
+            if (e.shiftKey && state.lastClickedSlot > 0) {
+              var anchorPos = state.grid.indexOf(state.lastClickedSlot);
+              var curPos = p;
+              if (anchorPos !== -1) {
+                var from = Math.min(anchorPos, curPos);
+                var to = Math.max(anchorPos, curPos);
+                state.selectedSlots = [];
+                for (var i = from; i <= to; i++) {
+                  if (state.grid[i] > 0) state.selectedSlots.push(state.grid[i]);
+                }
+                renderPreview();
+                renderButtonSettings();
+                return;
+              }
+            }
+            if (e.ctrlKey || e.metaKey) {
+              var idx = state.selectedSlots.indexOf(s);
+              if (idx !== -1) {
+                state.selectedSlots.splice(idx, 1);
+              } else {
+                state.selectedSlots.push(s);
+                state.lastClickedSlot = s;
+              }
+              renderPreview();
+              renderButtonSettings();
+              return;
+            }
+            if (state.selectedSlots.length === 1 && state.selectedSlots[0] === s) {
+              selectButton(-1);
+            } else {
+              selectButton(s);
+            }
+          });
+          btn.addEventListener("contextmenu", function (e) {
+            showContextMenu(e, s);
+          });
+          setupPreviewDrag(btn, p);
+        })(slot, pos);
+        main.appendChild(btn);
+      } else {
+        var empty = document.createElement("div");
+        empty.className = "sp-empty-cell";
+        empty.setAttribute("data-pos", pos);
+        empty.innerHTML = '<span class="sp-add-icon mdi mdi-plus"></span>';
+        (function (p) {
+          empty.addEventListener("click", function () { addButton(p); });
+        })(pos);
+        main.appendChild(empty);
+      }
     }
   }
 
@@ -1593,103 +1618,94 @@
 
   // ── Preview drag and drop ─────────────────────────────────────────
 
-  function removePreviewPlaceholder() {
-    if (previewPlaceholder && previewPlaceholder.parentNode) {
-      previewPlaceholder.parentNode.removeChild(previewPlaceholder);
+  function getCellFromEvent(e, container) {
+    var rect = container.getBoundingClientRect();
+    var col = Math.floor((e.clientX - rect.left) / (rect.width / GRID_COLS));
+    var row = Math.floor((e.clientY - rect.top) / (rect.height / GRID_ROWS));
+    col = Math.max(0, Math.min(col, GRID_COLS - 1));
+    row = Math.max(0, Math.min(row, GRID_ROWS - 1));
+    return row * GRID_COLS + col;
+  }
+
+  function moveToCell(fromPos, toPos) {
+    var grid = state.grid.slice();
+    var movingSlot = grid[fromPos];
+    grid[fromPos] = 0;
+    if (grid[toPos] > 0) {
+      var displaced = grid[toPos];
+      grid[toPos] = 0;
+      for (var i = 1; i < NUM_SLOTS; i++) {
+        var candidate = (toPos + i) % NUM_SLOTS;
+        if (grid[candidate] === 0) { grid[candidate] = displaced; break; }
+      }
     }
-    previewPlaceholder = null;
-    previewDropIdx = -1;
+    grid[toPos] = movingSlot;
+    state.grid = grid;
   }
 
   function setupPreviewDropZone() {
     var container = els.previewMain;
 
     container.addEventListener("dragover", function (e) {
-      if (dragSrcPos < 0 || !previewPlaceholder) return;
+      if (dragSrcPos < 0) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
-
-      var buttons = container.querySelectorAll(
-        ".sp-btn:not(.sp-drop-placeholder):not(.sp-add-btn)"
-      );
-      var dropIdx = buttons.length;
-      for (var i = 0; i < buttons.length; i++) {
-        var rect = buttons[i].getBoundingClientRect();
-        if (e.clientX < rect.left) { dropIdx = i; break; }
-        if (e.clientX <= rect.right) {
-          var midY = rect.top + rect.height / 2;
-          if (e.clientY < midY) { dropIdx = i; break; }
-          if (e.clientY <= rect.bottom) { dropIdx = i + 1; break; }
-        }
+      var cellIdx = getCellFromEvent(e, container);
+      if (cellIdx === previewDropIdx) return;
+      previewDropIdx = cellIdx;
+      var cells = container.children;
+      for (var i = 0; i < cells.length; i++) {
+        cells[i].classList.remove("sp-drop-placeholder");
       }
-
-      if (dropIdx === previewDropIdx) return;
-      previewDropIdx = dropIdx;
-
-      var refNodes = Array.from(buttons);
-      if (dropIdx < refNodes.length) {
-        container.insertBefore(previewPlaceholder, refNodes[dropIdx]);
-      } else {
-        var addBtn = container.querySelector(".sp-add-btn");
-        container.insertBefore(previewPlaceholder, addBtn);
+      if (cellIdx >= 0 && cellIdx < cells.length) {
+        cells[cellIdx].classList.add("sp-drop-placeholder");
       }
     });
 
     container.addEventListener("dragleave", function (e) {
-      if (!container.contains(e.relatedTarget) && previewPlaceholder && dragSrcPos >= 0) {
-        var buttons = container.querySelectorAll(
-          ".sp-btn:not(.sp-drop-placeholder):not(.sp-add-btn)"
-        );
-        var refNodes = Array.from(buttons);
-        if (dragSrcPos < refNodes.length) {
-          container.insertBefore(previewPlaceholder, refNodes[dragSrcPos]);
-        } else {
-          var addBtn = container.querySelector(".sp-add-btn");
-          container.insertBefore(previewPlaceholder, addBtn);
+      if (!container.contains(e.relatedTarget)) {
+        previewDropIdx = -1;
+        var cells = container.children;
+        for (var i = 0; i < cells.length; i++) {
+          cells[i].classList.remove("sp-drop-placeholder");
         }
-        previewDropIdx = dragSrcPos;
       }
     });
 
     container.addEventListener("drop", function (e) {
       e.preventDefault();
-      var toIdx = previewDropIdx;
-      removePreviewPlaceholder();
-      if (dragSrcPos < 0 || toIdx < 0) return;
-      if (dragSrcPos === toIdx) {
-        renderPreview();
+      var toPos = previewDropIdx;
+      previewDropIdx = -1;
+      var cells = container.children;
+      for (var i = 0; i < cells.length; i++) {
+        cells[i].classList.remove("sp-drop-placeholder");
+      }
+      if (dragSrcPos < 0 || toPos < 0 || toPos >= NUM_SLOTS) return;
+      if (dragSrcPos === toPos) {
         dragSrcPos = -1;
         return;
       }
-      var newOrder = state.order.slice();
-      var moved = newOrder.splice(dragSrcPos, 1)[0];
-      newOrder.splice(toIdx, 0, moved);
-      state.order = newOrder;
+      moveToCell(dragSrcPos, toPos);
       renderPreview();
       renderButtonSettings();
-      postText("Button Order", buildOrderStr());
+      postText("Button Order", serializeGrid(state.grid));
       dragSrcPos = -1;
     });
   }
 
-  function setupPreviewDrag(btn, idx) {
+  function setupPreviewDrag(btn, pos) {
     btn.addEventListener("dragstart", function (e) {
-      dragSrcPos = idx;
+      dragSrcPos = pos;
       didDrag = true;
       e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/plain", String(idx));
-      setTimeout(function () {
-        previewPlaceholder = document.createElement("div");
-        previewPlaceholder.className = "sp-btn sp-drop-placeholder";
-        previewDropIdx = idx;
-        btn.parentNode.replaceChild(previewPlaceholder, btn);
-      }, 0);
+      e.dataTransfer.setData("text/plain", String(pos));
     });
     btn.addEventListener("dragend", function () {
-      removePreviewPlaceholder();
-      if (dragSrcPos >= 0) {
-        renderPreview();
-        dragSrcPos = -1;
+      dragSrcPos = -1;
+      previewDropIdx = -1;
+      var cells = els.previewMain.children;
+      for (var i = 0; i < cells.length; i++) {
+        cells[i].classList.remove("sp-drop-placeholder");
       }
     });
   }
@@ -1749,7 +1765,7 @@
         if (state.sizes[slot] === 2) { delete state.sizes[slot]; } else { state.sizes[slot] = 2; }
         renderPreview();
         renderButtonSettings();
-        postText("Button Order", buildOrderStr());
+        postText("Button Order", serializeGrid(state.grid));
       });
       ctxMenu.appendChild(dblItem);
 
@@ -1803,18 +1819,27 @@
 
   function firstFreeSlot() {
     var used = {};
-    state.order.forEach(function (s) { used[s] = true; });
+    state.grid.forEach(function (s) { if (s > 0) used[s] = true; });
     for (var i = 1; i <= NUM_SLOTS; i++) {
       if (!used[i]) return i;
     }
     return -1;
   }
 
-  function addButton() {
+  function firstFreeCell(afterPos) {
+    var start = afterPos != null ? afterPos : 0;
+    for (var i = 0; i < NUM_SLOTS; i++) {
+      var candidate = (start + i) % NUM_SLOTS;
+      if (state.grid[candidate] === 0) return candidate;
+    }
+    return -1;
+  }
+
+  function addButton(pos) {
     var slot = firstFreeSlot();
     if (slot < 0) return;
-    state.order = state.order.concat(slot);
-    postText("Button Order", buildOrderStr());
+    state.grid[pos] = slot;
+    postText("Button Order", serializeGrid(state.grid));
     selectButton(slot);
   }
 
@@ -1834,12 +1859,12 @@
 
     if (state.sizes[srcSlot] === 2) state.sizes[newSlot] = 2;
 
-    var srcIdx = state.order.indexOf(srcSlot);
-    var newOrder = state.order.slice();
-    newOrder.splice(srcIdx + 1, 0, newSlot);
-    state.order = newOrder;
+    var srcPos = state.grid.indexOf(srcSlot);
+    var newPos = firstFreeCell(srcPos + 1);
+    if (newPos < 0) return;
+    state.grid[newPos] = newSlot;
 
-    postText("Button Order", buildOrderStr());
+    postText("Button Order", serializeGrid(state.grid));
     postText("Button " + newSlot + " Entity", src.entity);
     postText("Button " + newSlot + " Label", src.label);
     postText("Button " + newSlot + " Sensor", src.sensor);
@@ -1850,13 +1875,15 @@
   }
 
   function deleteButton(slot) {
-    state.order = state.order.filter(function (s) { return s !== slot; });
+    for (var i = 0; i < NUM_SLOTS; i++) {
+      if (state.grid[i] === slot) { state.grid[i] = 0; break; }
+    }
     delete state.sizes[slot];
     var pos = state.selectedSlots.indexOf(slot);
     if (pos !== -1) state.selectedSlots.splice(pos, 1);
     renderPreview();
     renderButtonSettings();
-    postText("Button Order", buildOrderStr());
+    postText("Button Order", serializeGrid(state.grid));
     postText("Button " + slot + " Entity", "");
     postText("Button " + slot + " Label", "");
     postText("Button " + slot + " Sensor", "");
@@ -1866,7 +1893,9 @@
   }
 
   function deleteButtons(slots) {
-    state.order = state.order.filter(function (s) { return slots.indexOf(s) === -1; });
+    for (var i = 0; i < NUM_SLOTS; i++) {
+      if (slots.indexOf(state.grid[i]) !== -1) state.grid[i] = 0;
+    }
     slots.forEach(function (slot) { delete state.sizes[slot]; });
     state.selectedSlots = [];
     state.lastClickedSlot = -1;
@@ -1878,7 +1907,7 @@
       postText("Button " + slot + " Icon", "Auto");
       postText("Button " + slot + " Icon On", "Auto");
     });
-    postText("Button Order", buildOrderStr());
+    postText("Button Order", serializeGrid(state.grid));
     renderPreview();
     renderButtonSettings();
   }
@@ -1890,7 +1919,7 @@
       version: 1,
       device: DEVICE_ID,
       exported_at: new Date().toISOString(),
-      button_order: buildOrderStr(),
+      button_order: serializeGrid(state.grid),
       button_on_color: state.onColor,
       button_off_color: state.offColor,
       buttons: state.buttons.map(function (b) {
@@ -1984,7 +2013,7 @@
 
         var orderStr = data.button_order || "";
         postText("Button Order", orderStr);
-        state.order = parseOrder(orderStr);
+        state.grid = parseOrder(orderStr);
         state.onColor = data.button_on_color || "FF8C00";
         state.offColor = data.button_off_color || "313131";
 
@@ -2074,9 +2103,9 @@
     var sseHandlers = {
       "text-button_order": function (val) {
         orderReceived = true;
-        state.order = parseOrder(val);
+        state.grid = parseOrder(val);
         state.selectedSlots = state.selectedSlots.filter(function (s) {
-          return state.order.indexOf(s) !== -1;
+          return state.grid.indexOf(s) !== -1;
         });
         renderPreview();
         renderButtonSettings();
@@ -2248,20 +2277,27 @@
     if (el && document.activeElement !== el) el.value = val;
   }
 
+  function gridHasAny() {
+    for (var i = 0; i < NUM_SLOTS; i++) { if (state.grid[i] > 0) return true; }
+    return false;
+  }
+
   function scheduleMigration() {
-    if (orderReceived || state.order.length > 0) return;
+    if (orderReceived || gridHasAny()) return;
     clearTimeout(migrationTimer);
     migrationTimer = setTimeout(function () {
-      if (orderReceived || state.order.length > 0) return;
-      var autoOrder = [];
+      if (orderReceived || gridHasAny()) return;
+      var pos = 0;
       for (var i = 0; i < NUM_SLOTS; i++) {
-        if (state.buttons[i].entity) autoOrder.push(i + 1);
+        if (state.buttons[i].entity && pos < NUM_SLOTS) {
+          state.grid[pos] = i + 1;
+          pos++;
+        }
       }
-      if (autoOrder.length > 0) {
-        state.order = autoOrder;
+      if (pos > 0) {
         renderPreview();
         renderButtonSettings();
-        postText("Button Order", buildOrderStr());
+        postText("Button Order", serializeGrid(state.grid));
       }
     }, 2000);
   }

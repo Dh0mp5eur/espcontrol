@@ -2,10 +2,10 @@
 # LVGL MAIN PAGE - Top-layer HUD and button grid
 # =============================================================================
 # Defines the primary UI: a top-layer overlay with temperature and clock
-# labels, and the main page containing a fixed 4x5 grid of 20 button widgets.
-# Uses row_wrap for left-to-right, top-to-bottom order on the 1024x600
-# landscape display. Buttons start hidden; sensors.yaml unhides active ones
-# at boot.
+# labels, and the main page containing a 4x5 grid of 20 button widgets.
+# Uses LVGL grid layout for sparse cell placement on the 1024x600 landscape
+# display. Buttons start hidden; sensors.yaml unhides and places active
+# ones at boot via grid cell coords.
 # =============================================================================
 
 lvgl:
@@ -44,8 +44,9 @@ lvgl:
     - id: main_page
       scrollbar_mode: "off"
       layout:
-        type: flex
-        flex_flow: row_wrap
+        type: grid
+        grid_columns: [FR(1), FR(1), FR(1), FR(1), FR(1)]
+        grid_rows: [FR(1), FR(1), FR(1), FR(1)]
         pad_row: 10
         pad_column: 10
       width: 100%
