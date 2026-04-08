@@ -2178,16 +2178,9 @@
       saveSubpageConfig(state.editingSubpage);
     } else {
       slots.forEach(function (slot) {
-        postText("Button " + slot + " Entity", "");
-        postText("Button " + slot + " Label", "");
-        postText("Button " + slot + " Sensor", "");
-        postText("Button " + slot + " Sensor Unit", "");
-        postText("Button " + slot + " Icon", "Auto");
-        postText("Button " + slot + " Icon On", "Auto");
-        postText("Button " + slot + " Type", "");
-        postText("Subpage " + slot + " Config", "");
-        state.buttons[slot - 1].type = "";
+        state.buttons[slot - 1] = { entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "", type: "" };
         delete state.subpages[slot];
+        saveButtonConfig(slot);
       });
       postText("Button Order", serializeGrid(state.grid));
     }
