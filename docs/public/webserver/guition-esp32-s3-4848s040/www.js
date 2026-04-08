@@ -15,203 +15,84 @@
   var GRID_COLS = CFG.cols;
   var GRID_ROWS = CFG.rows;
 
-  var ICON_MAP = {
+  // --- GENERATED:ICONS START ---
+  var ICON_EXCEPTIONS = {
     Auto: "cog",
-    // --- GENERATED:ICONS START ---
-    Account: "account",
-    "Air Conditioner": "air-conditioner",
-    "Air Filter": "air-filter",
-    "Air Purifier": "air-purifier",
     Alarm: "bell-ring",
-    "Alarm Light": "alarm-light",
     Application: "application-outline",
-    Battery: "battery",
-    "Battery 10%": "battery-10",
-    "Battery 20%": "battery-20",
-    "Battery 30%": "battery-30",
-    "Battery 40%": "battery-40",
-    "Battery 50%": "battery-50",
-    "Battery 60%": "battery-60",
-    "Battery 70%": "battery-70",
-    "Battery 80%": "battery-80",
-    "Battery 90%": "battery-90",
-    "Battery Alert": "battery-alert",
-    "Battery Charging": "battery-charging",
-    "Battery Charging 100": "battery-charging-100",
-    "Battery Charging 70": "battery-charging-70",
-    "Battery High": "battery-high",
-    "Battery Low": "battery-low",
-    "Battery Medium": "battery-medium",
-    "Battery Off": "battery-off",
-    "Battery Outline": "battery-outline",
-    "Battery Unknown": "battery-unknown",
-    Bed: "bed",
-    Bell: "bell",
-    Blinds: "blinds",
-    "Blinds Horizontal": "blinds-horizontal",
-    "Blinds Horizontal Closed": "blinds-horizontal-closed",
-    "Blinds Open": "blinds-open",
-    Bluetooth: "bluetooth",
-    Broom: "broom",
-    Camera: "camera",
-    "Car Electric": "car-electric",
-    Cast: "cast",
-    CCTV: "cctv",
-    "Ceiling Fan": "ceiling-fan",
-    "Ceiling Light": "ceiling-light",
-    Chandelier: "chandelier",
     Clock: "clock-outline",
-    "Coffee Maker": "coffee-maker",
-    "Current AC": "current-ac",
-    "Current DC": "current-dc",
-    Curtains: "curtains",
-    "Curtains Closed": "curtains-closed",
-    "Desk Lamp": "desk-lamp",
-    Dishwasher: "dishwasher",
-    Dog: "dog",
-    Door: "door",
-    "Door Open": "door-open",
     Doorbell: "doorbell-video",
     Dryer: "tumble-dryer",
     "EV Charger": "ev-station",
-    Fan: "fan",
-    Fire: "fire",
-    Fireplace: "fireplace",
-    Flash: "flash",
-    "Floor Lamp": "floor-lamp",
-    Fountain: "fountain",
-    Fridge: "fridge",
     Gamepad: "gamepad-variant",
-    Garage: "garage",
-    "Garage Open": "garage-open",
-    Gate: "gate",
-    "Gate Open": "gate-open",
-    Gauge: "gauge",
-    "Gauge Empty": "gauge-empty",
-    "Gauge Full": "gauge-full",
-    "Gauge Low": "gauge-low",
     "Grid Export": "transmission-tower-export",
     "Grid Import": "transmission-tower-import",
     "Grid Off": "transmission-tower-off",
-    Headphones: "headphones",
     Heater: "radiator",
-    Home: "home",
-    "Hot Tub": "hot-tub",
     Humidifier: "air-humidifier",
     "Humidity Alert": "water-percent-alert",
-    Iron: "iron",
-    Kettle: "kettle",
     Key: "key-variant",
-    Lamp: "lamp",
-    LAN: "lan",
     Lawnmower: "robot-mower",
-    Leaf: "leaf",
-    "LED Strip": "led-strip",
-    "LED Strip Variant": "led-strip-variant",
-    "LED Strip Variant Off": "led-strip-variant-off",
-    "Light Switch": "light-switch",
-    Lightbulb: "lightbulb",
-    "Lightbulb Group": "lightbulb-group",
-    "Lightbulb Group Outline": "lightbulb-group-outline",
-    "Lightbulb Night": "lightbulb-night",
-    "Lightbulb Night Outline": "lightbulb-night-outline",
-    "Lightbulb Off": "lightbulb-off",
-    "Lightbulb Outline": "lightbulb-outline",
-    "Lightning Bolt": "lightning-bolt",
-    Lock: "lock",
-    Mailbox: "mailbox",
-    "Message Video": "message-video",
-    "Meter Electric": "meter-electric",
-    "Meter Gas": "meter-gas",
-    Microwave: "microwave",
-    Monitor: "monitor",
-    "Motion Sensor": "motion-sensor",
-    "Movie Roll": "movie-roll",
-    Music: "music",
     "Outdoor Lamp": "coach-lamp",
     Oven: "stove",
     Package: "package-variant",
     "Package Closed": "package-variant-closed",
-    Pool: "pool",
-    Power: "power",
-    "Power Plug": "power-plug",
-    Printer: "printer",
-    "Printer 3D": "printer-3d",
-    Projector: "projector",
-    "Robot Vacuum": "robot-vacuum",
-    "Roller Shade": "roller-shade",
-    "Roller Shade Closed": "roller-shade-closed",
     Router: "router-wireless",
-    "Router Network": "router-network",
     Security: "shield-home",
     Shower: "shower-head",
-    "Smoke Detector": "smoke-detector",
-    Snowflake: "snowflake",
-    "Snowflake Alert": "snowflake-alert",
-    "Snowflake Thermometer": "snowflake-thermometer",
-    Sofa: "sofa",
-    "Solar Panel": "solar-panel",
-    "Solar Panel Large": "solar-panel-large",
-    "Solar Power": "solar-power",
-    "Solar Power Variant": "solar-power-variant",
-    Speaker: "speaker",
     Spotlight: "spotlight-beam",
-    Sprinkler: "sprinkler",
-    "String Lights": "string-lights",
     Sun: "white-balance-sunny",
     Table: "table-furniture",
-    Television: "television",
-    Thermometer: "thermometer",
-    "Thermometer Alert": "thermometer-alert",
-    "Thermometer High": "thermometer-high",
-    "Thermometer Low": "thermometer-low",
-    Thermostat: "thermostat",
     Timer: "timer-outline",
-    Toilet: "toilet",
-    "Transmission Tower": "transmission-tower",
-    "Trash Can": "trash-can",
     "Wall Outlet": "power-socket",
     Washer: "washing-machine",
-    Water: "water",
     "Water Heater": "water-boiler",
-    "Water Percent": "water-percent",
-    "Weather Cloudy": "weather-cloudy",
-    "Weather Cloudy Alert": "weather-cloudy-alert",
-    "Weather Dust": "weather-dust",
-    "Weather Fog": "weather-fog",
-    "Weather Hail": "weather-hail",
-    "Weather Hazy": "weather-hazy",
-    "Weather Hurricane": "weather-hurricane",
-    "Weather Lightning": "weather-lightning",
-    "Weather Lightning Rainy": "weather-lightning-rainy",
-    "Weather Night": "weather-night",
     "Weather Night Cloudy": "weather-night-partly-cloudy",
-    "Weather Partly Cloudy": "weather-partly-cloudy",
-    "Weather Partly Lightning": "weather-partly-lightning",
-    "Weather Partly Rainy": "weather-partly-rainy",
-    "Weather Partly Snowy": "weather-partly-snowy",
-    "Weather Partly Snowy Rainy": "weather-partly-snowy-rainy",
-    "Weather Pouring": "weather-pouring",
-    "Weather Rainy": "weather-rainy",
-    "Weather Snowy": "weather-snowy",
-    "Weather Snowy Heavy": "weather-snowy-heavy",
-    "Weather Snowy Rainy": "weather-snowy-rainy",
-    "Weather Sunny": "weather-sunny",
-    "Weather Sunny Alert": "weather-sunny-alert",
-    "Weather Sunny Off": "weather-sunny-off",
-    "Weather Sunset": "weather-sunset",
-    "Weather Sunset Down": "weather-sunset-down",
-    "Weather Sunset Up": "weather-sunset-up",
-    "Weather Tornado": "weather-tornado",
-    "Weather Windy": "weather-windy",
-    "Weather Windy Variant": "weather-windy-variant",
-    "Wind Power": "wind-power",
-    "Wind Turbine": "wind-turbine",
-    "Wind Turbine Alert": "wind-turbine-alert",
-    "Wind Turbine Check": "wind-turbine-check",
     Window: "window-open-variant",
-    // --- GENERATED:ICONS END ---
   };
+  var ICON_NAMES = [
+    "Account", "Air Conditioner", "Air Filter", "Air Purifier", "Alarm", "Alarm Light",
+    "Application", "Battery", "Battery 10%", "Battery 20%", "Battery 30%", "Battery 40%",
+    "Battery 50%", "Battery 60%", "Battery 70%", "Battery 80%", "Battery 90%", "Battery Alert",
+    "Battery Charging", "Battery Charging 100", "Battery Charging 70", "Battery High", "Battery Low", "Battery Medium",
+    "Battery Off", "Battery Outline", "Battery Unknown", "Bed", "Bell", "Blinds",
+    "Blinds Horizontal", "Blinds Horizontal Closed", "Blinds Open", "Bluetooth", "Broom", "Camera",
+    "Car Electric", "Cast", "CCTV", "Ceiling Fan", "Ceiling Light", "Chandelier",
+    "Clock", "Coffee Maker", "Current AC", "Current DC", "Curtains", "Curtains Closed",
+    "Desk Lamp", "Dishwasher", "Dog", "Door", "Door Open", "Doorbell",
+    "Dryer", "EV Charger", "Fan", "Fire", "Fireplace", "Flash",
+    "Floor Lamp", "Fountain", "Fridge", "Gamepad", "Garage", "Garage Open",
+    "Gate", "Gate Open", "Gauge", "Gauge Empty", "Gauge Full", "Gauge Low",
+    "Grid Export", "Grid Import", "Grid Off", "Headphones", "Heater", "Home",
+    "Hot Tub", "Humidifier", "Humidity Alert", "Iron", "Kettle", "Key",
+    "Lamp", "LAN", "Lawnmower", "Leaf", "LED Strip", "LED Strip Variant",
+    "LED Strip Variant Off", "Light Switch", "Lightbulb", "Lightbulb Group", "Lightbulb Group Outline", "Lightbulb Night",
+    "Lightbulb Night Outline", "Lightbulb Off", "Lightbulb Outline", "Lightning Bolt", "Lock", "Mailbox",
+    "Message Video", "Meter Electric", "Meter Gas", "Microwave", "Monitor", "Motion Sensor",
+    "Movie Roll", "Music", "Outdoor Lamp", "Oven", "Package", "Package Closed",
+    "Pool", "Power", "Power Plug", "Printer", "Printer 3D", "Projector",
+    "Robot Vacuum", "Roller Shade", "Roller Shade Closed", "Router", "Router Network", "Security",
+    "Shower", "Smoke Detector", "Snowflake", "Snowflake Alert", "Snowflake Thermometer", "Sofa",
+    "Solar Panel", "Solar Panel Large", "Solar Power", "Solar Power Variant", "Speaker", "Spotlight",
+    "Sprinkler", "String Lights", "Sun", "Table", "Television", "Thermometer",
+    "Thermometer Alert", "Thermometer High", "Thermometer Low", "Thermostat", "Timer", "Toilet",
+    "Transmission Tower", "Trash Can", "Wall Outlet", "Washer", "Water", "Water Heater",
+    "Water Percent", "Weather Cloudy", "Weather Cloudy Alert", "Weather Dust", "Weather Fog", "Weather Hail",
+    "Weather Hazy", "Weather Hurricane", "Weather Lightning", "Weather Lightning Rainy", "Weather Night", "Weather Night Cloudy",
+    "Weather Partly Cloudy", "Weather Partly Lightning", "Weather Partly Rainy", "Weather Partly Snowy", "Weather Partly Snowy Rainy", "Weather Pouring",
+    "Weather Rainy", "Weather Snowy", "Weather Snowy Heavy", "Weather Snowy Rainy", "Weather Sunny", "Weather Sunny Alert",
+    "Weather Sunny Off", "Weather Sunset", "Weather Sunset Down", "Weather Sunset Up", "Weather Tornado", "Weather Windy",
+    "Weather Windy Variant", "Wind Power", "Wind Turbine", "Wind Turbine Alert", "Wind Turbine Check", "Window",
+  ];
+  // --- GENERATED:ICONS END ---
+
+  function iconSlug(name) {
+    return ICON_EXCEPTIONS[name] || name.toLowerCase().replace(/[^a-z0-9]/g, function (ch) {
+      return ch === " " ? "-" : "";
+    }) || "cog";
+  }
+
+  var ICON_OPTIONS = ["Auto"].concat(ICON_NAMES).sort();
 
   var DOMAIN_ICONS = {
     // --- GENERATED:DOMAIN_ICONS START ---
@@ -227,21 +108,16 @@
     // --- GENERATED:DOMAIN_ICONS END ---
   };
 
-  var ICON_OPTIONS = Object.keys(ICON_MAP).sort();
-
   var CSS =
-    // CSS variables
     ":root{" +
     "--bg:#121212;--surface:#1e1e1e;--surface2:#2a2a2a;--border:#333;" +
     "--text:#e0e0e0;--text2:#999;--accent:#5c9cf5;--accent-hover:#7bb3ff;" +
     "--success:#4caf50;--danger:#ef5350;--radius:10px;--gap:16px}" +
 
-    // App shell
     "#sp-app{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;" +
     "color:var(--text);max-width:960px;margin:0 auto;-webkit-font-smoothing:antialiased}" +
     "esp-app{display:none !important}" +
 
-    // Header
     ".sp-header{display:flex;background:var(--surface);border-bottom:1px solid var(--border);" +
     "position:sticky;top:0;z-index:100;border-radius:0 0 var(--radius) var(--radius);overflow:hidden}" +
     ".sp-tab{flex:1;padding:14px 0;text-align:center;color:var(--text2);cursor:pointer;" +
@@ -249,43 +125,38 @@
     ".sp-tab:hover{color:#bbb}" +
     ".sp-tab.active{color:#fff;border-bottom-color:var(--accent)}" +
 
-    // Pages
     ".sp-page{display:none}.sp-page.active{display:block}" +
 
-    // Fade-in animation
     ".fade-in{animation:fadeIn .3s ease}" +
     "@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}" +
 
-    // Screen preview
     ".sp-wrap{display:flex;justify-content:center;padding:20px var(--gap) 4px}" +
-    ".sp-screen{width:" + CFG.screen.width + ";aspect-ratio:" + CFG.screen.aspect + ";background:#000;" +
+    ".sp-screen{width:var(--screen-w);aspect-ratio:var(--screen-aspect);background:#000;" +
     "border-radius:var(--radius);position:relative;overflow:hidden;" +
     "box-shadow:0 2px 20px rgba(0,0,0,.35);border:2px solid var(--surface);" +
     "container-type:inline-size;font-family:Roboto,sans-serif;user-select:none}" +
-    ".sp-topbar{position:absolute;top:0;left:0;right:0;height:" + CFG.topbar.height + "cqw;" +
-    "display:flex;align-items:center;padding:" + CFG.topbar.padding + ";z-index:1}" +
-    ".sp-temp{color:#fff;font-size:" + CFG.topbar.fontSize + "cqw;white-space:nowrap;opacity:0;transition:opacity .3s}" +
+    ".sp-topbar{position:absolute;top:0;left:0;right:0;height:var(--topbar-h);" +
+    "display:flex;align-items:center;padding:var(--topbar-pad);z-index:1}" +
+    ".sp-temp{color:#fff;font-size:var(--topbar-fs);white-space:nowrap;opacity:0;transition:opacity .3s}" +
     ".sp-temp.sp-visible{opacity:1}" +
     ".sp-clock{position:absolute;left:50%;transform:translateX(-50%);" +
-    "color:#fff;font-size:" + CFG.topbar.fontSize + "cqw;white-space:nowrap}" +
-    ".sp-main{position:absolute;top:" + CFG.grid.top + "cqw;left:" + CFG.grid.left + "cqw;right:" + CFG.grid.right + "cqw;bottom:" + CFG.grid.bottom + "cqw;" +
-    "display:grid;grid-template-columns:repeat(" + GRID_COLS + "," + CFG.grid.fr + ");" +
-    "grid-template-rows:repeat(" + GRID_ROWS + "," + CFG.grid.fr + ");gap:" + CFG.grid.gap + "cqw;overflow:hidden}" +
+    "color:#fff;font-size:var(--topbar-fs);white-space:nowrap}" +
+    ".sp-main{position:absolute;top:var(--grid-top);left:var(--grid-left);right:var(--grid-right);bottom:var(--grid-bottom);" +
+    "display:grid;grid-template-columns:var(--grid-cols);grid-template-rows:var(--grid-rows);gap:var(--grid-gap);overflow:hidden}" +
 
-    // Preview buttons
-    ".sp-btn{border-radius:" + CFG.btn.radius + "cqw;padding:" + CFG.btn.padding + "cqw;" +
+    ".sp-btn{border-radius:var(--btn-r);padding:var(--btn-pad);" +
     "display:flex;flex-direction:column;justify-content:space-between;" +
     "cursor:pointer;transition:all .2s;box-sizing:border-box;border:2px solid transparent;" +
     "position:relative}" +
     ".sp-btn:hover{filter:brightness(1.15)}" +
     ".sp-btn.sp-selected{border-color:var(--accent)}" +
-    ".sp-btn-icon{font-size:" + CFG.btn.iconSize + "cqw;line-height:1;color:#fff}" +
-    ".sp-btn-label{font-size:" + CFG.btn.labelSize + "cqw;line-height:1.2;color:#fff;" +
+    ".sp-btn-icon{font-size:var(--btn-icon);line-height:1;color:#fff}" +
+    ".sp-btn-label{font-size:var(--btn-label);line-height:1.2;color:#fff;" +
     "white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
-    ".sp-sensor-badge{position:absolute;top:" + CFG.sensorBadge.top + "cqw;right:" + CFG.sensorBadge.right + "cqw;font-size:" + CFG.sensorBadge.fontSize + "cqw;opacity:.5}" +
+    ".sp-sensor-badge{position:absolute;top:var(--sensor-top);right:var(--sensor-right);font-size:var(--sensor-fs);opacity:.5}" +
     ".sp-btn-double{grid-row:span 2}" +
     ".sp-empty-cell{border:2px dashed rgba(255,255,255,.15);background:transparent;" +
-    "border-radius:" + CFG.emptyCell.radius + "cqw;display:flex;align-items:center;justify-content:center;" +
+    "border-radius:var(--empty-r);display:flex;align-items:center;justify-content:center;" +
     "cursor:pointer;transition:border-color .2s}" +
     ".sp-empty-cell:hover{border-color:var(--accent)}" +
     ".sp-empty-cell .sp-add-icon{font-size:5cqw;color:rgba(255,255,255,.2)}" +
@@ -294,15 +165,12 @@
     (CFG.dragAnimation ? ".sp-btn.sp-dragging{opacity:.4;transform:scale(.95)}" +
     ".sp-empty-cell.sp-drop-placeholder{border-color:rgba(92,156,245,.5)}" : "") +
 
-    // Hint
     ".sp-hint{text-align:center;font-size:.75rem;opacity:.4;padding:6px 0 12px}" +
 
-    // Config area
     ".sp-config{padding:var(--gap) var(--gap) var(--gap)}" +
     ".sp-section-title{font-size:.8rem;font-weight:600;color:var(--text2);" +
     "margin:var(--gap) 0 8px;text-transform:uppercase;letter-spacing:.5px}" +
 
-    // Collapsible cards
     ".card{background:var(--surface);border:1px solid var(--border);" +
     "border-radius:var(--radius);padding:20px;margin-bottom:var(--gap)}" +
     ".card h3{font-size:.8rem;font-weight:600;margin-bottom:14px;color:var(--text2);" +
@@ -319,11 +187,9 @@
     ".card.collapsed .card-body{display:none}" +
     ".card-header-right{display:flex;align-items:center;gap:8px}" +
 
-    // Settings page panels (legacy, used on screen page)
     ".sp-panel{background:var(--surface);border-radius:var(--radius);padding:20px;" +
     "margin-bottom:var(--gap);border:1px solid var(--border)}" +
 
-    // Form fields
     ".sp-field{margin-bottom:28px}.sp-field:last-child{margin-bottom:0}" +
     ".sp-field-label{display:block;font-size:.85rem;color:var(--text2);margin-bottom:8px}" +
     ".sp-input,.sp-select{width:100%;padding:10px 12px;background:var(--surface2);" +
@@ -336,7 +202,6 @@
     "background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}" +
     "select option{background:var(--surface);color:var(--text)}" +
 
-    // Searchable icon picker
     ".sp-icon-picker{position:relative}" +
     ".sp-icon-picker-input{width:100%;padding:10px 12px;padding-left:36px;background:var(--surface2);" +
     "border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.9rem;" +
@@ -363,7 +228,6 @@
     ".sp-action-btn:active{opacity:.8}" +
     ".sp-delete-btn{background:var(--danger);color:#fff}" +
 
-    // Toggle switch
     ".sp-toggle-row{display:flex;align-items:center;justify-content:space-between;" +
     "min-height:36px;margin-bottom:14px}" +
     ".sp-toggle-row:last-child{margin-bottom:0}" +
@@ -378,17 +242,14 @@
     ".sp-toggle input:checked+.sp-toggle-track{background:var(--accent);border-color:var(--accent)}" +
     ".sp-toggle input:checked+.sp-toggle-track:before{transform:translateX(20px)}" +
 
-    // Segment control
     ".sp-segment{display:flex;border-radius:6px;overflow:hidden;border:1px solid var(--border);margin-bottom:14px}" +
     ".sp-segment button{flex:1;padding:8px 0;background:var(--surface2);color:var(--text2);" +
     "border:none;font-size:.85rem;cursor:pointer;transition:background .2s,color .2s;font-family:inherit}" +
     ".sp-segment button.active{background:var(--accent);color:#fff}" +
 
-    // Conditional field (shown below toggle when enabled)
     ".sp-cond-field{padding:0 0 4px;display:none}" +
     ".sp-cond-field.sp-visible{display:block}" +
 
-    // Range slider
     ".sp-range-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}" +
     ".sp-range-row:last-child{margin-bottom:0}" +
     ".sp-range{flex:1;height:4px;-webkit-appearance:none;appearance:none;background:var(--surface2);" +
@@ -400,7 +261,6 @@
     ".sp-range-val{min-width:42px;text-align:right;font-size:.85rem;color:var(--text2);" +
     "font-variant-numeric:tabular-nums}" +
 
-    // Color picker
     ".sp-color-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}" +
     ".sp-color-row:last-child{margin-bottom:0}" +
     ".sp-color-swatch{width:40px;height:38px;border-radius:6px;border:1px solid var(--border);" +
@@ -410,7 +270,6 @@
     "height:calc(100% + 16px);cursor:pointer;opacity:0}" +
     ".sp-color-row .sp-input{flex:1}" +
 
-    // Number input
     ".sp-number-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}" +
     ".sp-number-row:last-child{margin-bottom:0}" +
     ".sp-number{width:80px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);" +
@@ -419,7 +278,6 @@
     ".sp-number:focus{border-color:var(--accent)}" +
     ".sp-number-unit{font-size:.85rem;color:var(--text2)}" +
 
-    // Apply bar
     ".sp-apply-bar{padding:var(--gap);text-align:center}" +
     ".sp-apply-btn{background:var(--accent);color:#fff;border:none;border-radius:6px;" +
     "padding:10px 20px;font-size:.9rem;font-weight:500;cursor:pointer;" +
@@ -429,7 +287,6 @@
     ".sp-apply-btn:disabled{opacity:.4;cursor:not-allowed}" +
     ".sp-apply-note{font-size:.75rem;color:var(--text2);margin-top:6px}" +
 
-    // Log viewer
     ".sp-log-toolbar{display:flex;justify-content:flex-end;padding:12px var(--gap) 0}" +
     ".sp-log-clear{background:var(--surface2);color:var(--text);border:1px solid var(--border);" +
     "border-radius:6px;padding:8px 14px;font-size:.8rem;cursor:pointer;font-family:inherit}" +
@@ -447,10 +304,8 @@
     ".sp-log-debug{color:#aaa}" +
     ".sp-log-verbose{color:#666}" +
 
-    // Empty state
     ".sp-empty{text-align:center;padding:24px;color:#666;font-size:.85rem}" +
 
-    // Context menu
     ".sp-ctx-menu{position:fixed;z-index:200;background:var(--surface);border:1px solid var(--border);" +
     "border-radius:var(--radius);padding:4px 0;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.5);" +
     "font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}" +
@@ -462,14 +317,12 @@
     ".sp-ctx-item.sp-ctx-danger .mdi{color:var(--danger)}" +
     ".sp-ctx-divider{height:1px;background:var(--border);margin:4px 0}" +
 
-    // Connection banner
     ".sp-banner{padding:10px var(--gap);font-size:.85rem;text-align:center;display:none}" +
     ".sp-banner.sp-error{display:block;background:var(--danger);color:#fff}" +
     ".sp-banner.sp-offline{display:block;background:#1976d2;color:#fff}" +
     ".sp-banner.sp-success{display:block;background:var(--success);color:#fff}" +
     ".sp-banner.sp-warning{display:block;background:#e6a700;color:#000}" +
 
-    // Backup buttons
     ".sp-backup-btns{display:flex;gap:8px}" +
     ".sp-backup-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;" +
     "padding:10px 16px;border:1px solid var(--border);border-radius:6px;font-size:.85rem;font-weight:500;" +
@@ -478,15 +331,12 @@
     ".sp-backup-btn:hover{background:var(--border)}" +
     ".sp-backup-btn .mdi{font-size:16px}" +
 
-    // Sun info
     ".sp-sun-info{font-size:.8rem;color:var(--text2);padding:8px 12px;margin-top:12px;background:var(--surface2);" +
     "border-radius:6px;text-align:center;display:none}" +
     ".sp-sun-info.sp-visible{display:block}" +
 
-    // Field hint
     ".sp-field-hint{font-size:.75rem;color:var(--text2);margin-top:6px}" +
 
-    // Firmware
     ".sp-fw-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px;margin-bottom:12px}" +
     ".sp-fw-version{font-size:.9rem;color:var(--text)}" +
     ".sp-fw-label{font-size:.8rem;color:var(--text2)}" +
@@ -496,15 +346,15 @@
     ".sp-fw-btn:hover{background:var(--border)}" +
     ".sp-fw-btn:disabled{opacity:.4;cursor:not-allowed}" +
 
-    // Subpage back button in preview
-    ".sp-back-btn{border-radius:" + CFG.backBtn.radius + "cqw;padding:" + CFG.backBtn.padding + "cqw;display:flex;flex-direction:column;" +
+    ".sp-back-btn{border-radius:var(--back-r);padding:var(--back-pad);display:flex;flex-direction:column;" +
     "justify-content:space-between;box-sizing:border-box;border:2px solid transparent;" +
     "position:relative;background:#222;opacity:.6}" +
-    ".sp-back-btn .sp-btn-icon{font-size:" + CFG.backBtn.iconSize + "cqw;line-height:1;color:#fff}" +
-    ".sp-back-btn .sp-btn-label{font-size:" + CFG.backBtn.labelSize + "cqw;line-height:1.2;color:#fff}" +
+    ".sp-back-btn .sp-btn-icon{font-size:var(--back-icon);line-height:1;color:#fff}" +
+    ".sp-back-btn .sp-btn-label{font-size:var(--back-label);line-height:1.2;color:#fff}" +
 
-    // Subpage chevron overlay on home buttons
-    ".sp-subpage-badge{position:absolute;bottom:" + CFG.subpageBadge.bottom + "cqw;right:" + CFG.subpageBadge.right + "cqw;font-size:" + CFG.subpageBadge.fontSize + "cqw;opacity:.5}";
+    ".sp-subpage-badge{position:absolute;bottom:var(--subpage-bottom);right:var(--subpage-right);font-size:var(--subpage-fs);opacity:.5}";
+
+  // ── State ──────────────────────────────────────────────────────────────
 
   var state = {
     grid: [],
@@ -556,12 +406,54 @@
   var migrationTimer = null;
   var _eventSource = null;
 
-  // ── Helpers ──────────────────────────────────────────────────────────
+  // ── Utilities ──────────────────────────────────────────────────────────
+
+  function escHtml(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function escAttr(s) {
+    return s.replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function isSettingsFocused() {
+    var ae = document.activeElement;
+    return ae && els.buttonSettings && els.buttonSettings.contains(ae);
+  }
+
+  // ── Context abstraction ────────────────────────────────────────────────
+
+  function ctx() {
+    if (state.editingSubpage) {
+      var sp = getSubpage(state.editingSubpage);
+      return {
+        grid: sp.grid, sizes: sp.sizes, buttons: sp.buttons,
+        maxSlots: NUM_SLOTS - 1, selected: state.subpageSelectedSlots,
+        isSub: true,
+        setSelected: function (s) { state.subpageSelectedSlots = s; },
+        setLastClicked: function (s) { state.subpageLastClicked = s; },
+        getLastClicked: function () { return state.subpageLastClicked; },
+        save: function () { saveSubpageConfig(state.editingSubpage); },
+      };
+    }
+    return {
+      grid: state.grid, sizes: state.sizes, buttons: state.buttons,
+      maxSlots: NUM_SLOTS, selected: state.selectedSlots,
+      isSub: false,
+      setSelected: function (s) { state.selectedSlots = s; },
+      setLastClicked: function (s) { state.lastClickedSlot = s; },
+      getLastClicked: function () { return state.lastClickedSlot; },
+      save: function () { postText("Button Order", serializeGrid(state.grid)); },
+    };
+  }
+
+  // ── Grid helpers ───────────────────────────────────────────────────────
 
   function parseOrder(str) {
     var grid = [];
     for (var i = 0; i < NUM_SLOTS; i++) grid.push(0);
-    state.sizes = {};
     if (!str || !str.trim()) return grid;
     var parts = str.split(",");
     for (var i = 0; i < parts.length && i < NUM_SLOTS; i++) {
@@ -574,15 +466,15 @@
         if (dbl) state.sizes[n] = 2;
       }
     }
-    applySpans(grid);
+    applySpans(grid, state.sizes, NUM_SLOTS);
     return grid;
   }
 
-  function applySpans(grid) {
-    for (var i = 0; i < NUM_SLOTS; i++) {
-      if (grid[i] > 0 && state.sizes[grid[i]] === 2) {
+  function applySpans(grid, sizes, maxSlots) {
+    for (var i = 0; i < maxSlots; i++) {
+      if (grid[i] > 0 && sizes[grid[i]] === 2) {
         var below = i + GRID_COLS;
-        if (below < NUM_SLOTS) grid[below] = -1;
+        if (below < maxSlots) grid[below] = -1;
       }
     }
   }
@@ -599,28 +491,39 @@
     }).join(",");
   }
 
-  function resolveIcon(slot) {
-    var b = state.buttons[slot - 1];
+  function clearSpans(grid, maxSlots) {
+    for (var i = 0; i < maxSlots; i++) {
+      if (grid[i] === -1) grid[i] = 0;
+    }
+  }
+
+  function resolveIcon(b) {
     var sel = b.icon || "Auto";
     if (sel === "Auto" && b.entity) {
       var domain = b.entity.split(".")[0];
       return DOMAIN_ICONS[domain] || "cog";
     }
-    return ICON_MAP[sel] || "cog";
+    return iconSlug(sel);
   }
 
-  function btnDisplayName(slot) {
-    var b = state.buttons[slot - 1];
+  function btnDisplayName(b) {
     return b.label || b.entity || "Configure";
   }
 
+  // ── POST queue ─────────────────────────────────────────────────────────
+
+  var _postQueue = Promise.resolve();
+
   function post(url) {
-    return fetch(url, { method: "POST" }).then(function (r) {
-      if (!r.ok) showBanner("Request failed: " + r.status, "error");
-      return r;
-    }).catch(function () {
-      showBanner("Cannot reach device \u2014 is it connected?", "error");
+    _postQueue = _postQueue.then(function () {
+      return fetch(url, { method: "POST" }).then(function (r) {
+        if (!r.ok) showBanner("Request failed: " + r.status, "error");
+        return r;
+      }).catch(function () {
+        showBanner("Cannot reach device \u2014 is it connected?", "error");
+      });
     });
+    return _postQueue;
   }
 
   function postText(name, value) {
@@ -656,23 +559,7 @@
     }, 15000);
   }
 
-  function escHtml(s) {
-    var d = document.createElement("div");
-    d.textContent = s;
-    return d.innerHTML;
-  }
-
-  function escAttr(s) {
-    return s.replace(/&/g, "&amp;").replace(/"/g, "&quot;")
-      .replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  }
-
-  function isSettingsFocused() {
-    var ae = document.activeElement;
-    return ae && els.buttonSettings && els.buttonSettings.contains(ae);
-  }
-
-  // ── Subpage helpers ──────────────────────────────────────────────────
+  // ── Subpage helpers ────────────────────────────────────────────────────
 
   function parseSubpageConfig(str) {
     if (!str || !str.trim()) return { order: [], buttons: [] };
@@ -737,12 +624,7 @@
           if (dbl) sp.sizes[n] = 2;
         }
       }
-      for (var i = 0; i < maxPos; i++) {
-        if (grid[i] > 0 && sp.sizes[grid[i]] === 2) {
-          var below = i + GRID_COLS;
-          if (below < maxPos) grid[below] = -1;
-        }
-      }
+      applySpans(grid, sp.sizes, maxPos);
     }
     sp.grid = grid;
     return grid;
@@ -806,9 +688,39 @@
     input.addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
   }
 
-  // ── Init ─────────────────────────────────────────────────────────────
+  // ── Init ───────────────────────────────────────────────────────────────
 
   function init() {
+    // Set CSS custom properties from device config
+    var r = document.documentElement.style;
+    r.setProperty("--screen-w", CFG.screen.width);
+    r.setProperty("--screen-aspect", CFG.screen.aspect);
+    r.setProperty("--topbar-h", CFG.topbar.height + "cqw");
+    r.setProperty("--topbar-pad", CFG.topbar.padding);
+    r.setProperty("--topbar-fs", CFG.topbar.fontSize + "cqw");
+    r.setProperty("--grid-top", CFG.grid.top + "cqw");
+    r.setProperty("--grid-left", CFG.grid.left + "cqw");
+    r.setProperty("--grid-right", CFG.grid.right + "cqw");
+    r.setProperty("--grid-bottom", CFG.grid.bottom + "cqw");
+    r.setProperty("--grid-gap", CFG.grid.gap + "cqw");
+    r.setProperty("--grid-cols", "repeat(" + GRID_COLS + "," + CFG.grid.fr + ")");
+    r.setProperty("--grid-rows", "repeat(" + GRID_ROWS + "," + CFG.grid.fr + ")");
+    r.setProperty("--btn-r", CFG.btn.radius + "cqw");
+    r.setProperty("--btn-pad", CFG.btn.padding + "cqw");
+    r.setProperty("--btn-icon", CFG.btn.iconSize + "cqw");
+    r.setProperty("--btn-label", CFG.btn.labelSize + "cqw");
+    r.setProperty("--sensor-top", CFG.sensorBadge.top + "cqw");
+    r.setProperty("--sensor-right", CFG.sensorBadge.right + "cqw");
+    r.setProperty("--sensor-fs", CFG.sensorBadge.fontSize + "cqw");
+    r.setProperty("--empty-r", CFG.emptyCell.radius + "cqw");
+    r.setProperty("--back-r", CFG.backBtn.radius + "cqw");
+    r.setProperty("--back-pad", CFG.backBtn.padding + "cqw");
+    r.setProperty("--back-icon", CFG.backBtn.iconSize + "cqw");
+    r.setProperty("--back-label", CFG.backBtn.labelSize + "cqw");
+    r.setProperty("--subpage-bottom", CFG.subpageBadge.bottom + "cqw");
+    r.setProperty("--subpage-right", CFG.subpageBadge.right + "cqw");
+    r.setProperty("--subpage-fs", CFG.subpageBadge.fontSize + "cqw");
+
     var style = document.createElement("style");
     style.textContent = CSS;
     document.head.appendChild(style);
@@ -824,12 +736,11 @@
     document.head.appendChild(roboto);
 
     buildUI();
-    setupPreviewDropZone();
+    setupPreviewEvents();
     renderPreview();
     renderButtonSettings();
     connectEvents();
     updateClock();
-    setInterval(updateClock, 30000);
 
     document.addEventListener("click", hideContextMenu);
     document.addEventListener("scroll", hideContextMenu, true);
@@ -838,7 +749,7 @@
     });
   }
 
-  // ── Build UI ─────────────────────────────────────────────────────────
+  // ── Build UI ───────────────────────────────────────────────────────────
 
   function showBanner(msg, type) {
     if (!els.banner) return;
@@ -898,14 +809,11 @@
     parent.appendChild(header);
   }
 
-  // ── Screen Page ──────────────────────────────────────────────────────
-
   function buildScreenPage(parent) {
     var page = document.createElement("div");
     page.id = "sp-screen";
     page.className = "sp-page";
 
-    // Preview
     var wrap = document.createElement("div");
     wrap.className = "sp-wrap";
     wrap.innerHTML =
@@ -928,7 +836,6 @@
     els.previewHint = hint;
     page.appendChild(hint);
 
-    // Button settings (shown when a preview button is selected)
     var config = document.createElement("div");
     config.className = "sp-config";
     els.buttonSettings = config;
@@ -940,7 +847,7 @@
     els.screenPage = page;
   }
 
-  // ── Settings Page ────────────────────────────────────────────────────
+  // ── Settings Page ──────────────────────────────────────────────────────
 
   function buildSettingsPage(parent) {
     var page = document.createElement("div");
@@ -950,7 +857,6 @@
     var config = document.createElement("div");
     config.className = "sp-config fade-in";
 
-    // --- Appearance ---
     var appearBody = document.createElement("div");
 
     appearBody.appendChild(fieldLabel("On Color"));
@@ -969,7 +875,6 @@
 
     config.appendChild(makeCollapsibleCard("Appearance", appearBody, true));
 
-    // --- Brightness ---
     var blBody = document.createElement("div");
 
     var daySlider = createRangeSlider("Daytime Brightness", state.brightnessDayVal, "Screen: Daytime Brightness");
@@ -991,7 +896,6 @@
 
     config.appendChild(makeCollapsibleCard("Brightness", blBody, true));
 
-    // --- Temperature ---
     var tempBody = document.createElement("div");
 
     var indoor = createEntityToggleSection("Indoor Temperature", "sp-set-indoor-toggle", state._indoorOn,
@@ -1012,7 +916,6 @@
 
     config.appendChild(makeCollapsibleCard("Temperature", tempBody, true));
 
-    // --- Screensaver ---
     var ssBody = document.createElement("div");
     var ssMode = state.presenceEntity ? "sensor" : "timer";
 
@@ -1029,7 +932,6 @@
     segment.appendChild(sensorBtn);
     ssBody.appendChild(segment);
 
-    // Timer panel
     var timerPanel = document.createElement("div");
     timerPanel.appendChild(fieldLabel("Timeout"));
     var timeoutSelect = document.createElement("select");
@@ -1058,7 +960,6 @@
     ssBody.appendChild(timerPanel);
     els.setSSTimeout = timeoutSelect;
 
-    // Sensor panel
     var sensorPanel = document.createElement("div");
     sensorPanel.appendChild(fieldLabel("Presence Entity"));
     var presInp = textInput("sp-set-presence", "", "Presence sensor entity");
@@ -1081,7 +982,6 @@
 
     config.appendChild(makeCollapsibleCard("Screensaver", ssBody, true));
 
-    // --- Backup ---
     var backupBody = document.createElement("div");
 
     var backupRow = document.createElement("div");
@@ -1102,7 +1002,6 @@
     backupBody.appendChild(backupRow);
     config.appendChild(makeCollapsibleCard("Backup", backupBody, true));
 
-    // --- Firmware ---
     var fwBody = document.createElement("div");
 
     var fwVersionRow = document.createElement("div");
@@ -1165,7 +1064,7 @@
     els.settingsPage = page;
   }
 
-  // ── Settings page helpers ───────────────────────────────────────────
+  // ── Settings helpers ───────────────────────────────────────────────────
 
   function makeCollapsibleCard(title, bodyElement, defaultCollapsed) {
     var card = document.createElement("div");
@@ -1203,7 +1102,7 @@
     var el = document.createElement("input");
     el.type = "text";
     el.className = "sp-input";
-    el.id = id;
+    if (id) el.id = id;
     el.value = value;
     el.placeholder = placeholder || "";
     return el;
@@ -1343,7 +1242,7 @@
     return bar;
   }
 
-  // ── Logs Page ────────────────────────────────────────────────────────
+  // ── Logs Page ──────────────────────────────────────────────────────────
 
   function buildLogsPage(parent) {
     var page = document.createElement("div");
@@ -1368,8 +1267,6 @@
     els.logsPage = page;
   }
 
-  // ── Tab switching ────────────────────────────────────────────────────
-
   function switchTab(tab) {
     state.activeTab = tab;
     ["screen", "settings", "logs"].forEach(function (t) {
@@ -1380,36 +1277,48 @@
     els.logsPage.className = "sp-page" + (tab === "logs" ? " active" : "");
   }
 
-  // ── Preview rendering ────────────────────────────────────────────────
+  // ── Preview rendering (unified) ────────────────────────────────────────
 
   function renderPreview() {
     var main = els.previewMain;
     main.innerHTML = "";
+    var c = ctx();
 
-    if (state.editingSubpage) {
-      renderSubpagePreview(main);
-      return;
+    if (c.isSub) {
+      if (els.previewHint) els.previewHint.style.display = "none";
+      var backBtn = document.createElement("div");
+      backBtn.className = "sp-back-btn";
+      backBtn.innerHTML =
+        '<span class="sp-btn-icon mdi mdi-arrow-left"></span>' +
+        '<span class="sp-btn-label">Back</span>';
+      backBtn.style.cursor = "pointer";
+      backBtn.addEventListener("click", exitSubpage);
+      main.appendChild(backBtn);
+    } else {
+      if (els.previewHint) els.previewHint.style.display = "";
     }
 
-    if (els.previewHint) els.previewHint.style.display = "";
-
-    for (var pos = 0; pos < NUM_SLOTS; pos++) {
-      var slot = state.grid[pos];
-
+    for (var pos = 0; pos < c.maxSlots; pos++) {
+      var slot = c.grid[pos];
       if (slot === -1) continue;
 
       if (slot > 0) {
-        var b = state.buttons[slot - 1];
-        var iconName = resolveIcon(slot);
+        var bIdx = slot - 1;
+        if (c.isSub && bIdx >= c.buttons.length) continue;
+        var b = c.buttons[bIdx];
+        var iconName = resolveIcon(b);
         var label = b.label || b.entity || "Configure";
         var color = state.offColor;
-        var isSubpage = b.type === "subpage";
+        var isSubpage = !c.isSub && b.type === "subpage";
 
         var btn = document.createElement("div");
-        btn.className = "sp-btn" + (state.sizes[slot] === 2 ? " sp-btn-double" : "") + (state.selectedSlots.indexOf(slot) !== -1 ? " sp-selected" : "");
+        btn.className = "sp-btn" +
+          (c.sizes[slot] === 2 ? " sp-btn-double" : "") +
+          (c.selected.indexOf(slot) !== -1 ? " sp-selected" : "");
         btn.style.backgroundColor = "#" + (color.length === 6 ? color : "313131");
         btn.draggable = true;
         btn.setAttribute("data-pos", pos);
+        btn.setAttribute("data-slot", slot);
         var hasWhenOn = !isSubpage && (b.sensor || (b.icon_on && b.icon_on !== "Auto"));
         var badgeIcon = b.sensor ? "gauge" : "swap-horizontal";
         var sensorBadge = hasWhenOn
@@ -1422,273 +1331,136 @@
           sensorBadge + subpageBadge +
           '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>' +
           '<span class="sp-btn-label">' + escHtml(label) + "</span>";
-        (function (s, p) {
-          btn.addEventListener("click", function (e) {
-            if (didDrag) { didDrag = false; return; }
-            if (e.shiftKey && state.lastClickedSlot > 0) {
-              var anchorPos = state.grid.indexOf(state.lastClickedSlot);
-              var curPos = p;
-              if (anchorPos !== -1) {
-                var from = Math.min(anchorPos, curPos);
-                var to = Math.max(anchorPos, curPos);
-                state.selectedSlots = [];
-                for (var i = from; i <= to; i++) {
-                  if (state.grid[i] > 0) state.selectedSlots.push(state.grid[i]);
-                }
-                renderPreview();
-                renderButtonSettings();
-                return;
-              }
-            }
-            if (e.ctrlKey || e.metaKey) {
-              var idx = state.selectedSlots.indexOf(s);
-              if (idx !== -1) {
-                state.selectedSlots.splice(idx, 1);
-              } else {
-                state.selectedSlots.push(s);
-                state.lastClickedSlot = s;
-              }
-              renderPreview();
-              renderButtonSettings();
-              return;
-            }
-            if (state.selectedSlots.length === 1 && state.selectedSlots[0] === s) {
-              selectButton(-1);
-            } else {
-              selectButton(s);
-            }
-          });
-          btn.addEventListener("contextmenu", function (e) {
-            showContextMenu(e, s);
-          });
-          setupPreviewDrag(btn, p);
-        })(slot, pos);
         main.appendChild(btn);
       } else {
         var empty = document.createElement("div");
         empty.className = "sp-empty-cell";
         empty.setAttribute("data-pos", pos);
         empty.innerHTML = '<span class="sp-add-icon mdi mdi-plus"></span>';
-        (function (p) {
-          empty.addEventListener("click", function () { addButton(p); });
-          empty.addEventListener("contextmenu", function (ev) { showPasteContextMenu(ev, p); });
-        })(pos);
         main.appendChild(empty);
       }
     }
   }
 
-  function renderSubpagePreview(main) {
-    var homeSlot = state.editingSubpage;
-    var sp = getSubpage(homeSlot);
-    var homeBtn = state.buttons[homeSlot - 1];
-    var maxPos = NUM_SLOTS - 1;
-
-    // Hide hint
-    if (els.previewHint) els.previewHint.style.display = "none";
-
-    // Back button (grid position 0)
-    var backBtn = document.createElement("div");
-    backBtn.className = "sp-back-btn";
-    backBtn.innerHTML =
-      '<span class="sp-btn-icon mdi mdi-arrow-left"></span>' +
-      '<span class="sp-btn-label">Back</span>';
-    backBtn.style.cursor = "pointer";
-    backBtn.addEventListener("click", exitSubpage);
-    main.appendChild(backBtn);
-
-    // Subpage buttons
-    for (var pos = 0; pos < maxPos; pos++) {
-      var slot = sp.grid[pos];
-
-      if (slot === -1) continue;
-
-      if (slot > 0 && slot <= sp.buttons.length) {
-        var b = sp.buttons[slot - 1];
-        var iconName = resolveSubpageIcon(b);
-        var label = b.label || b.entity || "Configure";
-        var color = state.offColor;
-
-        var btn = document.createElement("div");
-        btn.className = "sp-btn" +
-          (sp.sizes[slot] === 2 ? " sp-btn-double" : "") +
-          (state.subpageSelectedSlots.indexOf(slot) !== -1 ? " sp-selected" : "");
-        btn.style.backgroundColor = "#" + (color.length === 6 ? color : "313131");
-        btn.draggable = true;
-        btn.setAttribute("data-pos", pos);
-        var hasWhenOn = b.sensor || (b.icon_on && b.icon_on !== "Auto");
-        var badgeIcon = b.sensor ? "gauge" : "swap-horizontal";
-        var sensorBadge = hasWhenOn
-          ? '<span class="sp-sensor-badge mdi mdi-' + badgeIcon + '"></span>'
-          : '';
-        btn.innerHTML =
-          sensorBadge +
-          '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>' +
-          '<span class="sp-btn-label">' + escHtml(label) + "</span>";
-        (function (s, p) {
-          btn.addEventListener("click", function (e) {
-            if (didDrag) { didDrag = false; return; }
-            if (e.shiftKey && state.subpageLastClicked > 0) {
-              var anchorPos = sp.grid.indexOf(state.subpageLastClicked);
-              var curPos = p;
-              if (anchorPos !== -1) {
-                var from = Math.min(anchorPos, curPos);
-                var to = Math.max(anchorPos, curPos);
-                state.subpageSelectedSlots = [];
-                for (var i = from; i <= to; i++) {
-                  if (sp.grid[i] > 0) state.subpageSelectedSlots.push(sp.grid[i]);
-                }
-                renderPreview();
-                renderButtonSettings();
-                return;
-              }
-            }
-            if (e.ctrlKey || e.metaKey) {
-              var idx = state.subpageSelectedSlots.indexOf(s);
-              if (idx !== -1) {
-                state.subpageSelectedSlots.splice(idx, 1);
-              } else {
-                state.subpageSelectedSlots.push(s);
-                state.subpageLastClicked = s;
-              }
-              renderPreview();
-              renderButtonSettings();
-              return;
-            }
-            if (state.subpageSelectedSlots.length === 1 && state.subpageSelectedSlots[0] === s) {
-              state.subpageSelectedSlots = [];
-            } else {
-              state.subpageSelectedSlots = [s];
-              state.subpageLastClicked = s;
-            }
-            renderPreview();
-            renderButtonSettings();
-          });
-          btn.addEventListener("contextmenu", function (e) {
-            showSubpageContextMenu(e, s);
-          });
-          setupPreviewDrag(btn, p);
-        })(slot, pos);
-        main.appendChild(btn);
-      } else {
-        var empty = document.createElement("div");
-        empty.className = "sp-empty-cell";
-        empty.setAttribute("data-pos", pos);
-        empty.innerHTML = '<span class="sp-add-icon mdi mdi-plus"></span>';
-        (function (p) {
-          empty.addEventListener("click", function () { addSubpageButton(p); });
-          empty.addEventListener("contextmenu", function (ev) { showSubpagePasteContextMenu(ev, p); });
-        })(pos);
-        main.appendChild(empty);
-      }
-    }
-  }
-
-  function resolveSubpageIcon(b) {
-    var sel = b.icon || "Auto";
-    if (sel === "Auto" && b.entity) {
-      var domain = b.entity.split(".")[0];
-      return DOMAIN_ICONS[domain] || "cog";
-    }
-    return ICON_MAP[sel] || "cog";
-  }
-
-  // ── Button settings panel (shown below preview) ─────────────────────
+  // ── Button settings panel (unified) ────────────────────────────────────
 
   function renderButtonSettings() {
     var container = els.buttonSettings;
     container.innerHTML = "";
+    var c = ctx();
 
-    if (state.editingSubpage) {
-      renderSubpageButtonSettings(container);
-      return;
-    }
+    if (c.selected.length === 0) return;
 
-    if (state.selectedSlots.length === 0) return;
-
-    if (state.selectedSlots.length > 1) {
+    if (c.selected.length > 1) {
       var hint = document.createElement("div");
       hint.className = "sp-hint";
-      hint.textContent = state.selectedSlots.length + " buttons selected \u2022 right click to delete";
+      hint.textContent = c.selected.length + " buttons selected \u2022 right click to delete";
       container.appendChild(hint);
       return;
     }
 
-    var slot = state.selectedSlots[0];
-    var b = state.buttons[slot - 1];
+    var slot = c.selected[0];
+    var bIdx = slot - 1;
+    if (c.isSub && (bIdx < 0 || bIdx >= c.buttons.length)) return;
+    var b = c.buttons[bIdx];
 
     var title = document.createElement("div");
     title.className = "sp-section-title";
-    title.textContent = "Button Settings";
+    title.textContent = c.isSub ? "Subpage Button Settings" : "Button Settings";
     container.appendChild(title);
 
     var panel = document.createElement("div");
     panel.className = "sp-panel";
 
-    // Type selector
-    var tf = document.createElement("div");
-    tf.className = "sp-field";
-    tf.appendChild(fieldLabel("Type"));
-    var typeSelect = document.createElement("select");
-    typeSelect.className = "sp-select";
-    typeSelect.id = "sp-inp-type";
-    var typeOpts = [["", "Toggle"], ["subpage", "Subpage"]];
-    typeOpts.forEach(function (o) {
-      var opt = document.createElement("option");
-      opt.value = o[0];
-      opt.textContent = o[1];
-      if ((b.type || "") === o[0]) opt.selected = true;
-      typeSelect.appendChild(opt);
-    });
-    typeSelect.addEventListener("change", function () {
-      var newType = this.value;
-      state.buttons[slot - 1].type = newType;
-      postText("Button " + slot + " Type", newType);
-      if (newType === "subpage") {
-        state.buttons[slot - 1].entity = "";
-        state.buttons[slot - 1].sensor = "";
-        state.buttons[slot - 1].unit = "";
-        state.buttons[slot - 1].icon_on = "Auto";
-        postText("Button " + slot + " Entity", "");
-        postText("Button " + slot + " Sensor", "");
-        postText("Button " + slot + " Sensor Unit", "");
-        postText("Button " + slot + " Icon On", "Auto");
+    var idPrefix = c.isSub ? "sp-sp-inp-" : "sp-inp-";
+
+    function saveField(field, val) {
+      if (c.isSub) {
+        saveSubpageConfig(state.editingSubpage);
+      } else {
+        var map = { entity: "Entity", label: "Label", icon: "Icon", icon_on: "Icon On", sensor: "Sensor", unit: "Sensor Unit", type: "Type" };
+        postText("Button " + slot + " " + map[field], val);
       }
-      renderPreview();
-      renderButtonSettings();
-    });
-    tf.appendChild(typeSelect);
-    panel.appendChild(tf);
+    }
 
-    // Label field (shown for both types)
-    var lf = document.createElement("div");
-    lf.className = "sp-field";
-    lf.appendChild(fieldLabel("Label"));
-    var labelInp = textInput("sp-inp-label", b.label, b.type === "subpage" ? "e.g. Lighting" : "e.g. Kitchen");
-    lf.appendChild(labelInp);
-    panel.appendChild(lf);
+    function bindField(input, field, rerender) {
+      input.addEventListener("blur", function () {
+        b[field] = this.value;
+        saveField(field, this.value);
+        if (rerender) renderPreview();
+      });
+      input.addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
+    }
 
-    bindTextPost(labelInp, "Button " + slot + " Label", {
-      onBlur: function (v) { state.buttons[slot - 1].label = v; },
-      rerender: true,
-    });
-
-    if (b.type === "subpage") {
-      // Subpage mode: icon + configure button
+    function makeIconPicker(pickerId, inputId, currentVal, onSelect) {
       var icf = document.createElement("div");
       icf.className = "sp-field";
       icf.appendChild(fieldLabel("Icon"));
-      var iconPicker = document.createElement("div");
-      iconPicker.className = "sp-icon-picker";
-      iconPicker.id = "sp-inp-icon-picker";
-      iconPicker.innerHTML =
-        '<span class="sp-icon-picker-preview mdi mdi-' + (ICON_MAP[b.icon] || "cog") + '"></span>' +
-        '<input class="sp-icon-picker-input" id="sp-inp-icon" type="text" ' +
-        'placeholder="Search icons\u2026" value="' + escAttr(b.icon) + '" autocomplete="off">' +
+      var picker = document.createElement("div");
+      picker.className = "sp-icon-picker";
+      if (pickerId) picker.id = pickerId;
+      picker.innerHTML =
+        '<span class="sp-icon-picker-preview mdi mdi-' + iconSlug(currentVal) + '"></span>' +
+        '<input class="sp-icon-picker-input"' + (inputId ? ' id="' + inputId + '"' : '') +
+        ' type="text" placeholder="Search icons\u2026" value="' + escAttr(currentVal) + '" autocomplete="off">' +
         '<div class="sp-icon-dropdown"></div>';
-      icf.appendChild(iconPicker);
-      panel.appendChild(icf);
-      initIconPicker(iconPicker, b.icon, slot);
+      icf.appendChild(picker);
+      initIconPicker(picker, currentVal, onSelect);
+      return icf;
+    }
+
+    // Type selector (home only)
+    var isSubpageType = false;
+    if (!c.isSub) {
+      isSubpageType = b.type === "subpage";
+      var tf = document.createElement("div");
+      tf.className = "sp-field";
+      tf.appendChild(fieldLabel("Type"));
+      var typeSelect = document.createElement("select");
+      typeSelect.className = "sp-select";
+      typeSelect.id = "sp-inp-type";
+      var typeOpts = [["", "Toggle"], ["subpage", "Subpage"]];
+      typeOpts.forEach(function (o) {
+        var opt = document.createElement("option");
+        opt.value = o[0];
+        opt.textContent = o[1];
+        if ((b.type || "") === o[0]) opt.selected = true;
+        typeSelect.appendChild(opt);
+      });
+      typeSelect.addEventListener("change", function () {
+        var newType = this.value;
+        b.type = newType;
+        saveField("type", newType);
+        if (newType === "subpage") {
+          b.entity = ""; b.sensor = ""; b.unit = ""; b.icon_on = "Auto";
+          postText("Button " + slot + " Entity", "");
+          postText("Button " + slot + " Sensor", "");
+          postText("Button " + slot + " Sensor Unit", "");
+          postText("Button " + slot + " Icon On", "Auto");
+        }
+        renderPreview();
+        renderButtonSettings();
+      });
+      tf.appendChild(typeSelect);
+      panel.appendChild(tf);
+    }
+
+    // Label
+    var lf = document.createElement("div");
+    lf.className = "sp-field";
+    lf.appendChild(fieldLabel("Label"));
+    var labelInp = textInput(idPrefix + "label", b.label, isSubpageType ? "e.g. Lighting" : "e.g. Kitchen");
+    lf.appendChild(labelInp);
+    panel.appendChild(lf);
+    bindField(labelInp, "label", true);
+
+    if (!c.isSub && isSubpageType) {
+      // Subpage mode on home: icon + configure button
+      panel.appendChild(makeIconPicker(idPrefix + "icon-picker", idPrefix + "icon", b.icon || "Auto", function (opt) {
+        b.icon = opt;
+        saveField("icon", opt);
+        renderPreview();
+      }));
 
       var configBtn = document.createElement("button");
       configBtn.className = "sp-action-btn";
@@ -1696,46 +1468,31 @@
       configBtn.style.color = "#fff";
       configBtn.style.width = "100%";
       configBtn.textContent = "Configure Subpage";
-      configBtn.addEventListener("click", function () {
-        enterSubpage(slot);
-      });
+      configBtn.addEventListener("click", function () { enterSubpage(slot); });
       panel.appendChild(configBtn);
     } else {
-      // Toggle mode: entity, icon, when-on settings
+      // Toggle (home or subpage): entity, icon, when-on
       var ef = document.createElement("div");
       ef.className = "sp-field";
       ef.appendChild(fieldLabel("Entity ID"));
-      var entityInp = textInput("sp-inp-entity", b.entity, "e.g. light.kitchen");
+      var entityInp = textInput(idPrefix + "entity", b.entity, "e.g. light.kitchen");
       ef.appendChild(entityInp);
       panel.appendChild(ef);
+      bindField(entityInp, "entity", true);
 
-      bindTextPost(entityInp, "Button " + slot + " Entity", {
-        onBlur: function (v) { state.buttons[slot - 1].entity = v; },
-        rerender: true,
-      });
+      panel.appendChild(makeIconPicker(idPrefix + "icon-picker", idPrefix + "icon", b.icon || "Auto", function (opt) {
+        b.icon = opt;
+        saveField("icon", opt);
+        renderPreview();
+      }));
 
-      var icf = document.createElement("div");
-      icf.className = "sp-field";
-      icf.appendChild(fieldLabel("Icon"));
-      var iconPicker = document.createElement("div");
-      iconPicker.className = "sp-icon-picker";
-      iconPicker.id = "sp-inp-icon-picker";
-      iconPicker.innerHTML =
-        '<span class="sp-icon-picker-preview mdi mdi-' + (ICON_MAP[b.icon] || "cog") + '"></span>' +
-        '<input class="sp-icon-picker-input" id="sp-inp-icon" type="text" ' +
-        'placeholder="Search icons\u2026" value="' + escAttr(b.icon) + '" autocomplete="off">' +
-        '<div class="sp-icon-dropdown"></div>';
-      icf.appendChild(iconPicker);
-      panel.appendChild(icf);
-
-      initIconPicker(iconPicker, b.icon, slot);
-
+      // When-on section
       var hasIconOn = b.icon_on && b.icon_on !== "Auto";
       var hasSensor = !!b.sensor;
       var whenOnEnabled = hasIconOn || hasSensor || !!b._whenOnActive;
       var whenOnMode = b._whenOnMode || (hasSensor ? "sensor" : "icon");
 
-      var whenOnToggle = toggleRow("When Entity On", "sp-inp-whenon-toggle", whenOnEnabled);
+      var whenOnToggle = toggleRow("When Entity On", idPrefix + "whenon-toggle", whenOnEnabled);
       panel.appendChild(whenOnToggle.row);
 
       var whenOnCond = condField();
@@ -1755,35 +1512,37 @@
       seg.appendChild(btnSensor);
       whenOnCond.appendChild(seg);
 
+      // Icon-on section
       var iconOnSection = condField();
       if (whenOnMode === "icon") iconOnSection.classList.add("sp-visible");
       var ionLabel = fieldLabel("Icon When On");
       iconOnSection.appendChild(ionLabel);
+      var iconOnVal = hasIconOn ? b.icon_on : "Auto";
       var iconOnPicker = document.createElement("div");
       iconOnPicker.className = "sp-icon-picker";
-      iconOnPicker.id = "sp-inp-icon-on-picker";
-      var iconOnVal = hasIconOn ? b.icon_on : "Auto";
+      iconOnPicker.id = idPrefix + "icon-on-picker";
       iconOnPicker.innerHTML =
-        '<span class="sp-icon-picker-preview mdi mdi-' + (ICON_MAP[iconOnVal] || "cog") + '"></span>' +
-        '<input class="sp-icon-picker-input" id="sp-inp-icon-on" type="text" ' +
+        '<span class="sp-icon-picker-preview mdi mdi-' + iconSlug(iconOnVal) + '"></span>' +
+        '<input class="sp-icon-picker-input" id="' + idPrefix + 'icon-on" type="text" ' +
         'placeholder="Search icons\u2026" value="' + escAttr(iconOnVal) + '" autocomplete="off">' +
         '<div class="sp-icon-dropdown"></div>';
       iconOnSection.appendChild(iconOnPicker);
       whenOnCond.appendChild(iconOnSection);
 
-      initIconPicker(iconOnPicker, iconOnVal, slot, function (opt) {
-        state.buttons[slot - 1].icon_on = opt;
-        postText("Button " + slot + " Icon On", opt);
+      initIconPicker(iconOnPicker, iconOnVal, function (opt) {
+        b.icon_on = opt;
+        saveField("icon_on", opt);
         renderPreview();
       });
 
+      // Sensor section
       var sensorSection = condField();
       if (whenOnMode === "sensor") sensorSection.classList.add("sp-visible");
       sensorSection.appendChild(fieldLabel("Sensor Entity"));
-      var sensorInp = textInput("sp-inp-sensor", b.sensor, "e.g. sensor.printer_percent_complete");
+      var sensorInp = textInput(idPrefix + "sensor", b.sensor, "e.g. sensor.printer_percent_complete");
       sensorSection.appendChild(sensorInp);
       sensorSection.appendChild(fieldLabel("Unit"));
-      var unitInp = textInput("sp-inp-unit", b.unit, "e.g. %");
+      var unitInp = textInput(idPrefix + "unit", b.unit, "e.g. %");
       unitInp.className = "sp-input sp-input--narrow";
       sensorSection.appendChild(unitInp);
       var sensorHint = document.createElement("div");
@@ -1794,10 +1553,13 @@
 
       panel.appendChild(whenOnCond);
 
+      bindField(sensorInp, "sensor", true);
+      bindField(unitInp, "unit", false);
+
       function setWhenOnMode(mode) {
         whenOnMode = mode;
-        state.buttons[slot - 1]._whenOnActive = true;
-        state.buttons[slot - 1]._whenOnMode = mode;
+        b._whenOnActive = true;
+        b._whenOnMode = mode;
         btnIcon.classList.toggle("active", mode === "icon");
         btnSensor.classList.toggle("active", mode === "sensor");
         iconOnSection.classList.toggle("sp-visible", mode === "icon");
@@ -1805,13 +1567,13 @@
         if (mode === "icon") {
           sensorInp.value = "";
           unitInp.value = "";
-          state.buttons[slot - 1].sensor = "";
-          state.buttons[slot - 1].unit = "";
-          postText("Button " + slot + " Sensor", "");
-          postText("Button " + slot + " Sensor Unit", "");
+          b.sensor = "";
+          b.unit = "";
+          saveField("sensor", "");
+          saveField("unit", "");
         } else {
-          state.buttons[slot - 1].icon_on = "Auto";
-          postText("Button " + slot + " Icon On", "Auto");
+          b.icon_on = "Auto";
+          saveField("icon_on", "Auto");
           var ionPreview = iconOnPicker.querySelector(".sp-icon-picker-preview");
           if (ionPreview) ionPreview.className = "sp-icon-picker-preview mdi mdi-cog";
           var ionInput = iconOnPicker.querySelector(".sp-icon-picker-input");
@@ -1825,303 +1587,118 @@
 
       whenOnToggle.input.addEventListener("change", function () {
         if (this.checked) {
-          state.buttons[slot - 1]._whenOnActive = true;
+          b._whenOnActive = true;
           whenOnCond.classList.add("sp-visible");
         } else {
-          state.buttons[slot - 1]._whenOnActive = false;
-          state.buttons[slot - 1]._whenOnMode = null;
+          b._whenOnActive = false;
+          b._whenOnMode = null;
           whenOnCond.classList.remove("sp-visible");
           sensorInp.value = "";
           unitInp.value = "";
-          state.buttons[slot - 1].sensor = "";
-          state.buttons[slot - 1].unit = "";
-          state.buttons[slot - 1].icon_on = "Auto";
-          postText("Button " + slot + " Sensor", "");
-          postText("Button " + slot + " Sensor Unit", "");
-          postText("Button " + slot + " Icon On", "Auto");
+          b.sensor = "";
+          b.unit = "";
+          b.icon_on = "Auto";
+          saveField("sensor", "");
+          saveField("unit", "");
+          saveField("icon_on", "Auto");
           renderPreview();
         }
       });
+    }
 
-      bindTextPost(sensorInp, "Button " + slot + " Sensor", {
-        onBlur: function (v) { state.buttons[slot - 1].sensor = v; },
-        rerender: true,
-      });
-      bindTextPost(unitInp, "Button " + slot + " Sensor Unit", {
-        onBlur: function (v) { state.buttons[slot - 1].unit = v; },
-      });
+    // Delete button (subpage only)
+    if (c.isSub) {
+      var btnRow = document.createElement("div");
+      btnRow.className = "sp-btn-row";
+      var delBtn = document.createElement("button");
+      delBtn.className = "sp-action-btn sp-delete-btn";
+      delBtn.textContent = "Delete";
+      delBtn.addEventListener("click", function () { deleteSlot(slot); });
+      btnRow.appendChild(delBtn);
+      panel.appendChild(btnRow);
     }
 
     container.appendChild(panel);
   }
 
-  // ── Subpage button settings ─────────────────────────────────────────
+  // ── Render debouncing ──────────────────────────────────────────────────
 
-  function renderSubpageButtonSettings(container) {
-    var homeSlot = state.editingSubpage;
-    var sp = getSubpage(homeSlot);
-
-    if (state.subpageSelectedSlots.length === 0) return;
-
-    if (state.subpageSelectedSlots.length > 1) {
-      var hint = document.createElement("div");
-      hint.className = "sp-hint";
-      hint.textContent = state.subpageSelectedSlots.length + " buttons selected \u2022 right click to delete";
-      container.appendChild(hint);
-      return;
-    }
-
-    var slot = state.subpageSelectedSlots[0];
-    if (slot < 1 || slot > sp.buttons.length) return;
-    var b = sp.buttons[slot - 1];
-
-    var title = document.createElement("div");
-    title.className = "sp-section-title";
-    title.textContent = "Subpage Button Settings";
-    container.appendChild(title);
-
-    var panel = document.createElement("div");
-    panel.className = "sp-panel";
-
-    // Label
-    var lf = document.createElement("div");
-    lf.className = "sp-field";
-    lf.appendChild(fieldLabel("Label"));
-    var labelInp = textInput("sp-sp-inp-label", b.label, "e.g. Kitchen");
-    lf.appendChild(labelInp);
-    panel.appendChild(lf);
-
-    labelInp.addEventListener("blur", function () {
-      b.label = this.value;
-      saveSubpageConfig(homeSlot);
+  var _renderPending = false;
+  function scheduleRender() {
+    if (_renderPending) return;
+    _renderPending = true;
+    requestAnimationFrame(function () {
+      _renderPending = false;
       renderPreview();
+      renderButtonSettings();
     });
-    labelInp.addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
-
-    // Entity
-    var ef = document.createElement("div");
-    ef.className = "sp-field";
-    ef.appendChild(fieldLabel("Entity ID"));
-    var entityInp = textInput("sp-sp-inp-entity", b.entity, "e.g. light.kitchen");
-    ef.appendChild(entityInp);
-    panel.appendChild(ef);
-
-    entityInp.addEventListener("blur", function () {
-      b.entity = this.value;
-      saveSubpageConfig(homeSlot);
-      renderPreview();
-    });
-    entityInp.addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
-
-    // Icon
-    var icf = document.createElement("div");
-    icf.className = "sp-field";
-    icf.appendChild(fieldLabel("Icon"));
-    var iconPicker = document.createElement("div");
-    iconPicker.className = "sp-icon-picker";
-    iconPicker.id = "sp-sp-icon-picker";
-    iconPicker.innerHTML =
-      '<span class="sp-icon-picker-preview mdi mdi-' + (ICON_MAP[b.icon] || "cog") + '"></span>' +
-      '<input class="sp-icon-picker-input" id="sp-sp-inp-icon" type="text" ' +
-      'placeholder="Search icons\u2026" value="' + escAttr(b.icon) + '" autocomplete="off">' +
-      '<div class="sp-icon-dropdown"></div>';
-    icf.appendChild(iconPicker);
-    panel.appendChild(icf);
-
-    initIconPicker(iconPicker, b.icon, slot, function (opt) {
-      b.icon = opt;
-      saveSubpageConfig(homeSlot);
-      renderPreview();
-    });
-
-    // Icon On
-    var hasIconOn = b.icon_on && b.icon_on !== "Auto";
-    var hasSensor = !!b.sensor;
-    var whenOnEnabled = hasIconOn || hasSensor || !!b._whenOnActive;
-    var whenOnMode = b._whenOnMode || (hasSensor ? "sensor" : "icon");
-
-    var whenOnToggle = toggleRow("When Entity On", "sp-sp-whenon-toggle", whenOnEnabled);
-    panel.appendChild(whenOnToggle.row);
-
-    var whenOnCond = condField();
-    if (whenOnEnabled) whenOnCond.classList.add("sp-visible");
-
-    var seg = document.createElement("div");
-    seg.className = "sp-segment";
-    var btnIconSeg = document.createElement("button");
-    btnIconSeg.type = "button";
-    btnIconSeg.textContent = "Replace Icon";
-    if (whenOnMode === "icon") btnIconSeg.classList.add("active");
-    var btnSensorSeg = document.createElement("button");
-    btnSensorSeg.type = "button";
-    btnSensorSeg.textContent = "Sensor Data";
-    if (whenOnMode === "sensor") btnSensorSeg.classList.add("active");
-    seg.appendChild(btnIconSeg);
-    seg.appendChild(btnSensorSeg);
-    whenOnCond.appendChild(seg);
-
-    var ionSection = condField();
-    if (whenOnMode === "icon") ionSection.classList.add("sp-visible");
-    ionSection.appendChild(fieldLabel("Icon When On"));
-    var ionPicker = document.createElement("div");
-    ionPicker.className = "sp-icon-picker";
-    ionPicker.id = "sp-sp-icon-on-picker";
-    var ionVal = hasIconOn ? b.icon_on : "Auto";
-    ionPicker.innerHTML =
-      '<span class="sp-icon-picker-preview mdi mdi-' + (ICON_MAP[ionVal] || "cog") + '"></span>' +
-      '<input class="sp-icon-picker-input" id="sp-sp-inp-icon-on" type="text" ' +
-      'placeholder="Search icons\u2026" value="' + escAttr(ionVal) + '" autocomplete="off">' +
-      '<div class="sp-icon-dropdown"></div>';
-    ionSection.appendChild(ionPicker);
-    whenOnCond.appendChild(ionSection);
-
-    initIconPicker(ionPicker, ionVal, slot, function (opt) {
-      b.icon_on = opt;
-      saveSubpageConfig(homeSlot);
-      renderPreview();
-    });
-
-    var sensorSection = condField();
-    if (whenOnMode === "sensor") sensorSection.classList.add("sp-visible");
-    sensorSection.appendChild(fieldLabel("Sensor Entity"));
-    var sensorInp = textInput("sp-sp-inp-sensor", b.sensor, "e.g. sensor.temperature");
-    sensorSection.appendChild(sensorInp);
-    sensorSection.appendChild(fieldLabel("Unit"));
-    var unitInp = textInput("sp-sp-inp-unit", b.unit, "e.g. %");
-    unitInp.className = "sp-input sp-input--narrow";
-    sensorSection.appendChild(unitInp);
-    whenOnCond.appendChild(sensorSection);
-
-    panel.appendChild(whenOnCond);
-
-    function setSpWhenOnMode(mode) {
-      whenOnMode = mode;
-      b._whenOnActive = true;
-      b._whenOnMode = mode;
-      btnIconSeg.classList.toggle("active", mode === "icon");
-      btnSensorSeg.classList.toggle("active", mode === "sensor");
-      ionSection.classList.toggle("sp-visible", mode === "icon");
-      sensorSection.classList.toggle("sp-visible", mode === "sensor");
-      if (mode === "icon") {
-        sensorInp.value = "";
-        unitInp.value = "";
-        b.sensor = "";
-        b.unit = "";
-      } else {
-        b.icon_on = "Auto";
-      }
-      saveSubpageConfig(homeSlot);
-      renderPreview();
-    }
-
-    btnIconSeg.addEventListener("click", function () { setSpWhenOnMode("icon"); });
-    btnSensorSeg.addEventListener("click", function () { setSpWhenOnMode("sensor"); });
-
-    whenOnToggle.input.addEventListener("change", function () {
-      if (this.checked) {
-        b._whenOnActive = true;
-        whenOnCond.classList.add("sp-visible");
-      } else {
-        b._whenOnActive = false;
-        b._whenOnMode = null;
-        whenOnCond.classList.remove("sp-visible");
-        b.sensor = "";
-        b.unit = "";
-        b.icon_on = "Auto";
-        saveSubpageConfig(homeSlot);
-        renderPreview();
-      }
-    });
-
-    sensorInp.addEventListener("blur", function () {
-      b.sensor = this.value;
-      saveSubpageConfig(homeSlot);
-      renderPreview();
-    });
-    sensorInp.addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
-
-    unitInp.addEventListener("blur", function () {
-      b.unit = this.value;
-      saveSubpageConfig(homeSlot);
-    });
-    unitInp.addEventListener("keydown", function (e) { if (e.key === "Enter") this.blur(); });
-
-    // Delete button
-    var btnRow = document.createElement("div");
-    btnRow.className = "sp-btn-row";
-    var delBtn = document.createElement("button");
-    delBtn.className = "sp-action-btn sp-delete-btn";
-    delBtn.textContent = "Delete";
-    delBtn.addEventListener("click", function () {
-      deleteSubpageButton(slot);
-    });
-    btnRow.appendChild(delBtn);
-    panel.appendChild(btnRow);
-
-    container.appendChild(panel);
   }
 
-  // ── Searchable icon picker ──────────────────────────────────────────
+  // ── Icon picker (optimized) ────────────────────────────────────────────
 
-  function initIconPicker(picker, currentIcon, slot, onSelectOpt) {
+  function initIconPicker(picker, currentIcon, onSelect) {
     var input = picker.querySelector(".sp-icon-picker-input");
     var dropdown = picker.querySelector(".sp-icon-dropdown");
     var preview = picker.querySelector(".sp-icon-picker-preview");
     var highlighted = -1;
+    var optionEls = null;
+    var emptyEl = null;
 
-    function iconClass(name) {
-      return ICON_MAP[name] || "cog";
-    }
-
-    function buildOptions(filter) {
-      dropdown.innerHTML = "";
-      highlighted = -1;
-      var lc = (filter || "").toLowerCase();
-      var matches = ICON_OPTIONS.filter(function (opt) {
-        return !lc || opt.toLowerCase().indexOf(lc) !== -1;
-      });
-      if (matches.length === 0) {
-        var empty = document.createElement("div");
-        empty.className = "sp-icon-option sp-icon-option--empty";
-        empty.textContent = "No matches";
-        dropdown.appendChild(empty);
-        return;
-      }
-      matches.forEach(function (opt) {
+    function ensureBuilt() {
+      if (optionEls) return;
+      optionEls = [];
+      var frag = document.createDocumentFragment();
+      ICON_OPTIONS.forEach(function (opt) {
         var row = document.createElement("div");
-        row.className = "sp-icon-option" +
-          (opt === currentIcon ? " sp-active" : "");
+        row.className = "sp-icon-option" + (opt === currentIcon ? " sp-active" : "");
         row.innerHTML =
-          '<span class="sp-icon-option-icon mdi mdi-' + iconClass(opt) + '"></span>' +
+          '<span class="sp-icon-option-icon mdi mdi-' + iconSlug(opt) + '"></span>' +
           '<span class="sp-icon-option-label">' + escHtml(opt) + '</span>';
+        row._lcName = opt.toLowerCase();
+        row._optName = opt;
         row.addEventListener("mousedown", function (e) {
           e.preventDefault();
-          selectOption(opt);
+          selectOpt(opt);
         });
-        dropdown.appendChild(row);
+        frag.appendChild(row);
+        optionEls.push(row);
       });
+      emptyEl = document.createElement("div");
+      emptyEl.className = "sp-icon-option sp-icon-option--empty";
+      emptyEl.textContent = "No matches";
+      emptyEl.style.display = "none";
+      frag.appendChild(emptyEl);
+      dropdown.appendChild(frag);
     }
 
-    function selectOption(opt) {
+    function filterOpts(filter) {
+      ensureBuilt();
+      highlighted = -1;
+      var lc = (filter || "").toLowerCase();
+      var hasMatch = false;
+      for (var i = 0; i < optionEls.length; i++) {
+        var match = !lc || optionEls[i]._lcName.indexOf(lc) !== -1;
+        optionEls[i].style.display = match ? "" : "none";
+        optionEls[i].classList.remove("sp-highlighted");
+        if (match) hasMatch = true;
+      }
+      emptyEl.style.display = hasMatch ? "none" : "";
+    }
+
+    function selectOpt(opt) {
       currentIcon = opt;
       input.value = opt;
-      preview.className = "sp-icon-picker-preview mdi mdi-" + iconClass(opt);
+      preview.className = "sp-icon-picker-preview mdi mdi-" + iconSlug(opt);
       closePicker();
-      if (onSelectOpt) {
-        onSelectOpt(opt);
-      } else {
-        state.buttons[slot - 1].icon = opt;
-        postText("Button " + slot + " Icon", opt);
-        renderPreview();
-      }
+      onSelect(opt);
     }
 
     function openPicker() {
       if (currentIcon === "Auto") {
         input.value = "";
-        buildOptions("");
+        filterOpts("");
       } else {
-        buildOptions(currentIcon);
+        filterOpts(currentIcon);
         setTimeout(function () { input.select(); }, 0);
       }
       picker.classList.add("sp-open");
@@ -2133,34 +1710,37 @@
       highlighted = -1;
     }
 
-    function highlightAt(idx) {
-      var items = dropdown.querySelectorAll(".sp-icon-option:not(.sp-icon-option--empty)");
-      if (items.length === 0) return;
-      items.forEach(function (el) { el.classList.remove("sp-highlighted"); });
-      if (idx < 0) idx = items.length - 1;
-      if (idx >= items.length) idx = 0;
-      highlighted = idx;
-      items[highlighted].classList.add("sp-highlighted");
-      items[highlighted].scrollIntoView({ block: "nearest" });
+    function getVisible() {
+      var vis = [];
+      if (optionEls) {
+        for (var i = 0; i < optionEls.length; i++) {
+          if (optionEls[i].style.display !== "none") vis.push(optionEls[i]);
+        }
+      }
+      return vis;
     }
 
-    input.addEventListener("focus", function () {
-      openPicker();
-    });
+    function highlightAt(idx) {
+      var visible = getVisible();
+      if (visible.length === 0) return;
+      if (optionEls) optionEls.forEach(function (el) { el.classList.remove("sp-highlighted"); });
+      if (idx < 0) idx = visible.length - 1;
+      if (idx >= visible.length) idx = 0;
+      highlighted = idx;
+      visible[highlighted].classList.add("sp-highlighted");
+      visible[highlighted].scrollIntoView({ block: "nearest" });
+    }
 
-    input.addEventListener("blur", function () {
-      closePicker();
-    });
+    input.addEventListener("focus", openPicker);
+    input.addEventListener("blur", closePicker);
 
     input.addEventListener("input", function () {
-      buildOptions(this.value);
-      if (dropdown.querySelector(".sp-icon-option:not(.sp-icon-option--empty)")) {
-        highlightAt(0);
-      }
+      filterOpts(this.value);
+      var vis = getVisible();
+      if (vis.length > 0) highlightAt(0);
     });
 
     input.addEventListener("keydown", function (e) {
-      var items = dropdown.querySelectorAll(".sp-icon-option:not(.sp-icon-option--empty)");
       if (e.key === "ArrowDown") {
         e.preventDefault();
         if (!picker.classList.contains("sp-open")) { openPicker(); return; }
@@ -2170,9 +1750,9 @@
         highlightAt(highlighted - 1);
       } else if (e.key === "Enter") {
         e.preventDefault();
-        if (highlighted >= 0 && highlighted < items.length) {
-          var label = items[highlighted].querySelector(".sp-icon-option-label");
-          if (label) selectOption(label.textContent);
+        var visible = getVisible();
+        if (highlighted >= 0 && highlighted < visible.length) {
+          selectOpt(visible[highlighted]._optName);
         }
       } else if (e.key === "Escape") {
         e.preventDefault();
@@ -2182,14 +1762,13 @@
     });
   }
 
-  // ── Preview drag and drop ─────────────────────────────────────────
+  // ── Preview event delegation & drag ────────────────────────────────────
 
   function resolveSpanPos(pos) {
-    var grid = state.editingSubpage ? getSubpage(state.editingSubpage).grid : state.grid;
-    var sizes = state.editingSubpage ? getSubpage(state.editingSubpage).sizes : state.sizes;
-    if (grid[pos] === -1) {
+    var c = ctx();
+    if (c.grid[pos] === -1) {
       var above = pos - GRID_COLS;
-      if (above >= 0 && grid[above] > 0 && sizes[grid[above]] === 2) return above;
+      if (above >= 0 && c.grid[above] > 0 && c.sizes[c.grid[above]] === 2) return above;
     }
     return pos;
   }
@@ -2205,7 +1784,7 @@
     }
     var x = e.clientX, y = e.clientY;
     var children = container.children;
-    var skip = dragIsSubpage ? 1 : 0;
+    var skip = state.editingSubpage ? 1 : 0;
     var bestDist = Infinity, bestPos = -1;
     for (var i = skip; i < children.length; i++) {
       var r = children[i].getBoundingClientRect();
@@ -2219,30 +1798,25 @@
     return bestPos;
   }
 
-  function clearSpans(grid) {
-    for (var i = 0; i < NUM_SLOTS; i++) {
-      if (grid[i] === -1) grid[i] = 0;
-    }
-  }
-
   function moveToCell(fromPos, toPos) {
+    var c = ctx();
     toPos = resolveSpanPos(toPos);
-    if (state.grid[toPos] === -1) return;
-    var grid = state.grid.slice();
+    if (toPos >= c.maxSlots || c.grid[toPos] === -1) return;
+    var grid = c.grid.slice();
     var movingSlot = grid[fromPos];
-    clearSpans(grid);
+    clearSpans(grid, c.maxSlots);
     if (CFG.dragMode === "swap") {
       var targetSlot = grid[toPos];
       grid[toPos] = movingSlot;
       grid[fromPos] = targetSlot;
-      for (var i = 0; i < NUM_SLOTS; i++) {
-        if (grid[i] > 0 && state.sizes[grid[i]] === 2) {
+      for (var i = 0; i < c.maxSlots; i++) {
+        if (grid[i] > 0 && c.sizes[grid[i]] === 2) {
           var below = i + GRID_COLS;
-          if (below < NUM_SLOTS) {
+          if (below < c.maxSlots) {
             if (grid[below] > 0) {
               var displaced = grid[below];
               grid[below] = -1;
-              for (var j = 0; j < NUM_SLOTS; j++) {
+              for (var j = 0; j < c.maxSlots; j++) {
                 if (grid[j] === 0) { grid[j] = displaced; break; }
               }
             } else {
@@ -2256,70 +1830,19 @@
       if (grid[toPos] > 0) {
         var displaced = grid[toPos];
         grid[toPos] = 0;
-        for (var i = 1; i < NUM_SLOTS; i++) {
-          var candidate = (toPos + i) % NUM_SLOTS;
+        for (var i = 1; i < c.maxSlots; i++) {
+          var candidate = (toPos + i) % c.maxSlots;
           if (grid[candidate] === 0) { grid[candidate] = displaced; break; }
         }
       }
       grid[toPos] = movingSlot;
-      applySpans(grid);
+      applySpans(grid, c.sizes, c.maxSlots);
     }
-    if (state.sizes[movingSlot] === 2 && toPos + GRID_COLS >= NUM_SLOTS) {
-      delete state.sizes[movingSlot];
-    }
-    state.grid = grid;
-  }
-
-  function moveToCellSubpage(fromPos, toPos) {
-    var sp = getSubpage(state.editingSubpage);
-    var maxPos = NUM_SLOTS - 1;
-    toPos = resolveSpanPos(toPos);
-    if (toPos >= maxPos || sp.grid[toPos] === -1) return;
-    var grid = sp.grid.slice();
-    var movingSlot = grid[fromPos];
-    clearSpans(grid);
-    if (CFG.dragMode === "swap") {
-      var targetSlot = grid[toPos];
-      grid[toPos] = movingSlot;
-      grid[fromPos] = targetSlot;
-      for (var i = 0; i < maxPos; i++) {
-        if (grid[i] > 0 && sp.sizes[grid[i]] === 2) {
-          var below = i + GRID_COLS;
-          if (below < maxPos) {
-            if (grid[below] > 0) {
-              var displaced = grid[below];
-              grid[below] = -1;
-              for (var j = 0; j < maxPos; j++) {
-                if (grid[j] === 0) { grid[j] = displaced; break; }
-              }
-            } else {
-              grid[below] = -1;
-            }
-          }
-        }
-      }
+    if (c.isSub) {
+      getSubpage(state.editingSubpage).grid = grid;
     } else {
-      grid[fromPos] = 0;
-      if (grid[toPos] > 0) {
-        var displaced = grid[toPos];
-        grid[toPos] = 0;
-        for (var i = 1; i < maxPos; i++) {
-          var candidate = (toPos + i) % maxPos;
-          if (grid[candidate] === 0) { grid[candidate] = displaced; break; }
-        }
-      }
-      grid[toPos] = movingSlot;
-      for (var i = 0; i < maxPos; i++) {
-        if (grid[i] > 0 && sp.sizes[grid[i]] === 2) {
-          var below = i + GRID_COLS;
-          if (below < maxPos) grid[below] = -1;
-        }
-      }
+      state.grid = grid;
     }
-    if (sp.sizes[movingSlot] === 2 && toPos + GRID_COLS >= maxPos) {
-      delete sp.sizes[movingSlot];
-    }
-    sp.grid = grid;
   }
 
   function clearPlaceholder() {
@@ -2329,10 +1852,66 @@
     }
   }
 
-  function setupPreviewDropZone() {
+  function setupPreviewEvents() {
     var container = els.previewMain;
     var pendingCellIdx = -1;
 
+    // Click delegation
+    container.addEventListener("click", function (e) {
+      var target = e.target.closest("[data-pos]");
+      if (!target) return;
+      var pos = parseInt(target.getAttribute("data-pos"), 10);
+      var c = ctx();
+      var slot = c.grid[pos];
+      if (slot > 0) {
+        handleBtnClick(e, slot, pos);
+      } else if (slot === 0) {
+        addSlot(pos);
+      }
+    });
+
+    // Context menu delegation
+    container.addEventListener("contextmenu", function (e) {
+      var target = e.target.closest("[data-pos]");
+      if (!target) return;
+      e.preventDefault();
+      var pos = parseInt(target.getAttribute("data-pos"), 10);
+      var c = ctx();
+      var slot = c.grid[pos];
+      if (slot > 0) {
+        showContextMenu(e, slot);
+      } else if (slot === 0 && state.clipboard) {
+        showPasteContextMenu(e, pos);
+      }
+    });
+
+    // Drag delegation
+    container.addEventListener("dragstart", function (e) {
+      var target = e.target.closest(".sp-btn");
+      if (!target) return;
+      var pos = parseInt(target.getAttribute("data-pos"), 10);
+      dragSrcPos = pos;
+      if (CFG.dragAnimation) dragSrcEl = target;
+      dragIsSubpage = !!state.editingSubpage;
+      didDrag = true;
+      dragEnterCount = 0;
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", String(pos));
+      if (CFG.dragAnimation) {
+        requestAnimationFrame(function () { target.classList.add("sp-dragging"); });
+      }
+    });
+
+    container.addEventListener("dragend", function () {
+      dragSrcPos = -1;
+      previewDropIdx = -1;
+      dragIsSubpage = false;
+      dragEnterCount = 0;
+      clearPlaceholder();
+      if (dragSrcEl) { dragSrcEl.classList.remove("sp-dragging"); dragSrcEl = null; }
+    });
+
+    // Drop zone
     function updatePlaceholder(cellIdx) {
       if (cellIdx === previewDropIdx) return;
       previewDropIdx = cellIdx;
@@ -2383,51 +1962,61 @@
       previewDropIdx = -1;
       clearPlaceholder();
       if (dragSrcEl) { dragSrcEl.classList.remove("sp-dragging"); dragSrcEl = null; }
-      if (dragIsSubpage) {
-        var maxPos = NUM_SLOTS - 1;
-        if (dragSrcPos < 0 || toPos < 0 || toPos >= maxPos) { dragSrcPos = -1; dragIsSubpage = false; return; }
-        if (dragSrcPos === toPos) { dragSrcPos = -1; dragIsSubpage = false; return; }
-        moveToCellSubpage(dragSrcPos, toPos);
+      var c = ctx();
+      if (dragSrcPos < 0 || toPos < 0 || toPos >= c.maxSlots) { dragSrcPos = -1; dragIsSubpage = false; return; }
+      if (dragSrcPos === toPos) { dragSrcPos = -1; dragIsSubpage = false; return; }
+      moveToCell(dragSrcPos, toPos);
+      renderPreview();
+      renderButtonSettings();
+      c.save();
+      dragSrcPos = -1;
+      dragIsSubpage = false;
+    });
+  }
+
+  function handleBtnClick(e, slot, pos) {
+    if (didDrag) { didDrag = false; return; }
+    var c = ctx();
+
+    if (e.shiftKey && c.getLastClicked() > 0) {
+      var anchorPos = c.grid.indexOf(c.getLastClicked());
+      if (anchorPos !== -1) {
+        var from = Math.min(anchorPos, pos);
+        var to = Math.max(anchorPos, pos);
+        var newSel = [];
+        for (var i = from; i <= to; i++) {
+          if (c.grid[i] > 0) newSel.push(c.grid[i]);
+        }
+        c.setSelected(newSel);
         renderPreview();
         renderButtonSettings();
-        saveSubpageConfig(state.editingSubpage);
+        return;
+      }
+    }
+
+    if (e.ctrlKey || e.metaKey) {
+      var idx = c.selected.indexOf(slot);
+      if (idx !== -1) {
+        c.selected.splice(idx, 1);
       } else {
-        if (dragSrcPos < 0 || toPos < 0 || toPos >= NUM_SLOTS) { dragSrcPos = -1; return; }
-        if (dragSrcPos === toPos) { dragSrcPos = -1; return; }
-        moveToCell(dragSrcPos, toPos);
-        renderPreview();
-        renderButtonSettings();
-        postText("Button Order", serializeGrid(state.grid));
+        c.selected.push(slot);
+        c.setLastClicked(slot);
       }
-      dragSrcPos = -1;
-      dragIsSubpage = false;
-    });
-  }
+      renderPreview();
+      renderButtonSettings();
+      return;
+    }
 
-  function setupPreviewDrag(btn, pos) {
-    btn.addEventListener("dragstart", function (e) {
-      dragSrcPos = pos;
-      if (CFG.dragAnimation) dragSrcEl = btn;
-      dragIsSubpage = !!state.editingSubpage;
-      didDrag = true;
-      dragEnterCount = 0;
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/plain", String(pos));
-      if (CFG.dragAnimation) {
-        requestAnimationFrame(function () { btn.classList.add("sp-dragging"); });
-      }
-    });
-    btn.addEventListener("dragend", function () {
-      dragSrcPos = -1;
-      previewDropIdx = -1;
-      dragIsSubpage = false;
-      dragEnterCount = 0;
-      clearPlaceholder();
-      if (dragSrcEl) { dragSrcEl.classList.remove("sp-dragging"); dragSrcEl = null; }
-    });
+    if (c.selected.length === 1 && c.selected[0] === slot) {
+      c.setSelected([]);
+      c.setLastClicked(-1);
+    } else {
+      c.setSelected([slot]);
+      c.setLastClicked(slot);
+    }
+    renderPreview();
+    renderButtonSettings();
   }
-
-  // ── Button settings panel ───────────────────────────────────────────
 
   function selectButton(slot) {
     if (slot < 1) {
@@ -2440,149 +2029,7 @@
     renderButtonSettings();
   }
 
-  // ── Context menu ────────────────────────────────────────────────────
-
-  var ctxMenu = null;
-
-  function showContextMenu(e, slot) {
-    e.preventDefault();
-    hideContextMenu();
-
-    var isMulti = state.selectedSlots.length > 1 && state.selectedSlots.indexOf(slot) !== -1;
-
-    if (state.selectedSlots.indexOf(slot) === -1 && state.selectedSlots.length > 1) {
-      state.selectedSlots.push(slot);
-      isMulti = true;
-      renderPreview();
-      renderButtonSettings();
-    }
-
-    ctxMenu = document.createElement("div");
-    ctxMenu.className = "sp-ctx-menu";
-
-    if (isMulti) {
-      var bulkSlots = state.selectedSlots.slice();
-      var cutItem = document.createElement("div");
-      cutItem.className = "sp-ctx-item";
-      cutItem.innerHTML = '<span class="mdi mdi-content-cut"></span>Cut ' + bulkSlots.length + " Buttons";
-      cutItem.addEventListener("mousedown", function (ev) {
-        ev.preventDefault();
-        hideContextMenu();
-        cutButtons(bulkSlots);
-      });
-      ctxMenu.appendChild(cutItem);
-      var delItem = document.createElement("div");
-      delItem.className = "sp-ctx-item sp-ctx-danger";
-      delItem.innerHTML = '<span class="mdi mdi-delete"></span>Delete ' + bulkSlots.length + " Buttons";
-      delItem.addEventListener("mousedown", function (ev) {
-        ev.preventDefault();
-        hideContextMenu();
-        deleteButtons(bulkSlots);
-      });
-      ctxMenu.appendChild(delItem);
-    } else {
-      var b = state.buttons[slot - 1];
-      if (b && b.type === "subpage") {
-        var setupItem = document.createElement("div");
-        setupItem.className = "sp-ctx-item";
-        setupItem.innerHTML = '<span class="mdi mdi-cog"></span>Setup Subpage';
-        setupItem.addEventListener("mousedown", function (ev) {
-          ev.preventDefault();
-          hideContextMenu();
-          enterSubpage(slot);
-        });
-        ctxMenu.appendChild(setupItem);
-        var spDivider = document.createElement("div");
-        spDivider.className = "sp-ctx-divider";
-        ctxMenu.appendChild(spDivider);
-      }
-
-      var isDbl = state.sizes[slot] === 2;
-      var dblItem = document.createElement("div");
-      dblItem.className = "sp-ctx-item";
-      dblItem.innerHTML = '<span class="mdi mdi-arrow-expand-vertical"></span>' + (isDbl ? "Single Height" : "Double Height");
-      dblItem.addEventListener("mousedown", function (ev) {
-        ev.preventDefault();
-        hideContextMenu();
-        var slotPos = state.grid.indexOf(slot);
-        var belowPos = slotPos + GRID_COLS;
-        if (state.sizes[slot] === 2) {
-          delete state.sizes[slot];
-          if (belowPos < NUM_SLOTS && state.grid[belowPos] === -1) state.grid[belowPos] = 0;
-        } else {
-          if (belowPos >= NUM_SLOTS) return;
-          if (state.grid[belowPos] > 0) {
-            var displaced = state.grid[belowPos];
-            state.grid[belowPos] = 0;
-            var freeCell = firstFreeCell(belowPos + 1);
-            if (freeCell >= 0) state.grid[freeCell] = displaced;
-          }
-          state.sizes[slot] = 2;
-          state.grid[belowPos] = -1;
-        }
-        renderPreview();
-        renderButtonSettings();
-        postText("Button Order", serializeGrid(state.grid));
-      });
-      ctxMenu.appendChild(dblItem);
-
-      var dupItem = document.createElement("div");
-      dupItem.className = "sp-ctx-item";
-      dupItem.innerHTML = '<span class="mdi mdi-content-copy"></span>Duplicate';
-      dupItem.addEventListener("mousedown", function (ev) {
-        ev.preventDefault();
-        hideContextMenu();
-        duplicateButton(slot);
-      });
-      ctxMenu.appendChild(dupItem);
-
-      var cutItem = document.createElement("div");
-      cutItem.className = "sp-ctx-item";
-      cutItem.innerHTML = '<span class="mdi mdi-content-cut"></span>Cut';
-      cutItem.addEventListener("mousedown", function (ev) {
-        ev.preventDefault();
-        hideContextMenu();
-        cutButton(slot);
-      });
-      ctxMenu.appendChild(cutItem);
-
-      var divider = document.createElement("div");
-      divider.className = "sp-ctx-divider";
-      ctxMenu.appendChild(divider);
-
-      var delItem = document.createElement("div");
-      delItem.className = "sp-ctx-item sp-ctx-danger";
-      delItem.innerHTML = '<span class="mdi mdi-delete"></span>Delete';
-      delItem.addEventListener("mousedown", function (ev) {
-        ev.preventDefault();
-        hideContextMenu();
-        deleteButton(slot);
-      });
-      ctxMenu.appendChild(delItem);
-    }
-
-    document.body.appendChild(ctxMenu);
-
-    var menuW = ctxMenu.offsetWidth;
-    var menuH = ctxMenu.offsetHeight;
-    var x = e.clientX;
-    var y = e.clientY;
-    if (x + menuW > window.innerWidth) x = window.innerWidth - menuW - 4;
-    if (y + menuH > window.innerHeight) y = window.innerHeight - menuH - 4;
-    if (x < 0) x = 4;
-    if (y < 0) y = 4;
-    ctxMenu.style.left = x + "px";
-    ctxMenu.style.top = y + "px";
-  }
-
-  function hideContextMenu() {
-    if (ctxMenu && ctxMenu.parentNode) {
-      ctxMenu.parentNode.removeChild(ctxMenu);
-    }
-    ctxMenu = null;
-  }
-
-  // ── Add / Duplicate / Delete buttons ───────────────────────────────
+  // ── Button management (unified) ────────────────────────────────────────
 
   function firstFreeSlot() {
     var used = {};
@@ -2602,12 +2049,28 @@
     return -1;
   }
 
-  function addButton(pos) {
-    var slot = firstFreeSlot();
-    if (slot < 0) return;
-    state.grid[pos] = slot;
-    postText("Button Order", serializeGrid(state.grid));
-    selectButton(slot);
+  function addSlot(pos) {
+    var c = ctx();
+    if (c.isSub) {
+      var sp = getSubpage(state.editingSubpage);
+      var newSlot = subpageFirstFreeSlot(sp);
+      while (sp.buttons.length < newSlot) {
+        sp.buttons.push({ entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "" });
+      }
+      sp.grid[pos] = newSlot;
+      sp.order = serializeSubpageGrid(sp);
+      saveSubpageConfig(state.editingSubpage);
+      state.subpageSelectedSlots = [newSlot];
+      state.subpageLastClicked = newSlot;
+      renderPreview();
+      renderButtonSettings();
+    } else {
+      var slot = firstFreeSlot();
+      if (slot < 0) return;
+      state.grid[pos] = slot;
+      postText("Button Order", serializeGrid(state.grid));
+      selectButton(slot);
+    }
   }
 
   function duplicateButton(srcSlot) {
@@ -2616,12 +2079,8 @@
 
     var src = state.buttons[srcSlot - 1];
     state.buttons[newSlot - 1] = {
-      entity: src.entity,
-      label: src.label,
-      icon: src.icon,
-      icon_on: src.icon_on,
-      sensor: src.sensor,
-      unit: src.unit,
+      entity: src.entity, label: src.label, icon: src.icon,
+      icon_on: src.icon_on, sensor: src.sensor, unit: src.unit,
       type: src.type || "",
     };
 
@@ -2655,32 +2114,46 @@
     selectButton(newSlot);
   }
 
-  function deleteButton(slot) {
-    for (var i = 0; i < NUM_SLOTS; i++) {
-      if (state.grid[i] === slot) {
-        state.grid[i] = 0;
-        if (state.sizes[slot] === 2 && i + GRID_COLS < NUM_SLOTS && state.grid[i + GRID_COLS] === -1) {
-          state.grid[i + GRID_COLS] = 0;
+  function deleteSlot(slot) {
+    var c = ctx();
+    for (var i = 0; i < c.maxSlots; i++) {
+      if (c.grid[i] === slot) {
+        c.grid[i] = 0;
+        if (c.sizes[slot] === 2 && i + GRID_COLS < c.maxSlots && c.grid[i + GRID_COLS] === -1) {
+          c.grid[i + GRID_COLS] = 0;
         }
         break;
       }
     }
-    delete state.sizes[slot];
-    var pos = state.selectedSlots.indexOf(slot);
-    if (pos !== -1) state.selectedSlots.splice(pos, 1);
+    delete c.sizes[slot];
+
+    var selIdx = c.selected.indexOf(slot);
+    if (selIdx !== -1) c.selected.splice(selIdx, 1);
+
+    if (c.isSub) {
+      var sp = getSubpage(state.editingSubpage);
+      if (slot >= 1 && slot <= sp.buttons.length) {
+        sp.buttons[slot - 1] = { entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "" };
+      }
+      sp.order = serializeSubpageGrid(sp);
+      state.subpageLastClicked = -1;
+      saveSubpageConfig(state.editingSubpage);
+    } else {
+      postText("Button Order", serializeGrid(state.grid));
+      postText("Button " + slot + " Entity", "");
+      postText("Button " + slot + " Label", "");
+      postText("Button " + slot + " Sensor", "");
+      postText("Button " + slot + " Sensor Unit", "");
+      postText("Button " + slot + " Icon", "Auto");
+      postText("Button " + slot + " Icon On", "Auto");
+      postText("Button " + slot + " Type", "");
+      postText("Subpage " + slot + " Config", "");
+      state.buttons[slot - 1].type = "";
+      delete state.subpages[slot];
+    }
+
     renderPreview();
     renderButtonSettings();
-    postText("Button Order", serializeGrid(state.grid));
-    postText("Button " + slot + " Entity", "");
-    postText("Button " + slot + " Label", "");
-    postText("Button " + slot + " Sensor", "");
-    postText("Button " + slot + " Sensor Unit", "");
-    postText("Button " + slot + " Icon", "Auto");
-    postText("Button " + slot + " Icon On", "Auto");
-    postText("Button " + slot + " Type", "");
-    postText("Subpage " + slot + " Config", "");
-    state.buttons[slot - 1].type = "";
-    delete state.subpages[slot];
   }
 
   function deleteButtons(slots) {
@@ -2712,64 +2185,148 @@
     renderButtonSettings();
   }
 
-  // ── Subpage add / delete / context menu ─────────────────────────────
+  // ── Context menu (unified) ─────────────────────────────────────────────
 
-  function addSubpageButton(pos) {
-    var homeSlot = state.editingSubpage;
-    var sp = getSubpage(homeSlot);
-    var maxPos = NUM_SLOTS - 1;
-    var newSlot = subpageFirstFreeSlot(sp);
-    while (sp.buttons.length < newSlot) {
-      sp.buttons.push({ entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "" });
-    }
-    sp.grid[pos] = newSlot;
-    sp.order = serializeSubpageGrid(sp);
-    saveSubpageConfig(homeSlot);
-    state.subpageSelectedSlots = [newSlot];
-    state.subpageLastClicked = newSlot;
-    renderPreview();
-    renderButtonSettings();
+  var ctxMenu = null;
+
+  function positionMenu(menu, e) {
+    var w = menu.offsetWidth, h = menu.offsetHeight;
+    var x = Math.max(4, Math.min(e.clientX, window.innerWidth - w - 4));
+    var y = Math.max(4, Math.min(e.clientY, window.innerHeight - h - 4));
+    menu.style.left = x + "px";
+    menu.style.top = y + "px";
   }
 
-  function deleteSubpageButton(slot) {
-    var homeSlot = state.editingSubpage;
-    var sp = getSubpage(homeSlot);
-    var maxPos = NUM_SLOTS - 1;
-    for (var i = 0; i < maxPos; i++) {
-      if (sp.grid[i] === slot) {
-        sp.grid[i] = 0;
-        if (sp.sizes[slot] === 2 && i + GRID_COLS < maxPos && sp.grid[i + GRID_COLS] === -1) {
-          sp.grid[i + GRID_COLS] = 0;
+  function addCtxItem(icon, text, handler, danger) {
+    var item = document.createElement("div");
+    item.className = "sp-ctx-item" + (danger ? " sp-ctx-danger" : "");
+    item.innerHTML = '<span class="mdi mdi-' + icon + '"></span>' + escHtml(text);
+    item.addEventListener("mousedown", function (ev) {
+      ev.preventDefault();
+      hideContextMenu();
+      handler();
+    });
+    ctxMenu.appendChild(item);
+  }
+
+  function addCtxDivider() {
+    var div = document.createElement("div");
+    div.className = "sp-ctx-divider";
+    ctxMenu.appendChild(div);
+  }
+
+  function showContextMenu(e, slot) {
+    hideContextMenu();
+    var c = ctx();
+
+    var isMulti = c.selected.length > 1 && c.selected.indexOf(slot) !== -1;
+    if (c.selected.indexOf(slot) === -1 && c.selected.length > 1) {
+      c.selected.push(slot);
+      isMulti = true;
+      renderPreview();
+      renderButtonSettings();
+    }
+
+    ctxMenu = document.createElement("div");
+    ctxMenu.className = "sp-ctx-menu";
+
+    if (isMulti && !c.isSub) {
+      var bulkSlots = c.selected.slice();
+      addCtxItem("content-cut", "Cut " + bulkSlots.length + " Buttons", function () { cutButtons(bulkSlots); });
+      addCtxItem("delete", "Delete " + bulkSlots.length + " Buttons", function () { deleteButtons(bulkSlots); }, true);
+    } else {
+      if (!c.isSub) {
+        var b = state.buttons[slot - 1];
+        if (b && b.type === "subpage") {
+          addCtxItem("cog", "Setup Subpage", function () { enterSubpage(slot); });
+          addCtxDivider();
         }
-        break;
       }
+
+      var isDbl = c.sizes[slot] === 2;
+      addCtxItem("arrow-expand-vertical", isDbl ? "Single Height" : "Double Height", function () {
+        var slotPos = c.grid.indexOf(slot);
+        var belowPos = slotPos + GRID_COLS;
+        if (isDbl) {
+          delete c.sizes[slot];
+          if (belowPos < c.maxSlots && c.grid[belowPos] === -1) c.grid[belowPos] = 0;
+        } else {
+          if (belowPos >= c.maxSlots) return;
+          if (c.grid[belowPos] > 0) {
+            if (c.isSub) return;
+            var displaced = c.grid[belowPos];
+            c.grid[belowPos] = 0;
+            var freeCell = firstFreeCell(belowPos + 1);
+            if (freeCell >= 0) c.grid[freeCell] = displaced;
+          }
+          c.sizes[slot] = 2;
+          c.grid[belowPos] = -1;
+        }
+        if (c.isSub) {
+          var sp = getSubpage(state.editingSubpage);
+          sp.order = serializeSubpageGrid(sp);
+          saveSubpageConfig(state.editingSubpage);
+        } else {
+          postText("Button Order", serializeGrid(state.grid));
+        }
+        renderPreview();
+        renderButtonSettings();
+      });
+
+      if (!c.isSub) {
+        addCtxItem("content-copy", "Duplicate", function () { duplicateButton(slot); });
+      }
+
+      addCtxItem("content-cut", "Cut", function () { cutSlot(slot); });
+      addCtxDivider();
+      addCtxItem("delete", "Delete", function () { deleteSlot(slot); }, true);
     }
-    delete sp.sizes[slot];
-    if (slot >= 1 && slot <= sp.buttons.length) {
-      sp.buttons[slot - 1] = { entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "" };
-    }
-    sp.order = serializeSubpageGrid(sp);
-    state.subpageSelectedSlots = [];
-    state.subpageLastClicked = -1;
-    saveSubpageConfig(homeSlot);
-    renderPreview();
-    renderButtonSettings();
+
+    document.body.appendChild(ctxMenu);
+    positionMenu(ctxMenu, e);
   }
 
-  // ── Cut / Paste ────────────────────────────────────────────────────
+  function showPasteContextMenu(e, pos) {
+    if (!state.clipboard) return;
+    hideContextMenu();
+    ctxMenu = document.createElement("div");
+    ctxMenu.className = "sp-ctx-menu";
+    var c = ctx();
+    var count = state.clipboard.buttons.length;
+    addCtxItem("content-paste", count > 1 ? "Paste " + count + " Buttons" : "Paste", function () {
+      if (c.isSub) {
+        pasteSubpageButton(pos);
+      } else {
+        pasteButton(pos);
+      }
+    });
+    document.body.appendChild(ctxMenu);
+    positionMenu(ctxMenu, e);
+  }
 
-  function cutButton(slot) {
-    var src = state.buttons[slot - 1];
+  function hideContextMenu() {
+    if (ctxMenu && ctxMenu.parentNode) {
+      ctxMenu.parentNode.removeChild(ctxMenu);
+    }
+    ctxMenu = null;
+  }
+
+  // ── Cut / Paste ────────────────────────────────────────────────────────
+
+  function cutSlot(slot) {
+    var c = ctx();
+    var src = c.buttons[slot - 1];
     var entry = {
       entity: src.entity, label: src.label, icon: src.icon,
       icon_on: src.icon_on, sensor: src.sensor, unit: src.unit,
-      type: src.type || "", subpageConfig: null, size: state.sizes[slot] || 1,
+      type: c.isSub ? "" : (src.type || ""), subpageConfig: null,
+      size: c.sizes[slot] || 1,
     };
-    if (src.type === "subpage" && state.subpages[slot]) {
+    if (!c.isSub && src.type === "subpage" && state.subpages[slot]) {
       entry.subpageConfig = serializeSubpageConfig(state.subpages[slot]);
     }
     state.clipboard = { buttons: [entry] };
-    deleteButton(slot);
+    deleteSlot(slot);
   }
 
   function cutButtons(slots) {
@@ -2788,18 +2345,6 @@
     });
     state.clipboard = { buttons: entries };
     deleteButtons(slots);
-  }
-
-  function cutSubpageButton(slot) {
-    var homeSlot = state.editingSubpage;
-    var sp = getSubpage(homeSlot);
-    var src = sp.buttons[slot - 1];
-    state.clipboard = { buttons: [{
-      entity: src.entity, label: src.label, icon: src.icon,
-      icon_on: src.icon_on, sensor: src.sensor, unit: src.unit,
-      type: "", subpageConfig: null, size: sp.sizes[slot] || 1,
-    }] };
-    deleteSubpageButton(slot);
   }
 
   function pasteButton(pos) {
@@ -2886,141 +2431,7 @@
     renderButtonSettings();
   }
 
-  function showSubpageContextMenu(e, slot) {
-    e.preventDefault();
-    hideContextMenu();
-
-    ctxMenu = document.createElement("div");
-    ctxMenu.className = "sp-ctx-menu";
-
-    var homeSlot = state.editingSubpage;
-    var sp = getSubpage(homeSlot);
-    var isDbl = sp.sizes[slot] === 2;
-    var maxPos = NUM_SLOTS - 1;
-
-    var dblItem = document.createElement("div");
-    dblItem.className = "sp-ctx-item";
-    dblItem.innerHTML = '<span class="mdi mdi-arrow-expand-vertical"></span>' + (isDbl ? "Single Height" : "Double Height");
-    dblItem.addEventListener("mousedown", function (ev) {
-      ev.preventDefault();
-      hideContextMenu();
-      var slotPos = sp.grid.indexOf(slot);
-      var belowPos = slotPos + GRID_COLS;
-      if (sp.sizes[slot] === 2) {
-        delete sp.sizes[slot];
-        if (belowPos < maxPos && sp.grid[belowPos] === -1) sp.grid[belowPos] = 0;
-      } else {
-        if (belowPos >= maxPos) return;
-        if (sp.grid[belowPos] > 0) return;
-        sp.sizes[slot] = 2;
-        sp.grid[belowPos] = -1;
-      }
-      sp.order = serializeSubpageGrid(sp);
-      saveSubpageConfig(homeSlot);
-      renderPreview();
-      renderButtonSettings();
-    });
-    ctxMenu.appendChild(dblItem);
-
-    var cutItem = document.createElement("div");
-    cutItem.className = "sp-ctx-item";
-    cutItem.innerHTML = '<span class="mdi mdi-content-cut"></span>Cut';
-    cutItem.addEventListener("mousedown", function (ev) {
-      ev.preventDefault();
-      hideContextMenu();
-      cutSubpageButton(slot);
-    });
-    ctxMenu.appendChild(cutItem);
-
-    var divider = document.createElement("div");
-    divider.className = "sp-ctx-divider";
-    ctxMenu.appendChild(divider);
-
-    var delItem = document.createElement("div");
-    delItem.className = "sp-ctx-item sp-ctx-danger";
-    delItem.innerHTML = '<span class="mdi mdi-delete"></span>Delete';
-    delItem.addEventListener("mousedown", function (ev) {
-      ev.preventDefault();
-      hideContextMenu();
-      deleteSubpageButton(slot);
-    });
-    ctxMenu.appendChild(delItem);
-
-    document.body.appendChild(ctxMenu);
-
-    var menuW = ctxMenu.offsetWidth;
-    var menuH = ctxMenu.offsetHeight;
-    var x = e.clientX;
-    var y = e.clientY;
-    if (x + menuW > window.innerWidth) x = window.innerWidth - menuW - 4;
-    if (y + menuH > window.innerHeight) y = window.innerHeight - menuH - 4;
-    if (x < 0) x = 4;
-    if (y < 0) y = 4;
-    ctxMenu.style.left = x + "px";
-    ctxMenu.style.top = y + "px";
-  }
-
-  // ── Paste context menus (empty cells) ──────────────────────────────
-
-  function showPasteContextMenu(e, pos) {
-    e.preventDefault();
-    if (!state.clipboard) return;
-    hideContextMenu();
-    ctxMenu = document.createElement("div");
-    ctxMenu.className = "sp-ctx-menu";
-    var count = state.clipboard.buttons.length;
-    var pasteItem = document.createElement("div");
-    pasteItem.className = "sp-ctx-item";
-    pasteItem.innerHTML = '<span class="mdi mdi-content-paste"></span>' + (count > 1 ? "Paste " + count + " Buttons" : "Paste");
-    pasteItem.addEventListener("mousedown", function (ev) {
-      ev.preventDefault();
-      hideContextMenu();
-      pasteButton(pos);
-    });
-    ctxMenu.appendChild(pasteItem);
-    document.body.appendChild(ctxMenu);
-    var menuW = ctxMenu.offsetWidth;
-    var menuH = ctxMenu.offsetHeight;
-    var x = e.clientX;
-    var y = e.clientY;
-    if (x + menuW > window.innerWidth) x = window.innerWidth - menuW - 4;
-    if (y + menuH > window.innerHeight) y = window.innerHeight - menuH - 4;
-    if (x < 0) x = 4;
-    if (y < 0) y = 4;
-    ctxMenu.style.left = x + "px";
-    ctxMenu.style.top = y + "px";
-  }
-
-  function showSubpagePasteContextMenu(e, pos) {
-    e.preventDefault();
-    if (!state.clipboard) return;
-    hideContextMenu();
-    ctxMenu = document.createElement("div");
-    ctxMenu.className = "sp-ctx-menu";
-    var count = state.clipboard.buttons.length;
-    var pasteItem = document.createElement("div");
-    pasteItem.className = "sp-ctx-item";
-    pasteItem.innerHTML = '<span class="mdi mdi-content-paste"></span>' + (count > 1 ? "Paste " + count + " Buttons" : "Paste");
-    pasteItem.addEventListener("mousedown", function (ev) {
-      ev.preventDefault();
-      hideContextMenu();
-      pasteSubpageButton(pos);
-    });
-    ctxMenu.appendChild(pasteItem);
-    document.body.appendChild(ctxMenu);
-    var menuW = ctxMenu.offsetWidth;
-    var menuH = ctxMenu.offsetHeight;
-    var x = e.clientX;
-    var y = e.clientY;
-    if (x + menuW > window.innerWidth) x = window.innerWidth - menuW - 4;
-    if (y + menuH > window.innerHeight) y = window.innerHeight - menuH - 4;
-    if (x < 0) x = 4;
-    if (y < 0) y = 4;
-    ctxMenu.style.left = x + "px";
-    ctxMenu.style.top = y + "px";
-  }
-
-  // ── Export / Import ─────────────────────────────────────────────────
+  // ── Export / Import ────────────────────────────────────────────────────
 
   function exportConfig() {
     var data = {
@@ -3032,12 +2443,8 @@
       button_off_color: state.offColor,
       buttons: state.buttons.map(function (b) {
         return {
-          entity: b.entity,
-          label: b.label,
-          icon: b.icon,
-          icon_on: b.icon_on,
-          sensor: b.sensor,
-          unit: b.unit,
+          entity: b.entity, label: b.label, icon: b.icon,
+          icon_on: b.icon_on, sensor: b.sensor, unit: b.unit,
           type: b.type || "",
         };
       }),
@@ -3109,87 +2516,8 @@
         postText("Button Off Color", data.button_off_color || "313131");
 
         var empty = { entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "", type: "" };
-        var buttons, orderStr, spKeyMap;
-
-        if (importedCount > NUM_SLOTS) {
-          // Remap: collect used buttons in grid-visual order, compact into available slots
-          var origParts = (data.button_order || "").split(",");
-          var usedSlots = [];
-          var seen = {};
-          for (var j = 0; j < origParts.length; j++) {
-            var tok = origParts[j].trim();
-            if (!tok) continue;
-            var dbl = tok.charAt(tok.length - 1) === "d";
-            var num = parseInt(tok, 10);
-            if (isNaN(num) || num < 1 || num > importedCount || seen[num]) continue;
-            seen[num] = true;
-            usedSlots.push({ oldSlot: num, isDouble: dbl });
-          }
-          for (var j = 0; j < importedCount; j++) {
-            var sn = j + 1;
-            if (seen[sn]) continue;
-            var bb = data.buttons[j];
-            if (bb.entity || bb.label || bb.type) {
-              usedSlots.push({ oldSlot: sn, isDouble: false });
-            }
-          }
-
-          var limit = Math.min(usedSlots.length, NUM_SLOTS);
-          var slotMap = {};
-          buttons = [];
-          var newSizes = {};
-          for (var j = 0; j < limit; j++) {
-            var ns = j + 1;
-            slotMap[usedSlots[j].oldSlot] = ns;
-            buttons.push(data.buttons[usedSlots[j].oldSlot - 1]);
-            if (usedSlots[j].isDouble) newSizes[ns] = 2;
-          }
-          for (var j = limit; j < NUM_SLOTS; j++) buttons.push(empty);
-
-          var newGrid = [];
-          for (var j = 0; j < NUM_SLOTS; j++) newGrid.push(0);
-          var pos = 0;
-          for (var j = 0; j < limit && pos < NUM_SLOTS; j++) {
-            var ns = j + 1;
-            var isD = newSizes[ns] === 2;
-            var row = Math.floor(pos / GRID_COLS);
-            if (isD && row >= GRID_ROWS - 1) { isD = false; delete newSizes[ns]; }
-            newGrid[pos] = ns;
-            if (isD) {
-              var bp = pos + GRID_COLS;
-              if (bp < NUM_SLOTS) newGrid[bp] = -1;
-            }
-            pos++;
-            while (pos < NUM_SLOTS && newGrid[pos] === -1) pos++;
-          }
-
-          state.sizes = newSizes;
-          orderStr = serializeGrid(newGrid);
-
-          spKeyMap = {};
-          if (data.subpages) {
-            for (var k in data.subpages) {
-              var oldKey = parseInt(k, 10);
-              if (slotMap[oldKey]) spKeyMap[k] = slotMap[oldKey];
-            }
-          }
-        } else {
-          buttons = [];
-          for (var j = 0; j < NUM_SLOTS; j++) {
-            buttons.push(j < importedCount ? data.buttons[j] : empty);
-          }
-          orderStr = data.button_order || "";
-          spKeyMap = {};
-          if (data.subpages) {
-            for (var k in data.subpages) {
-              var kn = parseInt(k, 10);
-              if (kn >= 1 && kn <= NUM_SLOTS) spKeyMap[k] = kn;
-            }
-          }
-        }
-
         for (var i = 0; i < NUM_SLOTS; i++) {
-          var b = buttons[i];
+          var b = i < importedCount ? data.buttons[i] : empty;
           var n = i + 1;
           postText("Button " + n + " Entity", b.entity || "");
           postText("Button " + n + " Label", b.label || "");
@@ -3200,12 +2528,9 @@
           postText("Button " + n + " Type", b.type || "");
 
           state.buttons[i] = {
-            entity: b.entity || "",
-            label: b.label || "",
-            icon: b.icon || "Auto",
-            icon_on: b.icon_on || "Auto",
-            sensor: b.sensor || "",
-            unit: b.unit || "",
+            entity: b.entity || "", label: b.label || "",
+            icon: b.icon || "Auto", icon_on: b.icon_on || "Auto",
+            sensor: b.sensor || "", unit: b.unit || "",
             type: b.type || "",
           };
         }
@@ -3213,16 +2538,16 @@
         state.subpages = {};
         if (data.subpages) {
           for (var k in data.subpages) {
-            var newKey = spKeyMap[k];
-            if (!newKey) continue;
+            if (parseInt(k, 10) > NUM_SLOTS) continue;
             var sp = parseSubpageConfig(data.subpages[k]);
             sp.sizes = {};
             buildSubpageGrid(sp);
-            state.subpages[String(newKey)] = sp;
-            postText("Subpage " + newKey + " Config", data.subpages[k]);
+            state.subpages[k] = sp;
+            postText("Subpage " + k + " Config", data.subpages[k]);
           }
         }
 
+        var orderStr = data.button_order || "";
         postText("Button Order", orderStr);
         state.grid = parseOrder(orderStr);
         state.onColor = data.button_on_color || "FF8C00";
@@ -3274,7 +2599,7 @@
     document.body.removeChild(input);
   }
 
-  // ── Clock ───────────────────────────────────────────────────────────
+  // ── Clock (minute-aligned) ─────────────────────────────────────────────
 
   function updateClock() {
     if (!els.clock) return;
@@ -3282,9 +2607,11 @@
     els.clock.textContent =
       String(now.getHours()).padStart(2, "0") + ":" +
       String(now.getMinutes()).padStart(2, "0");
+    var msToNext = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+    setTimeout(updateClock, msToNext + 50);
   }
 
-  // ── SSE ──────────────────────────────────────────────────────────────
+  // ── SSE ────────────────────────────────────────────────────────────────
 
   function connectEvents() {
     if (_eventSource) { _eventSource.close(); _eventSource = null; }
@@ -3319,12 +2646,12 @@
     var sseHandlers = {
       "text-button_order": function (val) {
         orderReceived = !!(val && val.trim());
+        state.sizes = {};
         state.grid = parseOrder(val);
         state.selectedSlots = state.selectedSlots.filter(function (s) {
           return state.grid.indexOf(s) !== -1;
         });
-        renderPreview();
-        renderButtonSettings();
+        scheduleRender();
       },
       "text-button_on_color": function (val) {
         state.onColor = val;
@@ -3414,8 +2741,7 @@
           var slot = parseInt(m[1], 10);
           if (slot >= 1 && slot <= NUM_SLOTS) {
             state.buttons[slot - 1].type = val;
-            renderPreview();
-            renderButtonSettings();
+            scheduleRender();
           }
         },
       },
@@ -3429,8 +2755,7 @@
             buildSubpageGrid(sp);
             state.subpages[slot] = sp;
             if (state.editingSubpage === slot) {
-              renderPreview();
-              renderButtonSettings();
+              scheduleRender();
             }
           }
         },
@@ -3462,7 +2787,7 @@
             if (state.selectedSlots.length === 1 && state.selectedSlots[0] === slot && isSettingsFocused()) {
               syncInput(document.getElementById("sp-inp-icon"), val);
               var prev = document.querySelector(".sp-icon-picker-preview");
-              if (prev) prev.className = "sp-icon-picker-preview mdi mdi-" + (ICON_MAP[val] || "cog");
+              if (prev) prev.className = "sp-icon-picker-preview mdi mdi-" + iconSlug(val);
             } else {
               renderButtonSettings();
             }
@@ -3481,7 +2806,7 @@
               var prev = document.getElementById("sp-inp-icon-on-picker");
               if (prev) {
                 var p = prev.querySelector(".sp-icon-picker-preview");
-                if (p) p.className = "sp-icon-picker-preview mdi mdi-" + (ICON_MAP[val] || "cog");
+                if (p) p.className = "sp-icon-picker-preview mdi mdi-" + iconSlug(val);
               }
             } else {
               renderButtonSettings();
@@ -3507,7 +2832,6 @@
       console.log("[SSE] unhandled:", id, val);
     });
 
-    // Log events
     source.addEventListener("log", function (e) {
       var d;
       try { d = JSON.parse(e.data); } catch (_) { d = { msg: e.data }; }
@@ -3573,7 +2897,7 @@
     }
   }
 
-  // ── Log viewer ──────────────────────────────────────────────────────
+  // ── Log viewer ─────────────────────────────────────────────────────────
 
   function appendLog(msg, lvl) {
     if (!els.logOutput) return;
@@ -3589,12 +2913,15 @@
 
     var atBottom = els.logOutput.scrollHeight - els.logOutput.scrollTop - els.logOutput.clientHeight < 40;
     els.logOutput.appendChild(line);
-    while (els.logOutput.childNodes.length > 1000)
-      els.logOutput.removeChild(els.logOutput.firstChild);
+    var overflow = els.logOutput.childNodes.length - 1000;
+    if (overflow > 0) {
+      for (var i = 0; i < overflow; i++)
+        els.logOutput.removeChild(els.logOutput.firstChild);
+    }
     if (atBottom) els.logOutput.scrollTop = els.logOutput.scrollHeight;
   }
 
-  // ── Start ───────────────────────────────────────────────────────────
+  // ── Start ──────────────────────────────────────────────────────────────
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

@@ -94,16 +94,29 @@ def gen_sensors_domain_icons(data):
 
 
 def gen_www_js_icon_map(data):
-    """JS ICON_MAP object entries."""
-    lines = []
+    """JS ICON_EXCEPTIONS + ICON_NAMES for www.js."""
+    fb = data["fallback"]
+    exceptions = [f'    Auto: "{fb["mdi"]}",\n']
+    names = []
+
     for icon in data["icons"]:
         name = icon["name"]
         mdi = icon["mdi"]
-        # Use unquoted key if it's a valid JS identifier
-        if re.match(r"^[A-Za-z_$][A-Za-z0-9_$]*$", name):
-            lines.append(f'    {name}: "{mdi}",\n')
-        else:
-            lines.append(f'    "{name}": "{mdi}",\n')
+        names.append(name)
+        expected = re.sub(r"[^a-z0-9 ]", "", name.lower()).replace(" ", "-")
+        if expected != mdi:
+            key = name if re.match(r"^[A-Za-z_$][A-Za-z0-9_$]*$", name) else f'"{name}"'
+            exceptions.append(f'    {key}: "{mdi}",\n')
+
+    lines = ["  var ICON_EXCEPTIONS = {\n"]
+    lines.extend(exceptions)
+    lines.append("  };\n")
+    lines.append("  var ICON_NAMES = [\n")
+    for i in range(0, len(names), 6):
+        chunk = names[i : i + 6]
+        formatted = ", ".join(f'"{n}"' for n in chunk)
+        lines.append(f"    {formatted},\n")
+    lines.append("  ];\n")
     return "".join(lines)
 
 
