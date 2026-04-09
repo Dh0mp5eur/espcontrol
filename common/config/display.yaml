@@ -18,7 +18,9 @@ switch:
       sorting_group_id: sg_display
     on_turn_on:
       - lambda: |-
-          lv_obj_clear_flag(id(temperatures), LV_OBJ_FLAG_HIDDEN);
+          if (lv_scr_act() == id(main_page)) {
+            lv_obj_clear_flag(id(temperatures), LV_OBJ_FLAG_HIDDEN);
+          }
           if (id(outdoor_temp_enable).state) {
             lv_label_set_text(id(temperatures), "-° / -°");
           } else {
@@ -45,7 +47,9 @@ switch:
       sorting_group_id: sg_display
     on_turn_on:
       - lambda: |-
-          lv_obj_clear_flag(id(temperatures), LV_OBJ_FLAG_HIDDEN);
+          if (lv_scr_act() == id(main_page)) {
+            lv_obj_clear_flag(id(temperatures), LV_OBJ_FLAG_HIDDEN);
+          }
           if (id(indoor_temp_enable).state) {
             lv_label_set_text(id(temperatures), "-° / -°");
           } else {
