@@ -882,17 +882,26 @@ esphome:
 
               int sp_pos[NUM_SLOTS] = {};
               bool sp_dbl[NUM_SLOTS] = {};
+              int back_pos = 0;
+              bool back_dbl = false;
+              bool has_back_token = false;
               if (!sp_order_str.empty()) {
                 size_t gp2 = 0, st2 = 0;
-                while (st2 <= sp_order_str.length() && gp2 < (size_t)(NUM_SLOTS - 1)) {
+                while (st2 <= sp_order_str.length() && gp2 < (size_t)(NUM_SLOTS)) {
                   size_t cm = sp_order_str.find(',', st2);
                   if (cm == std::string::npos) cm = sp_order_str.length();
                   if (cm > st2) {
                     std::string tk = sp_order_str.substr(st2, cm - st2);
-                    bool d = !tk.empty() && tk.back() == 'd';
-                    if (d) tk.pop_back();
-                    int v = atoi(tk.c_str());
-                    if (v >= 1 && v <= (int)sp_btns.size()) { sp_pos[gp2] = v; sp_dbl[v - 1] = d; }
+                    if (tk == "B" || tk == "Bd") {
+                      back_pos = gp2;
+                      back_dbl = (tk == "Bd");
+                      has_back_token = true;
+                    } else {
+                      bool d = !tk.empty() && tk.back() == 'd';
+                      if (d) tk.pop_back();
+                      int v = atoi(tk.c_str());
+                      if (v >= 1 && v <= (int)sp_btns.size()) { sp_pos[gp2] = v; sp_dbl[v - 1] = d; }
+                    }
                   }
                   gp2++;
                   st2 = cm + 1;
@@ -920,7 +929,8 @@ esphome:
               lv_obj_set_style_shadow_width(back_btn, 0, LV_PART_MAIN);
               if (has_off) lv_obj_set_style_bg_color(back_btn, lv_color_hex(off_val),
                 static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT));
-              lv_obj_set_grid_cell(back_btn, LV_GRID_ALIGN_STRETCH, 0, 1, LV_GRID_ALIGN_STRETCH, 0, 1);
+              lv_obj_set_grid_cell(back_btn, LV_GRID_ALIGN_STRETCH, back_pos % COLS, 1,
+                LV_GRID_ALIGN_STRETCH, back_pos / COLS, back_dbl ? 2 : 1);
               lv_obj_t *bi = lv_label_create(back_btn);
               lv_obj_set_style_text_font(bi, sp_icon_fnt, LV_PART_MAIN);
               lv_label_set_text(bi, "\U000F004D");
@@ -934,13 +944,13 @@ esphome:
                 lv_scr_load_anim((lv_obj_t *)lv_event_get_user_data(e), LV_SCR_LOAD_ANIM_NONE, 0, 0, false);
               }, LV_EVENT_CLICKED, main_scr);
 
-              for (int gp = 0; gp < NUM_SLOTS - 1; gp++) {
+              for (int gp = 0; gp < NUM_SLOTS; gp++) {
                 int bn = sp_pos[gp];
                 if (bn < 1 || bn > (int)sp_btns.size()) continue;
                 auto &sb = sp_btns[bn - 1];
-                int op = gp + 1;
-                int col = op % COLS;
-                int row = op / COLS;
+                int col, row;
+                if (has_back_token) { col = gp % COLS; row = gp / COLS; }
+                else { int op = gp + 1; col = op % COLS; row = op / COLS; }
                 int rs = sp_dbl[bn - 1] ? 2 : 1;
 
                 lv_obj_t *sb_btn = lv_btn_create(sub_scr);

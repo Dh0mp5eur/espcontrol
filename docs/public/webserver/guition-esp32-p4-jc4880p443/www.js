@@ -353,6 +353,7 @@
     "position:relative;background:#222;opacity:.6}" +
     ".sp-back-btn .sp-btn-icon{font-size:var(--back-icon);line-height:1;color:#fff}" +
     ".sp-back-btn .sp-btn-label{font-size:var(--back-label);line-height:1.2;color:#fff}" +
+    ".sp-back-btn.sp-btn-double{grid-row:span 2}" +
 
     ".sp-btn-label-row{display:flex;align-items:baseline;width:100%}" +
     ".sp-btn-label-row .sp-btn-label{flex:1;min-width:0}" +
@@ -437,7 +438,7 @@
       var sp = getSubpage(state.editingSubpage);
       return {
         grid: sp.grid, sizes: sp.sizes, buttons: sp.buttons,
-        maxSlots: NUM_SLOTS - 1, selected: state.subpageSelectedSlots,
+        maxSlots: NUM_SLOTS, selected: state.subpageSelectedSlots,
         isSub: true,
         setSelected: function (s) { state.subpageSelectedSlots = s; },
         setLastClicked: function (s) { state.subpageLastClicked = s; },
@@ -479,7 +480,7 @@
 
   function applySpans(grid, sizes, maxSlots) {
     for (var i = 0; i < maxSlots; i++) {
-      if (grid[i] > 0 && sizes[grid[i]] === 2) {
+      if ((grid[i] > 0 || grid[i] === -2) && sizes[grid[i]] === 2) {
         var below = i + GRID_COLS;
         if (below < maxSlots) grid[below] = -1;
       }
@@ -654,22 +655,50 @@
   }
 
   function buildSubpageGrid(sp) {
-    var maxPos = NUM_SLOTS - 1;
     var grid = [];
-    for (var i = 0; i < maxPos; i++) grid.push(0);
+    for (var i = 0; i < NUM_SLOTS; i++) grid.push(0);
     sp.sizes = sp.sizes || {};
     if (sp.order.length > 0) {
-      for (var i = 0; i < sp.order.length && i < maxPos; i++) {
-        var s = sp.order[i];
-        var dbl = s.charAt(s.length - 1) === "d";
-        var n = parseInt(s, 10);
-        if (n >= 1 && n <= sp.buttons.length && !isNaN(n)) {
-          grid[i] = n;
-          if (dbl) sp.sizes[n] = 2;
+      var hasBack = false;
+      for (var i = 0; i < sp.order.length; i++) {
+        var t = sp.order[i];
+        if (t === "B" || t === "Bd") { hasBack = true; break; }
+      }
+      if (hasBack) {
+        for (var i = 0; i < sp.order.length && i < NUM_SLOTS; i++) {
+          var s = sp.order[i];
+          if (!s) continue;
+          if (s === "B" || s === "Bd") {
+            grid[i] = -2;
+            if (s === "Bd") sp.sizes[-2] = 2; else delete sp.sizes[-2];
+            continue;
+          }
+          var dbl = s.charAt(s.length - 1) === "d";
+          var n = parseInt(s, 10);
+          if (n >= 1 && n <= sp.buttons.length && !isNaN(n)) {
+            grid[i] = n;
+            if (dbl) sp.sizes[n] = 2;
+          }
+        }
+      } else {
+        grid[0] = -2;
+        delete sp.sizes[-2];
+        for (var i = 0; i < sp.order.length && i + 1 < NUM_SLOTS; i++) {
+          var s = sp.order[i];
+          if (!s) continue;
+          var dbl = s.charAt(s.length - 1) === "d";
+          var n = parseInt(s, 10);
+          if (n >= 1 && n <= sp.buttons.length && !isNaN(n)) {
+            grid[i + 1] = n;
+            if (dbl) sp.sizes[n] = 2;
+          }
         }
       }
-      applySpans(grid, sp.sizes, maxPos);
+    } else {
+      grid[0] = -2;
+      delete sp.sizes[-2];
     }
+    applySpans(grid, sp.sizes, NUM_SLOTS);
     sp.grid = grid;
     return grid;
   }
@@ -678,13 +707,18 @@
     var grid = sp.grid;
     var last = -1;
     for (var i = grid.length - 1; i >= 0; i--) {
-      if (grid[i] > 0) { last = i; break; }
+      if (grid[i] > 0 || grid[i] === -2) { last = i; break; }
     }
     if (last < 0) return [];
     var order = [];
     for (var i = 0; i <= last; i++) {
-      if (grid[i] <= 0) { order.push(""); continue; }
-      order.push(grid[i] + (sp.sizes[grid[i]] === 2 ? "d" : ""));
+      if (grid[i] === -2) {
+        order.push(sp.sizes[-2] === 2 ? "Bd" : "B");
+      } else if (grid[i] <= 0) {
+        order.push("");
+      } else {
+        order.push(grid[i] + (sp.sizes[grid[i]] === 2 ? "d" : ""));
+      }
     }
     return order;
   }
@@ -1329,14 +1363,6 @@
 
     if (c.isSub) {
       if (els.previewHint) els.previewHint.style.display = "none";
-      var backBtn = document.createElement("div");
-      backBtn.className = "sp-back-btn";
-      backBtn.innerHTML =
-        '<span class="sp-btn-icon mdi mdi-chevron-left"></span>' +
-        '<span class="sp-btn-label">Back</span>';
-      backBtn.style.cursor = "pointer";
-      backBtn.addEventListener("click", exitSubpage);
-      main.appendChild(backBtn);
     } else {
       if (els.previewHint) els.previewHint.style.display = "";
     }
@@ -1345,7 +1371,17 @@
       var slot = c.grid[pos];
       if (slot === -1) continue;
 
-      if (slot > 0) {
+      if (slot === -2) {
+        var backBtn = document.createElement("div");
+        backBtn.className = "sp-back-btn" + (c.sizes[-2] === 2 ? " sp-btn-double" : "");
+        backBtn.innerHTML =
+          '<span class="sp-btn-icon mdi mdi-chevron-left"></span>' +
+          '<span class="sp-btn-label">Back</span>';
+        backBtn.style.cursor = "pointer";
+        backBtn.setAttribute("data-pos", pos);
+        backBtn.draggable = true;
+        main.appendChild(backBtn);
+      } else if (slot > 0) {
         var bIdx = slot - 1;
         if (c.isSub && bIdx >= c.buttons.length) continue;
         var b = c.buttons[bIdx];
@@ -1807,7 +1843,7 @@
     var c = ctx();
     if (c.grid[pos] === -1) {
       var above = pos - GRID_COLS;
-      if (above >= 0 && c.grid[above] > 0 && c.sizes[c.grid[above]] === 2) return above;
+      if (above >= 0 && (c.grid[above] > 0 || c.grid[above] === -2) && c.sizes[c.grid[above]] === 2) return above;
     }
     return pos;
   }
@@ -1823,7 +1859,7 @@
     }
     var x = e.clientX, y = e.clientY;
     var children = container.children;
-    var skip = state.editingSubpage ? 1 : 0;
+    var skip = 0;
     var bestDist = Infinity, bestPos = -1;
     for (var i = skip; i < children.length; i++) {
       var r = children[i].getBoundingClientRect();
@@ -1849,10 +1885,10 @@
       grid[toPos] = movingSlot;
       grid[fromPos] = targetSlot;
       for (var i = 0; i < c.maxSlots; i++) {
-        if (grid[i] > 0 && c.sizes[grid[i]] === 2) {
+        if ((grid[i] > 0 || grid[i] === -2) && c.sizes[grid[i]] === 2) {
           var below = i + GRID_COLS;
           if (below < c.maxSlots) {
-            if (grid[below] > 0) {
+            if (grid[below] > 0 || grid[below] === -2) {
               var displaced = grid[below];
               grid[below] = -1;
               for (var j = 0; j < c.maxSlots; j++) {
@@ -1866,7 +1902,7 @@
       }
     } else {
       grid[fromPos] = 0;
-      if (grid[toPos] > 0) {
+      if (grid[toPos] > 0 || grid[toPos] === -2) {
         var displaced = grid[toPos];
         grid[toPos] = 0;
         for (var i = 1; i < c.maxSlots; i++) {
@@ -1914,6 +1950,9 @@
       var slot = c.grid[pos];
       if (slot > 0) {
         handleBtnClick(e, slot, pos);
+      } else if (slot === -2) {
+        if (didDrag) { didDrag = false; return; }
+        exitSubpage();
       } else if (slot === 0) {
         addSlot(pos);
       }
@@ -1929,6 +1968,8 @@
       var slot = c.grid[pos];
       if (slot > 0) {
         showContextMenu(e, slot);
+      } else if (slot === -2) {
+        showBackContextMenu(e);
       } else if (slot === 0 && state.clipboard) {
         showPasteContextMenu(e, pos);
       }
@@ -1936,7 +1977,7 @@
 
     // Drag delegation
     container.addEventListener("dragstart", function (e) {
-      var target = e.target.closest(".sp-btn");
+      var target = e.target.closest(".sp-btn") || e.target.closest(".sp-back-btn");
       if (!target) return;
       var pos = parseInt(target.getAttribute("data-pos"), 10);
       dragSrcPos = pos;
@@ -2328,6 +2369,39 @@
     positionMenu(ctxMenu, e);
   }
 
+  function showBackContextMenu(e) {
+    hideContextMenu();
+    ctxMenu = document.createElement("div");
+    ctxMenu.className = "sp-ctx-menu";
+    var sp = getSubpage(state.editingSubpage);
+    var isDbl = sp.sizes[-2] === 2;
+    addCtxItem("arrow-expand-vertical", isDbl ? "Single Height" : "Double Height", function () {
+      var backPos = sp.grid.indexOf(-2);
+      var belowPos = backPos + GRID_COLS;
+      if (isDbl) {
+        delete sp.sizes[-2];
+        if (belowPos < NUM_SLOTS && sp.grid[belowPos] === -1) sp.grid[belowPos] = 0;
+      } else {
+        if (belowPos >= NUM_SLOTS) return;
+        if (sp.grid[belowPos] > 0) {
+          var displaced = sp.grid[belowPos];
+          sp.grid[belowPos] = 0;
+          for (var j = 0; j < NUM_SLOTS; j++) {
+            if (sp.grid[j] === 0) { sp.grid[j] = displaced; break; }
+          }
+        }
+        sp.sizes[-2] = 2;
+        sp.grid[belowPos] = -1;
+      }
+      sp.order = serializeSubpageGrid(sp);
+      saveSubpageConfig(state.editingSubpage);
+      renderPreview();
+      renderButtonSettings();
+    });
+    document.body.appendChild(ctxMenu);
+    positionMenu(ctxMenu, e);
+  }
+
   function showPasteContextMenu(e, pos) {
     if (!state.clipboard) return;
     hideContextMenu();
@@ -2431,7 +2505,7 @@
     if (!state.clipboard) return;
     var homeSlot = state.editingSubpage;
     var sp = getSubpage(homeSlot);
-    var maxPos = NUM_SLOTS - 1;
+    var maxPos = NUM_SLOTS;
     var entries = state.clipboard.buttons;
     var lastSlot = -1;
     for (var i = 0; i < entries.length; i++) {
