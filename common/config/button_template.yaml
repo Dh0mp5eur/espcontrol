@@ -3,7 +3,7 @@
 # =============================================================================
 # Per-button config stored as a single semicolon-delimited string:
 #   entity_id;label;icon;icon_on;sensor;sensor_unit;type
-# Subpage config kept separate due to ESPHome 255-char text limit.
+# Subpage config kept separate for clarity; each has its own text entity.
 # Included once per button slot from packages.yaml with vars: { num: "N" }.
 # =============================================================================
 
@@ -32,7 +32,7 @@ text:
     restore_value: true
     initial_value: ""
     min_length: 0
-    max_length: 255
+    max_length: 1024
     mode: text
     entity_category: config
     icon: "mdi:file-tree"

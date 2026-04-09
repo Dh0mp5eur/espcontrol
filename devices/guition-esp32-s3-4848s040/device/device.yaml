@@ -31,9 +31,26 @@ espcontrol:
 # ---------------------------------------------------------------------------
 # ESPHome core (device name from substitutions)
 # ---------------------------------------------------------------------------
+# ESP32-S3 with octal PSRAM and MIPI RGB display fails to reinitialize
+# peripherals after a software reset (USB flash or OTA). A brief deep
+# sleep forces a full hardware reset on wake, equivalent to a power cycle.
+# The on_boot handler catches USB-triggered resets; the OTA on_end hook
+# catches wireless updates.
+# ---------------------------------------------------------------------------
 esphome:
   name: ${name}
   friendly_name: ${friendly_name}
+  platformio_options:
+    build_flags:
+      - "-include esp_sleep.h"
+  on_boot:
+    - priority: 800
+      then:
+        - lambda: |-
+            if (esp_reset_reason() == ESP_RST_USB) {
+              esp_sleep_enable_timer_wakeup(100000);
+              esp_deep_sleep_start();
+            }
 
 # ---------------------------------------------------------------------------
 # PSRAM (video frame buffer memory)
@@ -43,18 +60,7 @@ psram:
   speed: 80MHz
 
 # ---------------------------------------------------------------------------
-# Deep sleep (used by OTA to force a full hardware reset on wake)
-# ---------------------------------------------------------------------------
-deep_sleep:
-  id: ota_reboot
-  sleep_duration: 100ms
-
-# ---------------------------------------------------------------------------
 # OTA updates (ESPHome native + HTTP-based)
-# ---------------------------------------------------------------------------
-# ESP32-S3 with octal PSRAM and MIPI RGB display fails to reinitialize
-# peripherals after a software reset. Deep sleep wake triggers a full
-# hardware reset, equivalent to a power cycle.
 # ---------------------------------------------------------------------------
 ota:
   - platform: esphome
@@ -63,9 +69,9 @@ ota:
         - light.turn_off: display_backlight
     on_end:
       then:
-        - deep_sleep.enter:
-            id: ota_reboot
-            sleep_duration: 100ms
+        - lambda: |-
+            esp_sleep_enable_timer_wakeup(100000);
+            esp_deep_sleep_start();
   - platform: http_request
 
 # ---------------------------------------------------------------------------
