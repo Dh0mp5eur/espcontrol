@@ -148,10 +148,9 @@ export default defineConfig({
         ],
       },
       {
-        text: 'Features',
+        text: 'Configuring',
         items: [
           { text: 'Setup', link: '/features/setup' },
-          { text: 'Settings', link: '/features/settings' },
           { text: 'Buttons & Icons', link: '/features/buttons-and-icons' },
           { text: 'Appearance', link: '/features/appearance' },
           { text: 'Display & Screensaver', link: '/features/display-screensaver' },

@@ -53,7 +53,7 @@ If **Auto Update** is turned on (the default), the panel checks for and installs
 To update manually:
 
 1. Open the panel's web page.
-2. Go to the **Settings** tab.
+2. Go to the **Settings** tab in the [Setup](/features/setup).
 3. Under **Firmware**, press **Check for Update**.
 4. If a new version is available, the panel will download and install it.
 
@@ -79,7 +79,7 @@ Subpages are like folders for your buttons. Set any button to the **Subpage** ty
 
 ## Can I back up my setup?
 
-Yes. In the [Setup](/features/setup) **Settings** tab, under **Backup**, you can **Export** your entire setup (buttons, subpages, colours, and display settings) as a file. To restore it later, use **Import** to load the saved file. You can also use this to copy your setup to a different panel — the import will rearrange buttons automatically if the panels are different sizes.
+Yes. In the [Setup](/features/setup) **Settings** tab, under **Backup**, you can **Export** your entire setup (buttons, subpages, colours, and display settings) as a file. To restore it later, use **Import** to load the saved file. You can also use this to copy your setup to a different panel — the import will rearrange buttons automatically if the panels are different sizes. See [Backup](/features/backup) for details.
 
 ## Which panels are supported?
 

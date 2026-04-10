@@ -53,7 +53,13 @@ When you tap a button to select it, a settings panel appears below the preview w
 
 ## Settings tab
 
-See [Settings](/features/settings) for appearance, brightness, temperature, screensaver, backup, and firmware options.
+The Settings tab lets you adjust how your panel looks and behaves. Each section can be expanded or collapsed by tapping its heading:
+
+- **[Appearance](/features/appearance)** — customise button on/off colours.
+- **[Brightness](/features/backlight-schedule)** — set daytime/nighttime brightness and timezone for automatic sunrise/sunset switching.
+- **[Display & Screensaver](/features/display-screensaver)** — show temperatures in the top bar and configure screensaver behaviour.
+- **[Backup](/features/backup)** — export or import your panel configuration.
+- **[Firmware](/features/firmware-updates)** — check version, enable auto-updates, and set update frequency.
 
 ## Logs tab
 
