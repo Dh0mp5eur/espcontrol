@@ -136,6 +136,7 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/' },
           { text: 'Install', link: '/install' },
+          { text: 'Home Assistant Actions', link: '/home-assistant-actions' },
           { text: 'Web UI', link: '/web-ui' },
         ],
       },
