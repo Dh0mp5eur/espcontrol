@@ -3,7 +3,8 @@
 
 Reads src/webserver/www.js (the shared source) and src/webserver/devices.json,
 then generates docs/public/webserver/<slug>/www.js for each device by injecting
-the device-specific configuration block.
+the device-specific configuration block and button type definitions from
+src/webserver/types/*.js.
 
 Usage:
     python scripts/build_www.py           # write mode (default)
@@ -18,10 +19,13 @@ ROOT = Path(__file__).resolve().parent.parent
 
 SOURCE = ROOT / "src" / "webserver" / "www.js"
 DEVICES_JSON = ROOT / "src" / "webserver" / "devices.json"
+TYPES_DIR = ROOT / "src" / "webserver" / "types"
 OUTPUT_DIR = ROOT / "docs" / "public" / "webserver"
 
 CONFIG_START = "__DEVICE_CONFIG_START__"
 CONFIG_END = "__DEVICE_CONFIG_END__"
+TYPES_START = "__BUTTON_TYPES_START__"
+TYPES_END = "__BUTTON_TYPES_END__"
 
 
 def load_devices():
@@ -35,6 +39,33 @@ def build_config_block(slug, cfg):
         f'  var DEVICE_ID = "{slug}";\n'
         f"  var CFG = {cfg_json};\n"
     )
+
+
+def load_button_types():
+    if not TYPES_DIR.is_dir():
+        return ""
+    files = sorted(TYPES_DIR.glob("*.js"))
+    if not files:
+        return ""
+    chunks = []
+    for f in files:
+        chunks.append(f"  // --- type: {f.stem} ---")
+        for line in f.read_text().rstrip().splitlines():
+            chunks.append(f"  {line}" if line.strip() else "")
+    return "\n".join(chunks) + "\n"
+
+
+def replace_types(source_text):
+    pattern = re.compile(
+        r"(^[^\n]*" + re.escape(TYPES_START) + r"[^\n]*\n)"
+        r"(.*?)"
+        r"(^[^\n]*" + re.escape(TYPES_END) + r"[^\n]*$)",
+        re.MULTILINE | re.DOTALL,
+    )
+    m = pattern.search(source_text)
+    if not m:
+        return source_text
+    return source_text[: m.start(2)] + load_button_types() + source_text[m.start(3) :]
 
 
 def replace_config(source_text, slug, cfg):
@@ -53,6 +84,7 @@ def replace_config(source_text, slug, cfg):
 def build(check_only=False):
     devices = load_devices()
     source_text = SOURCE.read_text()
+    source_text = replace_types(source_text)
     dirty = []
 
     for slug, cfg in devices.items():

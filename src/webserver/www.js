@@ -108,6 +108,23 @@
     // --- GENERATED:DOMAIN_ICONS END ---
   };
 
+  // ── Button type plugin registry ──────────────────────────────────────
+  var BUTTON_TYPES = {};
+  function registerButtonType(key, def) {
+    BUTTON_TYPES[key] = Object.assign({
+      key: key,
+      label: key || "Toggle",
+      allowInSubpage: false,
+      labelPlaceholder: null,
+      onSelect: null,
+      renderSettings: null,
+      renderPreview: null,
+      contextMenuItems: null,
+    }, def);
+  }
+  // __BUTTON_TYPES_START__
+  // __BUTTON_TYPES_END__
+
   var CSS =
     ":root{" +
     "--bg:#121212;--surface:#1e1e1e;--surface2:#2a2a2a;--border:#333;" +
@@ -1400,7 +1417,10 @@
         var iconName = resolveIcon(b);
         var label = b.label || b.entity || "Configure";
         var color = state.offColor;
-        var isSubpage = !c.isSub && b.type === "subpage";
+        var previewTypeDef = !c.isSub ? (BUTTON_TYPES[b.type || ""] || null) : null;
+        var typePreview = previewTypeDef && previewTypeDef.renderPreview
+          ? previewTypeDef.renderPreview(b, { escHtml: escHtml })
+          : null;
 
         var btn = document.createElement("div");
         btn.className = "sp-btn" +
@@ -1410,14 +1430,13 @@
         btn.draggable = true;
         btn.setAttribute("data-pos", pos);
         btn.setAttribute("data-slot", slot);
-        var hasWhenOn = !isSubpage && (b.sensor || (b.icon_on && b.icon_on !== "Auto"));
+        var hasWhenOn = !typePreview && (b.sensor || (b.icon_on && b.icon_on !== "Auto"));
         var badgeIcon = b.sensor ? "gauge" : "swap-horizontal";
         var sensorBadge = hasWhenOn
           ? '<span class="sp-sensor-badge mdi mdi-' + badgeIcon + '"></span>'
           : '';
-        var labelHtml = isSubpage
-          ? '<span class="sp-btn-label-row"><span class="sp-btn-label">' + escHtml(label) + '</span>' +
-            '<span class="sp-subpage-badge mdi mdi-chevron-right"></span></span>'
+        var labelHtml = typePreview && typePreview.labelHtml
+          ? typePreview.labelHtml
           : '<span class="sp-btn-label">' + escHtml(label) + '</span>';
         btn.innerHTML =
           sensorBadge +
@@ -1501,16 +1520,19 @@
     }
 
     // Type selector (home only)
-    var isSubpageType = false;
+    var typeDef = BUTTON_TYPES[b.type || ""] || BUTTON_TYPES[""];
     if (!c.isSub) {
-      isSubpageType = b.type === "subpage";
+      var typeOpts = [];
+      for (var k in BUTTON_TYPES) {
+        var td = BUTTON_TYPES[k];
+        typeOpts.push([td.key, td.label]);
+      }
       var tf = document.createElement("div");
       tf.className = "sp-field";
       tf.appendChild(fieldLabel("Type"));
       var typeSelect = document.createElement("select");
       typeSelect.className = "sp-select";
       typeSelect.id = "sp-inp-type";
-      var typeOpts = [["", "Toggle"], ["subpage", "Subpage"]];
       typeOpts.forEach(function (o) {
         var opt = document.createElement("option");
         opt.value = o[0];
@@ -1521,9 +1543,8 @@
       typeSelect.addEventListener("change", function () {
         var newType = this.value;
         b.type = newType;
-        if (newType === "subpage") {
-          b.entity = ""; b.sensor = ""; b.unit = ""; b.icon_on = "Auto";
-        }
+        var td = BUTTON_TYPES[newType];
+        if (td && td.onSelect) td.onSelect(b);
         saveButtonConfig(slot);
         renderPreview();
         renderButtonSettings();
@@ -1536,27 +1557,23 @@
     var lf = document.createElement("div");
     lf.className = "sp-field";
     lf.appendChild(fieldLabel("Label"));
-    var labelInp = textInput(idPrefix + "label", b.label, isSubpageType ? "e.g. Lighting" : "e.g. Kitchen");
+    var labelPlaceholder = (typeDef && typeDef.labelPlaceholder) || "e.g. Kitchen";
+    var labelInp = textInput(idPrefix + "label", b.label, labelPlaceholder);
     lf.appendChild(labelInp);
     panel.appendChild(lf);
     bindField(labelInp, "label", true);
 
-    if (!c.isSub && isSubpageType) {
-      // Subpage mode on home: icon + configure button
-      panel.appendChild(makeIconPicker(idPrefix + "icon-picker", idPrefix + "icon", b.icon || "Auto", function (opt) {
-        b.icon = opt;
-        saveField("icon", opt);
-        renderPreview();
-      }));
+    var typeHelpers = {
+      makeIconPicker: makeIconPicker,
+      fieldLabel: fieldLabel,
+      textInput: textInput,
+      bindField: bindField,
+      saveField: saveField,
+      idPrefix: idPrefix,
+    };
 
-      var configBtn = document.createElement("button");
-      configBtn.className = "sp-action-btn";
-      configBtn.style.background = "var(--accent)";
-      configBtn.style.color = "#fff";
-      configBtn.style.width = "100%";
-      configBtn.textContent = "Configure Subpage";
-      configBtn.addEventListener("click", function () { enterSubpage(slot); });
-      panel.appendChild(configBtn);
+    if (!c.isSub && typeDef && typeDef.renderSettings) {
+      typeDef.renderSettings(panel, b, slot, typeHelpers);
     } else {
       // Toggle (home or subpage): entity, icon, when-on
       var ef = document.createElement("div");
@@ -2304,8 +2321,9 @@
     } else {
       if (!c.isSub) {
         var b = state.buttons[slot - 1];
-        if (b && b.type === "subpage") {
-          addCtxItem("cog", "Edit Subpage", function () { enterSubpage(slot); });
+        var ctxTypeDef = BUTTON_TYPES[(b && b.type) || ""];
+        if (ctxTypeDef && ctxTypeDef.contextMenuItems) {
+          ctxTypeDef.contextMenuItems(slot, b, { addCtxItem: addCtxItem });
         }
       }
 
