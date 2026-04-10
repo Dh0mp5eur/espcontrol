@@ -16,7 +16,7 @@ The transition is checked every 60 seconds and happens automatically. At midnigh
 
 ## Settings
 
-These are configured from the **Settings** tab in the [Web UI](/web-ui), under the **Brightness** section.
+These are configured from the **Settings** tab in the [Setup](/setup), under the **Brightness** section.
 
 - **Timezone** — select your timezone so the panel can calculate sunrise and sunset for your location. This is the only setting you need to configure for the brightness schedule to work.
 - **Daytime brightness** — how bright the screen should be during the day. Range: 10%–100%, default: 100%.
@@ -30,8 +30,3 @@ When the screensaver is active, the backlight turns off regardless of the bright
 ## If sunrise and sunset aren't available
 
 If the panel hasn't synced its clock yet (for example, during initial setup before connecting to Home Assistant), it defaults to using the **daytime brightness** setting at all times. Once the time syncs, sunrise and sunset are calculated immediately.
-
-## Related
-
-- [Display & Screensaver](/display-screensaver) — screensaver timeout and presence sensor
-- [Web UI](/web-ui) — full guide to the Settings tab

@@ -10,7 +10,7 @@ Your panel can update its firmware over the air — no USB cable or computer nee
 
 ## Update settings
 
-These are configured from the **Settings** tab in the [Web UI](/web-ui), under the **Firmware** section. They also appear as controls in Home Assistant.
+These are configured from the **Settings** tab in the [Setup](/setup), under the **Firmware** section. They also appear as controls in Home Assistant.
 
 - **Version** — the firmware version currently running on your panel (read-only).
 - **Auto Update** — turn this on to let the panel install new versions automatically. When off, you'll need to trigger updates manually.
@@ -30,7 +30,3 @@ The update usually takes a minute or two. The display may show a loading screen 
 You can also manage updates from Home Assistant. The **Auto Update** toggle, **Update Frequency** selector, and **Check for Update** button all appear as entities that you can control from the Home Assistant dashboard or use in automations.
 
 The standard Home Assistant **Update** entity may also appear, depending on your Home Assistant version.
-
-## Related
-
-- [Install](/install) — first-time setup and flashing via USB

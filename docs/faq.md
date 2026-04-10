@@ -79,7 +79,7 @@ Subpages are like folders for your buttons. Set any button to the **Subpage** ty
 
 ## Can I back up my setup?
 
-Yes. In the [Web UI](/web-ui) **Settings** tab, under **Backup**, you can **Export** your entire setup (buttons, subpages, colours, and display settings) as a file. To restore it later, use **Import** to load the saved file. You can also use this to copy your setup to a different panel — the import will rearrange buttons automatically if the panels are different sizes.
+Yes. In the [Setup](/setup) **Settings** tab, under **Backup**, you can **Export** your entire setup (buttons, subpages, colours, and display settings) as a file. To restore it later, use **Import** to load the saved file. You can also use this to copy your setup to a different panel — the import will rearrange buttons automatically if the panels are different sizes.
 
 ## Which panels are supported?
 

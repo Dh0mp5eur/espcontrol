@@ -101,7 +101,7 @@ The display behaves exactly as if you'd used the browser installer:
 
 1. It creates a WiFi hotspot if it can't connect to your network — follow the [WiFi setup steps](/install#connect-to-wifi).
 2. Home Assistant discovers it automatically — follow [Add to Home Assistant](/install#add-to-home-assistant).
-3. Configure buttons, display, and settings from the built-in [Web UI](/web-ui).
+3. Configure buttons, display, and settings from the built-in [Setup](/setup).
 
 ## Adding your own customisations
 
@@ -127,8 +127,3 @@ sensor:
   - platform: uptime
     name: "${friendly_name} Uptime"
 ```
-
-## Related
-
-- [Install](/install) — browser-based installer (no ESPHome required)
-- [Firmware Updates](/firmware-updates) — OTA update settings

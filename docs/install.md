@@ -78,7 +78,7 @@ With the display connected to WiFi and paired with Home Assistant, you're ready 
 4. **Adjust your settings.** On the **Settings** tab, set your button colours, temperatures, screensaver timeout, brightness, and more.
 5. **Tap "Apply Configuration"** when you're done. The display restarts with your new settings.
 
-That's it — your panel is ready to use. See the [Web UI](/web-ui) guide for a full walkthrough of every setting.
+That's it — your panel is ready to use. See the [Setup](/setup) guide for a full walkthrough of every setting.
 
 ## Troubleshooting
 
@@ -113,4 +113,4 @@ That's it — your panel is ready to use. See the [Web UI](/web-ui) guide for a 
 
 If you already use ESPHome and prefer to compile firmware yourself, see the [ESPHome Manual Setup](/esphome-manual-setup) guide. This method is for users who want full control over the build or want to extend the configuration with their own customisations.
 
-Next: [Web UI](/web-ui)
+Next: [Setup](/setup)

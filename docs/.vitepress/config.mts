@@ -137,7 +137,6 @@ export default defineConfig({
           { text: 'Overview', link: '/' },
           { text: 'Install', link: '/install' },
           { text: 'Home Assistant Actions', link: '/home-assistant-actions' },
-          { text: 'Web UI', link: '/web-ui' },
         ],
       },
       {
@@ -151,6 +150,8 @@ export default defineConfig({
       {
         text: 'Features',
         items: [
+          { text: 'Setup', link: '/setup' },
+          { text: 'Settings', link: '/settings' },
           { text: 'Buttons & Icons', link: '/buttons-and-icons' },
           { text: 'Display & Screensaver', link: '/display-screensaver' },
           { text: 'Backlight Schedule', link: '/backlight-schedule' },

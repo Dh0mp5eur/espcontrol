@@ -6,7 +6,7 @@ description:
 
 # Display & Screensaver
 
-These settings control what the panel shows on screen and how it behaves when you're not using it. You'll find all of these in the **Settings** tab on the [Web UI](/web-ui).
+These settings control what the panel shows on screen and how it behaves when you're not using it. You'll find all of these in the **Settings** tab on the [Setup](/setup).
 
 ## Temperature display
 
@@ -40,8 +40,3 @@ To use this, enter the name of your motion or presence sensor from Home Assistan
 ::: tip
 Touching the screen always wakes it up, no matter which mode you're using.
 :::
-
-## Related
-
-- [Backlight Schedule](/backlight-schedule) — automatic day and night brightness
-- [Web UI](/web-ui) — full guide to all the settings

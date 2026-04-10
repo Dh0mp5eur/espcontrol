@@ -49,4 +49,4 @@ If you find this project useful, consider buying me a coffee to support ongoing 
 ## Next steps
 
 - [Install](/install) — what you need, how to flash, and first-time setup
-- [Web UI](/web-ui) — how to configure buttons, display, and screensaver from your browser
+- [Setup](/setup) — how to configure buttons, display, and screensaver from your browser

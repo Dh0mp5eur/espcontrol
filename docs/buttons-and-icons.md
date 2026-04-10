@@ -10,7 +10,7 @@ Your panel has a grid of button spaces — **20** on the 7-inch, **15** on the 4
 
 ## Setting up a button
 
-From the [Web UI](/web-ui) **Screen** tab:
+From the [Setup](/setup) **Screen** tab:
 
 1. **Tap an empty space** in the grid to add a new button.
 2. **Choose a type** — **Toggle** (the default) to control a device, or **Subpage** to create a page of extra buttons.
