@@ -192,6 +192,9 @@
     "display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--btn-lines);" +
     "overflow:hidden;word-break:break-word;min-height:0}" +
     ".sp-sensor-badge{position:absolute;top:var(--sensor-top);right:var(--sensor-right);font-size:var(--sensor-fs);opacity:.5}" +
+    ".sp-sensor-preview{display:flex;align-items:baseline;gap:1px;color:#fff}" +
+    ".sp-sensor-value{font-size:var(--btn-icon);line-height:1;font-weight:700}" +
+    ".sp-sensor-unit{font-size:var(--btn-label);line-height:1;opacity:.7}" +
     ".sp-btn-double{grid-row:span 2}" +
     ".sp-btn-double .sp-btn-label{-webkit-line-clamp:var(--btn-lines-dbl)}" +
     ".sp-btn-double .sp-btn-label-row .sp-btn-label{-webkit-line-clamp:var(--btn-lines-dbl)}" +
@@ -1493,9 +1496,12 @@
         var labelHtml = typePreview && typePreview.labelHtml
           ? typePreview.labelHtml
           : '<span class="sp-btn-label">' + escHtml(label) + '</span>';
+        var iconHtml = typePreview && typePreview.iconHtml
+          ? typePreview.iconHtml
+          : '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>';
         btn.innerHTML =
           sensorBadge +
-          '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>' +
+          iconHtml +
           labelHtml;
         main.appendChild(btn);
       } else {

@@ -4,6 +4,7 @@ registerButtonType("sensor", {
   labelPlaceholder: "e.g. Living Room",
   onSelect: function (b) {
     b.entity = "";
+    b.icon = "Auto";
     b.icon_on = "Auto";
   },
   renderSettings: function (panel, b, slot, helpers) {
@@ -22,23 +23,19 @@ registerButtonType("sensor", {
     unitInp.className = "sp-input sp-input--narrow";
     uf.appendChild(unitInp);
     panel.appendChild(uf);
-    helpers.bindField(unitInp, "unit", false);
-
-    panel.appendChild(helpers.makeIconPicker(
-      helpers.idPrefix + "icon-picker", helpers.idPrefix + "icon",
-      b.icon || "Auto", function (opt) {
-        b.icon = opt;
-        helpers.saveField("icon", opt);
-        renderPreview();
-      }
-    ));
+    helpers.bindField(unitInp, "unit", true);
   },
   renderPreview: function (b, helpers) {
     var label = b.label || b.sensor || "Sensor";
+    var unit = b.unit ? helpers.escHtml(b.unit) : "";
     return {
+      iconHtml:
+        '<span class="sp-sensor-preview">' +
+          '<span class="sp-sensor-value">0</span>' +
+          '<span class="sp-sensor-unit">' + unit + '</span>' +
+        '</span>',
       labelHtml:
-        '<span class="sp-btn-label-row"><span class="sp-btn-label">' + helpers.escHtml(label) + '</span>' +
-        '<span class="sp-sensor-badge mdi mdi-gauge"></span></span>',
+        '<span class="sp-btn-label">' + helpers.escHtml(label) + '</span>',
     };
   },
 });
