@@ -86,7 +86,7 @@ button:
           lv_timer_create([](lv_timer_t *t) {
               lv_obj_clear_state((lv_obj_t *)t->user_data, LV_STATE_CHECKED);
               lv_timer_del(t);
-          }, 500, id(button_${num}));
+          }, 1000, id(button_${num}));
         } else if (t == "subpage") {
           lv_obj_t *sub_scr = (lv_obj_t *)lv_obj_get_user_data(id(button_${num}));
           if (sub_scr) lv_scr_load_anim(sub_scr, LV_SCR_LOAD_ANIM_NONE, 0, 0, false);
