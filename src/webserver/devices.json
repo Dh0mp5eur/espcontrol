@@ -1,8 +1,8 @@
 {
   "guition-esp32-p4-jc1060p470": {
-    "slots": 20,
+    "slots": 15,
     "cols": 5,
-    "rows": 4,
+    "rows": 3,
     "dragMode": "swap",
     "dragAnimation": true,
     "screen": { "width": "100%", "aspect": "1024/600" },
