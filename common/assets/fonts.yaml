@@ -4,7 +4,7 @@
 
 font:
   # Main page: large statistics / sensor values
-  - file: "gfonts://Roboto"
+  - file: "gfonts://Roboto@Light"
     id: statistics_font
     size: 48
     bpp: 4

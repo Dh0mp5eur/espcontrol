@@ -41,8 +41,6 @@ esphome:
                 id(button_7_config), id(button_8_config), id(button_9_config),
                 id(button_10_config), id(button_11_config), id(button_12_config),
                 id(button_13_config), id(button_14_config), id(button_15_config),
-                id(button_16_config), id(button_17_config), id(button_18_config),
-                id(button_19_config), id(button_20_config),
               };
               for (auto *c : cfgs) { if (!c->state.empty()) { all_empty = false; break; } }
               if (all_empty) {
@@ -89,13 +87,8 @@ esphome:
               { id(button_13_config), id(button_13), id(button_13_icon_label), id(button_13_text_label), id(button_13_sensor_container), id(button_13_sensor_label), id(button_13_unit_label) },
               { id(button_14_config), id(button_14), id(button_14_icon_label), id(button_14_text_label), id(button_14_sensor_container), id(button_14_sensor_label), id(button_14_unit_label) },
               { id(button_15_config), id(button_15), id(button_15_icon_label), id(button_15_text_label), id(button_15_sensor_container), id(button_15_sensor_label), id(button_15_unit_label) },
-              { id(button_16_config), id(button_16), id(button_16_icon_label), id(button_16_text_label), id(button_16_sensor_container), id(button_16_sensor_label), id(button_16_unit_label) },
-              { id(button_17_config), id(button_17), id(button_17_icon_label), id(button_17_text_label), id(button_17_sensor_container), id(button_17_sensor_label), id(button_17_unit_label) },
-              { id(button_18_config), id(button_18), id(button_18_icon_label), id(button_18_text_label), id(button_18_sensor_container), id(button_18_sensor_label), id(button_18_unit_label) },
-              { id(button_19_config), id(button_19), id(button_19_icon_label), id(button_19_text_label), id(button_19_sensor_container), id(button_19_sensor_label), id(button_19_unit_label) },
-              { id(button_20_config), id(button_20), id(button_20_icon_label), id(button_20_text_label), id(button_20_sensor_container), id(button_20_sensor_label), id(button_20_unit_label) },
             };
-            static constexpr int NUM_SLOTS = 20;
+            static constexpr int NUM_SLOTS = 15;
             static constexpr int COLS = 5;
 
             static int positions[NUM_SLOTS] = {};
@@ -455,7 +448,7 @@ esphome:
 
         # Phase 2: Subscribe to HA entities + create subpages
         - lambda: |-
-            constexpr int NUM_SLOTS = 20;
+            constexpr int NUM_SLOTS = 15;
             constexpr int COLS = 5;
 
             static bool has_sensor[NUM_SLOTS] = {};
@@ -500,11 +493,6 @@ esphome:
               { id(button_13_config), id(button_13), id(button_13_icon_label), id(button_13_text_label), id(button_13_sensor_container), id(button_13_sensor_label), id(button_13_unit_label) },
               { id(button_14_config), id(button_14), id(button_14_icon_label), id(button_14_text_label), id(button_14_sensor_container), id(button_14_sensor_label), id(button_14_unit_label) },
               { id(button_15_config), id(button_15), id(button_15_icon_label), id(button_15_text_label), id(button_15_sensor_container), id(button_15_sensor_label), id(button_15_unit_label) },
-              { id(button_16_config), id(button_16), id(button_16_icon_label), id(button_16_text_label), id(button_16_sensor_container), id(button_16_sensor_label), id(button_16_unit_label) },
-              { id(button_17_config), id(button_17), id(button_17_icon_label), id(button_17_text_label), id(button_17_sensor_container), id(button_17_sensor_label), id(button_17_unit_label) },
-              { id(button_18_config), id(button_18), id(button_18_icon_label), id(button_18_text_label), id(button_18_sensor_container), id(button_18_sensor_label), id(button_18_unit_label) },
-              { id(button_19_config), id(button_19), id(button_19_icon_label), id(button_19_text_label), id(button_19_sensor_container), id(button_19_sensor_label), id(button_19_unit_label) },
-              { id(button_20_config), id(button_20), id(button_20_icon_label), id(button_20_text_label), id(button_20_sensor_container), id(button_20_sensor_label), id(button_20_unit_label) },
             };
 
             std::string on_hex = id(button_on_color).state;
@@ -871,7 +859,7 @@ esphome:
             }
 
             static lv_coord_t sp_col_dsc[] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
-            static lv_coord_t sp_row_dsc[] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+            static lv_coord_t sp_row_dsc[] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
             const lv_font_t *sp_icon_fnt = lv_obj_get_style_text_font(slots[0].icon_lbl, LV_PART_MAIN);
 
             lv_obj_t *ref_btn = slots[0].btn;
@@ -886,8 +874,6 @@ esphome:
               id(subpage_7_config), id(subpage_8_config), id(subpage_9_config),
               id(subpage_10_config), id(subpage_11_config), id(subpage_12_config),
               id(subpage_13_config), id(subpage_14_config), id(subpage_15_config),
-              id(subpage_16_config), id(subpage_17_config), id(subpage_18_config),
-              id(subpage_19_config), id(subpage_20_config),
             };
             esphome::text::Text *sp_ext_configs[] = {
               id(subpage_1_config_ext), id(subpage_2_config_ext), id(subpage_3_config_ext),
@@ -895,8 +881,6 @@ esphome:
               id(subpage_7_config_ext), id(subpage_8_config_ext), id(subpage_9_config_ext),
               id(subpage_10_config_ext), id(subpage_11_config_ext), id(subpage_12_config_ext),
               id(subpage_13_config_ext), id(subpage_14_config_ext), id(subpage_15_config_ext),
-              id(subpage_16_config_ext), id(subpage_17_config_ext), id(subpage_18_config_ext),
-              id(subpage_19_config_ext), id(subpage_20_config_ext),
             };
 
             for (int si = 0; si < NUM_SLOTS; si++) {
