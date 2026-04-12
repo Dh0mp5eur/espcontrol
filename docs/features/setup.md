@@ -18,16 +18,20 @@ The address is shown on the display screen when no buttons are configured yet. Y
 
 Tap any empty space in the grid (shown as a dashed outline with a **+** icon). A settings panel appears below the preview where you configure the button:
 
-![Button settings panel](/images/button-settings.png)
+![Card settings panel](/images/button-settings.png)
 
-1. **Choose a type** — **Toggle** (the default) to control a device, **Subpage** to create a folder of extra buttons, or **[Push Button](/features/push-buttons)** to trigger Home Assistant automations with a single tap.
+![Toggle card showing a Heater icon](/images/card-toggle.png)
+
+1. **Choose a type** — **Toggle** (the default) to control a device, **Subpage** to create a folder of extra cards, **[Button](/card-types/buttons)** to trigger Home Assistant automations with a single tap, or **[Sensor](/card-types/sensors)** to display a live reading.
 2. **Pick the device** you want to control by entering its Home Assistant entity name (for example, `light.living_room` or `switch.garden_lights`). You can find these under **Settings > Devices & Services** in Home Assistant. Subpage buttons don't need a device name.
 3. **Choose an icon** — type to search, or select **Auto** to let the panel pick one based on the device type.
 4. **Set a label** (optional). If left blank the button uses the device's friendly name from Home Assistant.
 
 **[Subpage](/features/subpages)** — works like a folder that opens a new page of buttons. See [Subpages](/features/subpages) for details.
 
-**[Push Button](/features/push-buttons)** — a momentary button that fires an event to Home Assistant for use as an automation trigger. See [Push Buttons](/features/push-buttons) for details.
+**[Button](/card-types/buttons)** — a momentary button that fires an event to Home Assistant for use as an automation trigger. See [Buttons](/card-types/buttons) for details.
+
+**[Sensor](/card-types/sensors)** — displays a live reading from a Home Assistant sensor entity. See [Sensors](/card-types/sensors) for details.
 
 ### When Entity On
 

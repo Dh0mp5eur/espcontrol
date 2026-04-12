@@ -1,5 +1,5 @@
 registerButtonType("push", {
-  label: "Push Button",
+  label: "Button",
   allowInSubpage: false,
   labelPlaceholder: "e.g. Doorbell",
   onSelect: function (b) {

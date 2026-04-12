@@ -158,13 +158,19 @@ export default defineConfig({
         items: [
           { text: 'Setup', link: '/features/setup' },
           { text: 'Subpages', link: '/features/subpages' },
-          { text: 'Push Buttons', link: '/features/push-buttons' },
           { text: 'Appearance', link: '/features/appearance' },
           { text: 'Temperature', link: '/features/temperature' },
           { text: 'Screensaver', link: '/features/screensaver' },
           { text: 'Backlight', link: '/features/backlight' },
           { text: 'Backup', link: '/features/backup' },
           { text: 'Firmware Updates', link: '/features/firmware-updates' },
+        ],
+      },
+      {
+        text: 'Card Types',
+        items: [
+          { text: 'Buttons', link: '/card-types/buttons' },
+          { text: 'Sensors', link: '/card-types/sensors' },
         ],
       },
       {
