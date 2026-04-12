@@ -53,36 +53,39 @@ button:
         text: "Configure"
         long_mode: wrap
         width: 100%
-  # Navigate to subpage or toggle the bound HA entity on press
+  # Fire push event, navigate to subpage, or toggle the bound HA entity
   on_short_click:
-    - if:
-        condition:
-          lambda: |-
-            std::string cfg = id(button_${num}_config).state;
-            size_t p = 0;
-            for (int i = 0; i < 6; i++) { p = cfg.find(';', p); if (p == std::string::npos) return false; p++; }
-            size_t e = cfg.find(';', p);
-            std::string t = (e == std::string::npos) ? cfg.substr(p) : cfg.substr(p, e - p);
-            return t == "subpage";
-        then:
-          - lambda: |-
-              lv_obj_t *sub_scr = (lv_obj_t *)lv_obj_get_user_data(id(button_${num}));
-              if (sub_scr) lv_scr_load_anim(sub_scr, LV_SCR_LOAD_ANIM_NONE, 0, 0, false);
-        else:
-          - if:
-              condition:
-                lambda: |-
-                  std::string cfg = id(button_${num}_config).state;
-                  size_t p = cfg.find(';');
-                  std::string eid = (p != std::string::npos) ? cfg.substr(0, p) : cfg;
-                  return !eid.empty();
-              then:
-                - homeassistant.action:
-                    action: homeassistant.toggle
-                    data_template:
-                      entity_id: "{{ entity_id }}"
-                    variables:
-                      entity_id: !lambda |-
-                        std::string cfg = id(button_${num}_config).state;
-                        size_t p = cfg.find(';');
-                        return (p != std::string::npos) ? cfg.substr(0, p) : cfg;
+    - lambda: |-
+        std::string cfg = id(button_${num}_config).state;
+        size_t p = 0;
+        for (int i = 0; i < 6; i++) { p = cfg.find(';', p); if (p == std::string::npos) break; p++; }
+        size_t e = cfg.find(';', p);
+        std::string t = (p != std::string::npos)
+          ? ((e == std::string::npos) ? cfg.substr(p) : cfg.substr(p, e - p))
+          : "";
+        if (t == "push") {
+          id(button_${num}_push).press();
+          lv_obj_add_state(id(button_${num}), LV_STATE_CHECKED);
+          lv_timer_create([](lv_timer_t *timer) {
+            lv_obj_clear_state((lv_obj_t *)timer->user_data, LV_STATE_CHECKED);
+            lv_timer_del(timer);
+          }, 400, id(button_${num}));
+        } else if (t == "subpage") {
+          lv_obj_t *sub_scr = (lv_obj_t *)lv_obj_get_user_data(id(button_${num}));
+          if (sub_scr) lv_scr_load_anim(sub_scr, LV_SCR_LOAD_ANIM_NONE, 0, 0, false);
+        } else if (t == "sensor") {
+          return;
+        } else {
+          size_t sp = cfg.find(';');
+          std::string eid = (sp != std::string::npos) ? cfg.substr(0, sp) : cfg;
+          if (!eid.empty()) {
+            api::HomeassistantActionRequest req;
+            req.service = decltype(req.service)("homeassistant.toggle");
+            req.is_event = false;
+            req.data.init(1);
+            auto &kv = req.data.emplace_back();
+            kv.key = decltype(kv.key)("entity_id");
+            kv.value = decltype(kv.value)(eid.c_str());
+            api::global_api_server->send_homeassistant_action(req);
+          }
+        }

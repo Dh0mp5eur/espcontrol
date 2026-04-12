@@ -209,6 +209,7 @@ esphome:
               {"Garage Open",                "\U000F06DA"},
               {"Gate",                       "\U000F0299"},
               {"Gate Open",                  "\U000F116A"},
+              {"Gesture Tap",                "\U000F0741"},
               {"Gauge",                      "\U000F029A"},
               {"Gauge Empty",                "\U000F0873"},
               {"Gauge Full",                 "\U000F0874"},
@@ -371,6 +372,23 @@ esphome:
                   static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT));
               }
 
+              std::string btn_type = cfg_field(cfg, 6);
+              if (btn_type == "sensor") {
+                std::string sensor_id = cfg_field(cfg, 4);
+                if (sensor_id.empty()) continue;
+                lv_obj_add_flag(s.icon_lbl, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(s.sensor_container, LV_OBJ_FLAG_HIDDEN);
+                std::string unit_str = cfg_field(cfg, 5);
+                if (!unit_str.empty()) {
+                  lv_label_set_text(s.unit_lbl, unit_str.c_str());
+                }
+                std::string custom_label = cfg_field(cfg, 1);
+                if (!custom_label.empty()) {
+                  lv_label_set_text(s.text_lbl, custom_label.c_str());
+                }
+                continue;
+              }
+
               std::string sensor_id = cfg_field(cfg, 4);
               has_sensor[idx - 1] = !sensor_id.empty();
 
@@ -422,6 +440,8 @@ esphome:
                 std::string icon_name = cfg_field(cfg, 2);
                 if (!icon_name.empty() && icon_name != "Auto") {
                   lv_label_set_text(s.icon_lbl, find_icon(icon_name.c_str()));
+                } else if (cfg_field(cfg, 6) == "push") {
+                  lv_label_set_text(s.icon_lbl, "\U000F0741");
                 }
               }
             }
@@ -721,6 +741,39 @@ esphome:
               if (idx < 1 || idx > NUM_SLOTS) continue;
               auto &s = slots[idx - 1];
               std::string cfg = s.config->state;
+
+              std::string btn_type = cfg_field(cfg, 6);
+              if (btn_type == "sensor") {
+                std::string sensor_id = cfg_field(cfg, 4);
+                if (sensor_id.empty()) continue;
+                lv_obj_t *sensor_lbl = s.sensor_lbl;
+                api::global_api_server->subscribe_home_assistant_state(
+                  sensor_id, {},
+                  std::function<void(const std::string &)>([sensor_lbl](const std::string &state) {
+                    char *end;
+                    float val = strtof(state.c_str(), &end);
+                    if (end != state.c_str()) {
+                      char buf[16];
+                      snprintf(buf, sizeof(buf), "%.0f", val);
+                      lv_label_set_text(sensor_lbl, buf);
+                    } else {
+                      lv_label_set_text(sensor_lbl, state.c_str());
+                    }
+                  })
+                );
+                std::string custom_label = cfg_field(cfg, 1);
+                if (custom_label.empty()) {
+                  lv_obj_t *text_lbl = s.text_lbl;
+                  api::global_api_server->subscribe_home_assistant_state(
+                    sensor_id, std::string("friendly_name"),
+                    std::function<void(const std::string &)>([text_lbl](const std::string &name) {
+                      lv_label_set_text(text_lbl, name.c_str());
+                    })
+                  );
+                }
+                continue;
+              }
+
               std::string entity_id = cfg_field(cfg, 0);
               if (entity_id.empty()) continue;
 

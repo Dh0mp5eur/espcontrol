@@ -360,6 +360,11 @@
       "mdi": "gate-open"
     },
     {
+      "name": "Gesture Tap",
+      "codepoint": "F0741",
+      "mdi": "gesture-tap"
+    },
+    {
       "name": "Gauge",
       "codepoint": "F029A",
       "mdi": "gauge"

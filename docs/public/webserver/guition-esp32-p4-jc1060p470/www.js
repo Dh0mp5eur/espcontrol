@@ -62,27 +62,28 @@
     "Desk Lamp", "Dishwasher", "Dog", "Door", "Door Open", "Doorbell",
     "Dryer", "EV Charger", "Fan", "Fire", "Fireplace", "Flash",
     "Floor Lamp", "Fountain", "Fridge", "Gamepad", "Garage", "Garage Open",
-    "Gate", "Gate Open", "Gauge", "Gauge Empty", "Gauge Full", "Gauge Low",
-    "Grid Export", "Grid Import", "Grid Off", "Headphones", "Heater", "Home",
-    "Hot Tub", "Humidifier", "Humidity Alert", "Iron", "Kettle", "Key",
-    "Lamp", "LAN", "Lawnmower", "Leaf", "LED Strip", "LED Strip Variant",
-    "LED Strip Variant Off", "Light Switch", "Lightbulb", "Lightbulb Group", "Lightbulb Group Outline", "Lightbulb Night",
-    "Lightbulb Night Outline", "Lightbulb Off", "Lightbulb Outline", "Lightning Bolt", "Lock", "Mailbox",
-    "Message Video", "Meter Electric", "Meter Gas", "Microwave", "Monitor", "Motion Sensor",
-    "Movie Roll", "Music", "Outdoor Lamp", "Oven", "Package", "Package Closed",
-    "Pool", "Power", "Power Plug", "Printer", "Printer 3D", "Projector",
-    "Robot Vacuum", "Roller Shade", "Roller Shade Closed", "Router", "Router Network", "Security",
-    "Shower", "Smoke Detector", "Snowflake", "Snowflake Alert", "Snowflake Thermometer", "Sofa",
-    "Solar Panel", "Solar Panel Large", "Solar Power", "Solar Power Variant", "Speaker", "Spotlight",
-    "Sprinkler", "String Lights", "Sun", "Table", "Television", "Thermometer",
-    "Thermometer Alert", "Thermometer High", "Thermometer Low", "Thermostat", "Timer", "Toilet",
-    "Transmission Tower", "Trash Can", "Wall Outlet", "Washer", "Water", "Water Heater",
-    "Water Percent", "Weather Cloudy", "Weather Cloudy Alert", "Weather Dust", "Weather Fog", "Weather Hail",
-    "Weather Hazy", "Weather Hurricane", "Weather Lightning", "Weather Lightning Rainy", "Weather Night", "Weather Night Cloudy",
-    "Weather Partly Cloudy", "Weather Partly Lightning", "Weather Partly Rainy", "Weather Partly Snowy", "Weather Partly Snowy Rainy", "Weather Pouring",
-    "Weather Rainy", "Weather Snowy", "Weather Snowy Heavy", "Weather Snowy Rainy", "Weather Sunny", "Weather Sunny Alert",
-    "Weather Sunny Off", "Weather Sunset", "Weather Sunset Down", "Weather Sunset Up", "Weather Tornado", "Weather Windy",
-    "Weather Windy Variant", "Wind Power", "Wind Turbine", "Wind Turbine Alert", "Wind Turbine Check", "Window",
+    "Gate", "Gate Open", "Gesture Tap", "Gauge", "Gauge Empty", "Gauge Full",
+    "Gauge Low", "Grid Export", "Grid Import", "Grid Off", "Headphones", "Heater",
+    "Home", "Hot Tub", "Humidifier", "Humidity Alert", "Iron", "Kettle",
+    "Key", "Lamp", "LAN", "Lawnmower", "Leaf", "LED Strip",
+    "LED Strip Variant", "LED Strip Variant Off", "Light Switch", "Lightbulb", "Lightbulb Group", "Lightbulb Group Outline",
+    "Lightbulb Night", "Lightbulb Night Outline", "Lightbulb Off", "Lightbulb Outline", "Lightning Bolt", "Lock",
+    "Mailbox", "Message Video", "Meter Electric", "Meter Gas", "Microwave", "Monitor",
+    "Motion Sensor", "Movie Roll", "Music", "Outdoor Lamp", "Oven", "Package",
+    "Package Closed", "Pool", "Power", "Power Plug", "Printer", "Printer 3D",
+    "Projector", "Robot Vacuum", "Roller Shade", "Roller Shade Closed", "Router", "Router Network",
+    "Security", "Shower", "Smoke Detector", "Snowflake", "Snowflake Alert", "Snowflake Thermometer",
+    "Sofa", "Solar Panel", "Solar Panel Large", "Solar Power", "Solar Power Variant", "Speaker",
+    "Spotlight", "Sprinkler", "String Lights", "Sun", "Table", "Television",
+    "Thermometer", "Thermometer Alert", "Thermometer High", "Thermometer Low", "Thermostat", "Timer",
+    "Toilet", "Transmission Tower", "Trash Can", "Wall Outlet", "Washer", "Water",
+    "Water Heater", "Water Percent", "Weather Cloudy", "Weather Cloudy Alert", "Weather Dust", "Weather Fog",
+    "Weather Hail", "Weather Hazy", "Weather Hurricane", "Weather Lightning", "Weather Lightning Rainy", "Weather Night",
+    "Weather Night Cloudy", "Weather Partly Cloudy", "Weather Partly Lightning", "Weather Partly Rainy", "Weather Partly Snowy", "Weather Partly Snowy Rainy",
+    "Weather Pouring", "Weather Rainy", "Weather Snowy", "Weather Snowy Heavy", "Weather Snowy Rainy", "Weather Sunny",
+    "Weather Sunny Alert", "Weather Sunny Off", "Weather Sunset", "Weather Sunset Down", "Weather Sunset Up", "Weather Tornado",
+    "Weather Windy", "Weather Windy Variant", "Wind Power", "Wind Turbine", "Wind Turbine Alert", "Wind Turbine Check",
+    "Window",
   ];
   // --- GENERATED:ICONS END ---
 
@@ -123,6 +124,51 @@
     }, def);
   }
   // __BUTTON_TYPES_START__
+  // --- type: sensor ---
+  registerButtonType("sensor", {
+    label: "Sensor",
+    allowInSubpage: true,
+    labelPlaceholder: "e.g. Living Room",
+    onSelect: function (b) {
+      b.entity = "";
+      b.icon_on = "Auto";
+    },
+    renderSettings: function (panel, b, slot, helpers) {
+      var sf = document.createElement("div");
+      sf.className = "sp-field";
+      sf.appendChild(helpers.fieldLabel("Sensor Entity"));
+      var sensorInp = helpers.textInput(helpers.idPrefix + "sensor", b.sensor, "e.g. sensor.living_room_temperature");
+      sf.appendChild(sensorInp);
+      panel.appendChild(sf);
+      helpers.bindField(sensorInp, "sensor", true);
+
+      var uf = document.createElement("div");
+      uf.className = "sp-field";
+      uf.appendChild(helpers.fieldLabel("Unit"));
+      var unitInp = helpers.textInput(helpers.idPrefix + "unit", b.unit, "e.g. \u00B0C");
+      unitInp.className = "sp-input sp-input--narrow";
+      uf.appendChild(unitInp);
+      panel.appendChild(uf);
+      helpers.bindField(unitInp, "unit", false);
+
+      panel.appendChild(helpers.makeIconPicker(
+        helpers.idPrefix + "icon-picker", helpers.idPrefix + "icon",
+        b.icon || "Auto", function (opt) {
+          b.icon = opt;
+          helpers.saveField("icon", opt);
+          renderPreview();
+        }
+      ));
+    },
+    renderPreview: function (b, helpers) {
+      var label = b.label || b.sensor || "Sensor";
+      return {
+        labelHtml:
+          '<span class="sp-btn-label-row"><span class="sp-btn-label">' + helpers.escHtml(label) + '</span>' +
+          '<span class="sp-sensor-badge mdi mdi-gauge"></span></span>',
+      };
+    },
+  });
   // --- type: subpage ---
   registerButtonType("subpage", {
     label: "Subpage",
@@ -207,7 +253,7 @@
     ".sp-btn{border-radius:var(--btn-r);padding:var(--btn-pad);" +
     "display:flex;flex-direction:column;justify-content:space-between;" +
     "cursor:pointer;transition:all .2s;box-sizing:border-box;border:2px solid transparent;" +
-    "position:relative}" +
+    "position:relative;overflow:hidden;min-width:0}" +
     ".sp-btn:hover{filter:brightness(1.15)}" +
     ".sp-drag-active .sp-btn:hover{filter:none}" +
     ".sp-btn.sp-selected{border-color:var(--accent)}" +
@@ -412,12 +458,12 @@
 
     ".sp-back-btn{border-radius:var(--back-r);padding:var(--back-pad);display:flex;flex-direction:column;" +
     "justify-content:space-between;box-sizing:border-box;border:2px solid transparent;" +
-    "position:relative;background:#222;opacity:.6}" +
+    "position:relative;background:#222;opacity:.6;overflow:hidden;min-width:0}" +
     ".sp-back-btn .sp-btn-icon{font-size:var(--back-icon);line-height:1;color:#fff}" +
     ".sp-back-btn .sp-btn-label{font-size:var(--back-label);line-height:1.2;color:#fff}" +
     ".sp-back-btn.sp-btn-double{grid-row:span 2}" +
 
-    ".sp-btn-label-row{display:flex;align-items:baseline;width:100%}" +
+    ".sp-btn-label-row{display:flex;align-items:baseline;width:100%;overflow:hidden}" +
     ".sp-btn-label-row .sp-btn-label{flex:1;min-width:0}" +
     ".sp-subpage-badge{font-size:var(--btn-label);line-height:1.2;opacity:.5;flex-shrink:0;" +
     "cursor:pointer;padding:2px 0 2px 4px;border-radius:4px;transition:opacity .15s}" +
