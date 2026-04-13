@@ -424,6 +424,7 @@
     outdoorEntity: "",
     presenceEntity: "",
     screensaverTimeout: 300,
+    homeScreenTimeout: 60,
     brightnessDayVal: 100,
     brightnessNightVal: 75,
     timezone: "America/New_York (GMT-5)",
@@ -1203,6 +1204,31 @@
     bindTextPost(presInp, "Presence Sensor Entity", {});
     ssBody.appendChild(sensorPanel);
     els.setPresence = presInp;
+
+    ssBody.appendChild(fieldLabel("Home Screen Return"));
+    var hsSelect = document.createElement("select");
+    hsSelect.className = "sp-select";
+    hsSelect.id = "sp-set-hs-timeout";
+    var hsOptions = [
+      { label: "Disabled", value: 0 },
+      { label: "15 seconds", value: 15 },
+      { label: "30 seconds", value: 30 },
+      { label: "1 minute", value: 60 },
+      { label: "2 minutes", value: 120 },
+      { label: "5 minutes", value: 300 },
+    ];
+    hsOptions.forEach(function (opt) {
+      var o = document.createElement("option");
+      o.value = opt.value;
+      o.textContent = opt.label;
+      if (opt.value === state.homeScreenTimeout) o.selected = true;
+      hsSelect.appendChild(o);
+    });
+    hsSelect.addEventListener("change", function () {
+      postNumber("Home Screen Timeout", this.value);
+    });
+    ssBody.appendChild(hsSelect);
+    els.setHSTimeout = hsSelect;
 
     function setSsMode(mode) {
       ssMode = mode;
@@ -2880,6 +2906,7 @@
         outdoor_temp_entity: state.outdoorEntity,
         presence_sensor_entity: state.presenceEntity,
         screensaver_timeout: state.screensaverTimeout,
+        home_screen_timeout: state.homeScreenTimeout,
       },
     };
 
@@ -3082,6 +3109,7 @@
           postText("Outdoor Temp Entity", s.outdoor_temp_entity || "");
           postText("Presence Sensor Entity", s.presence_sensor_entity || "");
           postNumber("Screensaver Timeout", s.screensaver_timeout || 300);
+          postNumber("Home Screen Timeout", s.home_screen_timeout != null ? s.home_screen_timeout : 60);
 
           state._indoorOn = !!s.indoor_temp_enable;
           state._outdoorOn = !!s.outdoor_temp_enable;
@@ -3089,6 +3117,7 @@
           state.outdoorEntity = s.outdoor_temp_entity || "";
           state.presenceEntity = s.presence_sensor_entity || "";
           state.screensaverTimeout = s.screensaver_timeout || 300;
+          state.homeScreenTimeout = s.home_screen_timeout != null ? s.home_screen_timeout : 60;
 
           els.setIndoorToggle.checked = state._indoorOn;
           els.setIndoorField.className = "sp-cond-field" + (state._indoorOn ? " sp-visible" : "");
@@ -3098,6 +3127,7 @@
           syncInput(els.setOutdoorEntity, state.outdoorEntity);
           syncInput(els.setPresence, state.presenceEntity);
           if (els.setSSTimeout) els.setSSTimeout.value = String(state.screensaverTimeout);
+          if (els.setHSTimeout) els.setHSTimeout.value = String(state.homeScreenTimeout);
           if (els.setSsMode) els.setSsMode(state.presenceEntity ? "sensor" : "timer");
           updateTempPreview();
 
@@ -3209,6 +3239,10 @@
       "number-screensaver_timeout": function (val) {
         state.screensaverTimeout = parseFloat(val) || 300;
         if (els.setSSTimeout) els.setSSTimeout.value = String(state.screensaverTimeout);
+      },
+      "number-home_screen_timeout": function (val) {
+        state.homeScreenTimeout = parseFloat(val) || 0;
+        if (els.setHSTimeout) els.setHSTimeout.value = String(state.homeScreenTimeout);
       },
       "text-presence_sensor_entity": function (val) {
         state.presenceEntity = val;
