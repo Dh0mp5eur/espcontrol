@@ -1406,9 +1406,9 @@
     hsSelect.id = "sp-set-hs-timeout";
     var hsOptions = [
       { label: "Disabled", value: 0 },
-      { label: "15 seconds", value: 15 },
+      { label: "10 seconds", value: 10 },
+      { label: "20 seconds", value: 20 },
       { label: "30 seconds", value: 30 },
-      { label: "45 seconds", value: 45 },
       { label: "1 minute", value: 60 },
       { label: "2 minutes", value: 120 },
       { label: "5 minutes", value: 300 },
