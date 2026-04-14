@@ -2220,7 +2220,11 @@
         if (didDrag) { didDrag = false; return; }
         exitSubpage();
       } else if (slot === 0) {
-        addSlot(pos);
+        if (state.clipboard) {
+          showEmptySlotMenu(e, pos);
+        } else {
+          addSlot(pos);
+        }
       }
     });
 
@@ -2236,8 +2240,10 @@
         showContextMenu(e, slot);
       } else if (slot === -2) {
         showBackContextMenu(e);
-      } else if (slot === 0 && state.clipboard) {
-        showPasteContextMenu(e, pos);
+      } else if (slot === 0) {
+        if (state.clipboard) {
+          showEmptySlotMenu(e, pos);
+        }
       }
     });
 
@@ -2783,7 +2789,7 @@
     positionMenu(ctxMenu, e);
   }
 
-  function showPasteContextMenu(e, pos) {
+  function showEmptySlotMenu(e, pos) {
     if (!state.clipboard) return;
     hideContextMenu();
     ctxMenu = document.createElement("div");
@@ -2797,6 +2803,7 @@
         pasteButton(pos);
       }
     });
+    addCtxItem("plus", "Add New Button", function () { addSlot(pos); });
     document.body.appendChild(ctxMenu);
     positionMenu(ctxMenu, e);
   }
@@ -2887,9 +2894,8 @@
     }
     postText("Button Order", serializeGrid(state.grid));
     state.clipboard = null;
-    if (lastSlot > 0) selectButton(lastSlot);
+    state.selectedSlots = [];
     renderPreview();
-    renderButtonSettings();
   }
 
   function pasteSubpageButton(pos) {
@@ -2936,12 +2942,8 @@
     sp.order = serializeSubpageGrid(sp);
     state.clipboard = null;
     saveSubpageConfig(homeSlot);
-    if (lastSlot > 0) {
-      state.subpageSelectedSlots = [lastSlot];
-      state.subpageLastClicked = lastSlot;
-    }
+    state.subpageSelectedSlots = [];
     renderPreview();
-    renderButtonSettings();
   }
 
   // ── Export / Import ────────────────────────────────────────────────────
