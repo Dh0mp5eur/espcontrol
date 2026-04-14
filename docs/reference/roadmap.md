@@ -10,7 +10,7 @@ Espcontrol is actively developed and improved based on user feedback. There is n
 
 ## Additional button types
 
-Currently every button is either a **Toggle** (tap to switch a device on/off) or a **Subpage** (folder of more buttons). Future releases will introduce specialised button types that give richer, purpose-built controls on the panel:
+In addition to the existing card types — **Toggle**, **Subpage**, **[Button](/card-types/buttons)**, **[Sensor](/card-types/sensors)**, **[Slider](/card-types/sliders)**, and **[Cover](/card-types/covers)** — future releases will introduce more specialised controls:
 
 | Button type | Description |
 | --- | --- |
