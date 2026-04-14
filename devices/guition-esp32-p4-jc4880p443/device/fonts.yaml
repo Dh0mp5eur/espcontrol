@@ -1,28 +1,21 @@
 # =============================================================================
-# FONTS (DEVICE OVERRIDE) - Larger fonts for the 480x800 horizontal layout
+# FONTS (DEVICE OVERRIDE) - Font variants for the 480x800 display
 # =============================================================================
-# Supplements the common fonts with larger variants for the main UI.
+# Supplements the common fonts with device-specific variants for the main UI.
 # The common fonts (icon_font, label_font, etc.) still load for setup screens;
 # these _lg variants are referenced by the device theme and LVGL config.
 # =============================================================================
 
 font:
-  # Button icons (56px, up from common 48px)
-  - file: 'https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf'
-    id: icon_font_lg
-    size: 56
-    bpp: 4
-    glyphs: !include ../../../common/assets/icon_glyphs.yaml
-
-  # Button labels (24px, up from common 22px)
+  # Button labels (22px)
   - file: "gfonts://Roboto"
     id: label_font_lg
-    size: 24
+    size: 22
     bpp: 4
     glyphs: !include ../../../common/assets/text_glyphs.yaml
 
-  # Top bar clock and temperature (22px, up from common 20px)
+  # Top bar clock and temperature (20px)
   - file: "gfonts://Roboto"
     id: clockbar_font_lg
-    size: 22
+    size: 20
     bpp: 4
