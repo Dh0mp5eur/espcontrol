@@ -200,6 +200,8 @@ time:
 script:
   - id: time_update
     then:
+      - lambda: |-
+          apply_timezone(id(timezone_select).current_option());
       - lvgl.label.update:
           id: display_time
           text: !lambda |-
