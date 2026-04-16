@@ -12,6 +12,7 @@
 #include <string>
 #include <cstdlib>
 #include <cstring>
+#include <cctype>
 #include <cstdint>
 #include <vector>
 #include <functional>
@@ -72,6 +73,14 @@ inline int parse_precision(const std::string &s) {
   if (s.empty()) return 0;
   int v = atoi(s.c_str());
   return (v < 0) ? 0 : (v > 3) ? 3 : v;
+}
+
+inline bool parse_complete_float(const std::string &s, float &out) {
+  char *end;
+  out = strtof(s.c_str(), &end);
+  if (end == s.c_str()) return false;
+  while (*end != '\0' && isspace(static_cast<unsigned char>(*end))) end++;
+  return *end == '\0';
 }
 
 // Parse a 6-char hex color string (no # prefix) into a uint32_t RGB value
@@ -232,9 +241,8 @@ inline void subscribe_sensor_value(lv_obj_t *sensor_lbl, const std::string &sens
   esphome::api::global_api_server->subscribe_home_assistant_state(
     sensor_id, {},
     std::function<void(const std::string &)>([sensor_lbl, precision](const std::string &state) {
-      char *end;
-      float val = strtof(state.c_str(), &end);
-      if (end != state.c_str()) {
+      float val;
+      if (parse_complete_float(state, val)) {
         char fmt[8];
         snprintf(fmt, sizeof(fmt), "%%.%df", precision);
         char buf[16];

@@ -11,10 +11,12 @@ Usage:
     python scripts/build.py icons --check # check icons only
 """
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -238,14 +240,28 @@ def _minify_js(path):
     """Minify a JS file in-place using esbuild if available."""
     npx = shutil.which("npx")
     if not npx:
-        return
+        return False
+    env = os.environ.copy()
+    env.setdefault("npm_config_cache", str(Path(tempfile.gettempdir()) / "espcontrol-npm-cache"))
     result = subprocess.run(
         [npx, "esbuild", str(path), "--minify",
          f"--outfile={path}", "--allow-overwrite"],
-        capture_output=True, text=True,
+        capture_output=True, text=True, env=env,
     )
     if result.returncode != 0:
         print(f"  warning: esbuild minification failed for {path.name}")
+        return False
+    return True
+
+
+def _minified_www_text(generated):
+    """Return generated web UI text after the same minification used for outputs."""
+    with tempfile.TemporaryDirectory() as td:
+        tmp = Path(td) / "www.js"
+        tmp.write_text(generated)
+        if _minify_js(tmp):
+            return tmp.read_text()
+    return generated
 
 
 def build_www(check_only=False):
@@ -261,7 +277,8 @@ def build_www(check_only=False):
 
         if output_path.exists():
             current = output_path.read_text()
-            if current == generated:
+            expected = _minified_www_text(generated)
+            if current == expected:
                 continue
 
         dirty.append(slug)

@@ -21,12 +21,12 @@ font:
     bpp: 4
     glyphs: !include ../../../common/assets/text_glyphs.yaml
 
-  # Sensor value large number (62px)
+  # Sensor value large number/text (62px)
   - file: "gfonts://Roboto@Light"
     id: statistics_font_lg
     size: 62
     bpp: 4
-    glyphs: "0123456789.-°/%kWhVA "
+    glyphs: !include ../../../common/assets/text_glyphs.yaml
 
   # Top bar clock and temperature (25px)
   - file: "gfonts://Roboto"
