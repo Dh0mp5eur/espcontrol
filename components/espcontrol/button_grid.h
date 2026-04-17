@@ -502,7 +502,8 @@ inline lv_obj_t *setup_slider_widget(lv_obj_t *btn, uint32_t on_color, bool hori
   lv_obj_set_style_bg_opa(fill, LV_OPA_COVER, LV_PART_MAIN);
   lv_obj_set_style_border_width(fill, 0, LV_PART_MAIN);
   lv_obj_set_style_pad_all(fill, 0, LV_PART_MAIN);
-  lv_obj_clear_flag(fill, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_clear_flag(fill, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_clear_flag(fill, LV_OBJ_FLAG_SCROLLABLE);
 
   lv_obj_t *slider = lv_slider_create(btn);
   lv_slider_set_range(slider, 0, 100);
@@ -561,7 +562,7 @@ inline void setup_slider_visual(BtnSlot &s, const ParsedCfg &p, uint32_t on_colo
   lv_obj_set_user_data(slider, (void *)ctx);
 
   lv_obj_add_event_cb(slider, [](lv_event_t *e) {
-    lv_obj_t *sl = lv_event_get_target(e);
+    lv_obj_t *sl = static_cast<lv_obj_t *>(lv_event_get_target(e));
     SliderCtx *c = (SliderCtx *)lv_obj_get_user_data(sl);
     if (!c) return;
     int val = lv_slider_get_value(sl);
@@ -570,7 +571,7 @@ inline void setup_slider_visual(BtnSlot &s, const ParsedCfg &p, uint32_t on_colo
   }, LV_EVENT_VALUE_CHANGED, nullptr);
 
   lv_obj_add_event_cb(slider, [](lv_event_t *e) {
-    lv_obj_t *sl = lv_event_get_target(e);
+    lv_obj_t *sl = static_cast<lv_obj_t *>(lv_event_get_target(e));
     SliderCtx *c = (SliderCtx *)lv_obj_get_user_data(sl);
     if (c && !c->entity_id.empty()) {
       int val = lv_slider_get_value(sl);
@@ -682,7 +683,7 @@ inline lv_obj_t *setup_subpage_slider(lv_obj_t *btn, lv_obj_t *icon_lbl, lv_obj_
   lv_obj_set_user_data(sl, (void *)ctx);
 
   lv_obj_add_event_cb(sl, [](lv_event_t *e) {
-    lv_obj_t *s = lv_event_get_target(e);
+    lv_obj_t *s = static_cast<lv_obj_t *>(lv_event_get_target(e));
     SliderCtx *c = (SliderCtx *)lv_obj_get_user_data(s);
     if (!c) return;
     int val = lv_slider_get_value(s);
@@ -691,7 +692,7 @@ inline lv_obj_t *setup_subpage_slider(lv_obj_t *btn, lv_obj_t *icon_lbl, lv_obj_
   }, LV_EVENT_VALUE_CHANGED, nullptr);
 
   lv_obj_add_event_cb(sl, [](lv_event_t *e) {
-    lv_obj_t *s = lv_event_get_target(e);
+    lv_obj_t *s = static_cast<lv_obj_t *>(lv_event_get_target(e));
     SliderCtx *c = (SliderCtx *)lv_obj_get_user_data(s);
     if (c && !c->entity_id.empty())
       send_slider_action(c->entity_id, lv_slider_get_value(s));
@@ -1145,7 +1146,8 @@ inline void grid_phase2(
         lv_obj_t *sc = lv_obj_create(sb_btn);
         lv_obj_set_align(sc, LV_ALIGN_TOP_LEFT);
         lv_obj_set_size(sc, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-        lv_obj_clear_flag(sc, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_clear_flag(sc, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_clear_flag(sc, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_style_bg_opa(sc, LV_OPA_TRANSP, LV_PART_MAIN);
         lv_obj_set_style_border_width(sc, 0, LV_PART_MAIN);
         lv_obj_set_style_pad_all(sc, 0, LV_PART_MAIN);
