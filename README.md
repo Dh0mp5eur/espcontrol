@@ -24,7 +24,7 @@ Supported panels include the **7-inch JC1060P470** (1024×600, landscape, 15 but
 
 | 7″ JC1060P470 | 4.3″ JC4880P443 | 4″ 4848S040 |
 |:-:|:-:|:-:|
-| ![7-inch JC1060P470](docs/public/images/jc1060p470-hero.png) | ![4.3-inch JC4880P443](docs/public/images/jc4880p443-hero.png) | ![4-inch 4848S040](docs/public/images/4848s040-hero.png) |
+| ![7-inch JC1060P470](docs/public/images/jc1060p470-hero.jpg) | ![4.3-inch JC4880P443](docs/public/images/jc4880p443-hero.jpg) | ![4-inch 4848S040](docs/public/images/4848s040-hero.jpg) |
 | 1024×600 landscape · 15 buttons | 480×800 portrait · 15 buttons | 480×480 square · 9 buttons |
 | ESP32-P4 | ESP32-P4 | ESP32-S3 |
 | [AliExpress ~£40](https://s.click.aliexpress.com/e/_c335W0r5) | [AliExpress ~£24](https://s.click.aliexpress.com/e/_c32jr3eN) | [AliExpress ~£16](https://s.click.aliexpress.com/e/_c3sIhvBv) |
