@@ -2383,11 +2383,7 @@
     main.innerHTML = "";
     var c = ctx();
 
-    if (c.isSub) {
-      if (els.previewHint) els.previewHint.style.display = "none";
-    } else {
-      if (els.previewHint) els.previewHint.style.display = "";
-    }
+    updatePreviewHint(c);
 
     for (var pos = 0; pos < c.maxSlots; pos++) {
       var slot = c.grid[pos];
@@ -2455,8 +2451,23 @@
 
   // ── Button settings panel (unified) ────────────────────────────────────
 
-  function closeSettings() {
+  function hideSettingsOverlay() {
     if (els.settingsOverlay) els.settingsOverlay.classList.remove("sp-visible");
+  }
+
+  function updatePreviewHint(c) {
+    if (!els.previewHint) return;
+    c = c || ctx();
+    els.previewHint.style.display = "";
+    if (c.selected.length > 1) {
+      els.previewHint.textContent = c.selected.length + " buttons selected \u2022 right click to copy, cut, or delete";
+    } else {
+      els.previewHint.textContent = "tap to configure \u2022 shift/ctrl+tap to multi-select \u2022 right click to manage";
+    }
+  }
+
+  function closeSettings() {
+    hideSettingsOverlay();
     ctx().setSelected([]);
     renderPreview();
   }
@@ -2467,19 +2478,16 @@
     var c = ctx();
 
     if (c.selected.length === 0) {
-      if (els.settingsOverlay) els.settingsOverlay.classList.remove("sp-visible");
+      hideSettingsOverlay();
+      return;
+    }
+
+    if (c.selected.length > 1) {
+      hideSettingsOverlay();
       return;
     }
 
     if (els.settingsOverlay) els.settingsOverlay.classList.add("sp-visible");
-
-    if (c.selected.length > 1) {
-      var hint = document.createElement("div");
-      hint.className = "sp-hint";
-      hint.textContent = c.selected.length + " buttons selected \u2022 right click to delete";
-      container.appendChild(hint);
-      return;
-    }
 
     var slot = c.selected[0];
     var bIdx = slot - 1;
@@ -3190,7 +3198,7 @@
         }
         c.setSelected(newSel);
         renderPreview();
-        renderButtonSettings();
+        hideSettingsOverlay();
         return;
       }
     }
@@ -3204,7 +3212,7 @@
         c.setLastClicked(slot);
       }
       renderPreview();
-      renderButtonSettings();
+      hideSettingsOverlay();
       return;
     }
 
