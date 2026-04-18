@@ -37,7 +37,12 @@
         "180",
         "270"
       ],
-      "screenRotationDisplayOffset": 180
+      "screenRotationDisplayLabels": {
+        "0": "180",
+        "90": "270",
+        "180": "0",
+        "270": "90"
+      }
     },
     "screen": {
       "width": "55%",
@@ -1136,6 +1141,9 @@
   }
 
   function displayScreenRotation(value) {
+    var labels = CFG.features && CFG.features.screenRotationDisplayLabels;
+    value = String(value == null ? "" : value);
+    if (labels && Object.prototype.hasOwnProperty.call(labels, value)) return labels[value];
     var offset = (CFG.features && parseInt(CFG.features.screenRotationDisplayOffset, 10)) || 0;
     var n = parseInt(value, 10);
     if (!isFinite(n)) return value;
