@@ -793,6 +793,18 @@
     ".sp-empty-cell.sp-drop-placeholder{border-color:rgba(92,156,245,.5)}" : "") +
 
     ".sp-hint{text-align:center;font-size:.7rem;color:var(--text3);padding:8px 0 12px}" +
+    ".sp-selection-bar{display:none;align-items:center;justify-content:center;gap:8px;" +
+    "padding:0 var(--gap) 12px;color:var(--text);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}" +
+    ".sp-selection-bar.sp-visible{display:flex}" +
+    ".sp-selection-label{font-size:.8rem;color:var(--text2);margin-right:4px}" +
+    ".sp-selection-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;" +
+    "border:1px solid var(--border);border-radius:var(--action-r);background:var(--surface2);" +
+    "color:var(--text);padding:8px 12px;font-size:.8rem;font-weight:500;cursor:pointer;" +
+    "font-family:inherit;transition:all .2s;min-height:34px}" +
+    ".sp-selection-btn:hover{background:var(--border);border-color:#4a4d54}" +
+    ".sp-selection-btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}" +
+    ".sp-selection-btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}" +
+    ".sp-selection-btn .mdi{font-size:16px;line-height:1}" +
 
     ".sp-config{padding:var(--gap) var(--gap) var(--gap)}" +
 
@@ -1118,7 +1130,6 @@
     editingSubpage: null,
     subpageSelectedSlots: [],
     subpageLastClicked: -1,
-    settingsDraft: null,
     clipboard: null,
   };
 
@@ -1243,7 +1254,6 @@
         els.fwCheckBtn.textContent = state.firmwareChecking ? "Checking\u2026" : "Check for Update";
       }
     }
-    renderSelectionBar(c);
   }
 
   function setFirmwareUpdateInfo(d) {
@@ -2030,9 +2040,14 @@
 
     var hint = document.createElement("div");
     hint.className = "sp-hint";
-    hint.textContent = "tap to configure \u2022 shift/ctrl+tap to multi-select \u2022 right click to manage";
+    hint.textContent = "tap to select \u2022 shift/ctrl+tap to multi-select \u2022 right click to manage";
     els.previewHint = hint;
     page.appendChild(hint);
+
+    var selectionBar = document.createElement("div");
+    selectionBar.className = "sp-selection-bar";
+    els.selectionBar = selectionBar;
+    page.appendChild(selectionBar);
 
     var overlay = document.createElement("div");
     overlay.className = "sp-settings-overlay";
@@ -2740,6 +2755,7 @@
         main.appendChild(empty);
       }
     }
+    renderSelectionBar(c);
   }
 
   // ── Button settings panel (unified) ────────────────────────────────────
@@ -2755,7 +2771,7 @@
     if (c.selected.length > 1) {
       els.previewHint.textContent = c.selected.length + " buttons selected \u2022 right click to copy, cut, or delete";
     } else {
-      els.previewHint.textContent = "tap to configure \u2022 shift/ctrl+tap to multi-select \u2022 right click to manage";
+      els.previewHint.textContent = "tap to select \u2022 shift/ctrl+tap to multi-select \u2022 right click to manage";
     }
   }
 
@@ -3465,6 +3481,7 @@
     }
   }
 
+
   function canPlaceSlotAt(grid, pos, size, maxSlots) {
     if (pos < 0 || pos >= maxSlots || grid[pos] !== 0) return false;
     if (size === 2 || size === 4) {
@@ -3569,6 +3586,8 @@
         exitSubpage();
       } else if (slot === 0) {
         if (state.clipboard) {
+          e.preventDefault();
+          e.stopPropagation();
           showEmptySlotMenu(e, pos);
         } else {
           addSlot(pos);
@@ -3589,9 +3608,7 @@
       } else if (slot === -2) {
         showBackContextMenu(e);
       } else if (slot === 0) {
-        if (state.clipboard) {
-          showEmptySlotMenu(e, pos);
-        }
+        showEmptySlotMenu(e, pos);
       }
     });
 
@@ -3678,7 +3695,7 @@
       var c = ctx();
       if (dragSrcPos < 0 || toPos < 0 || toPos >= c.maxSlots) { dragSrcPos = -1; dragIsSubpage = false; return; }
       if (dragSrcPos === toPos) { dragSrcPos = -1; dragIsSubpage = false; return; }
-      moveToCell(dragSrcPos, toPos);
+      if (!moveSelectedToCell(dragSrcPos, toPos)) moveToCell(dragSrcPos, toPos);
       renderPreview();
       renderButtonSettings();
       c.save();
@@ -3762,13 +3779,17 @@
     return -1;
   }
 
+  function emptyButtonConfig(type) {
+    return { entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "", type: type || "", precision: "" };
+  }
+
   function addSlot(pos) {
     var c = ctx();
     if (c.isSub) {
       var sp = getSubpage(state.editingSubpage);
       var newSlot = subpageFirstFreeSlot(sp);
       while (sp.buttons.length < newSlot) {
-        sp.buttons.push({ entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "", type: "", precision: "" });
+        sp.buttons.push(emptyButtonConfig());
       }
       sp.grid[pos] = newSlot;
       sp.order = serializeSubpageGrid(sp);
@@ -3784,6 +3805,21 @@
       postText("Button Order", serializeGrid(state.grid));
       selectButton(slot);
     }
+  }
+
+  function addSubpageSlot(pos) {
+    var c = ctx();
+    if (c.isSub) return;
+    var slot = firstFreeSlot();
+    if (slot < 0) return;
+    state.buttons[slot - 1] = emptyButtonConfig("subpage");
+    state.grid[pos] = slot;
+    state.subpages[slot] = { order: [], buttons: [], grid: [], sizes: {} };
+    buildSubpageGrid(state.subpages[slot]);
+    postText("Button Order", serializeGrid(state.grid));
+    saveButtonConfig(slot);
+    saveSubpageEntity(slot);
+    selectButton(slot);
   }
 
   function duplicateButton(srcSlot) {
@@ -3837,7 +3873,7 @@
     var sp = getSubpage(homeSlot);
     var newSlot = subpageFirstFreeSlot(sp);
     while (sp.buttons.length < newSlot) {
-      sp.buttons.push({ entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "", type: "", precision: "" });
+      sp.buttons.push(emptyButtonConfig());
     }
 
     var src = sp.buttons[srcSlot - 1];
@@ -4071,49 +4107,80 @@
     renderButtonSettings();
   }
 
+
+  function addBulkCardMenuItems(slots) {
+    addCtxItem("clipboard-outline", "Copy " + slots.length + " Cards", function () { copyButtons(slots); });
+    addCtxItem("content-cut", "Cut " + slots.length + " Cards", function () { cutButtons(slots); });
+    addCtxItem("delete", "Delete " + slots.length + " Cards", function () { deleteButtons(slots); }, true);
+  }
+
+  function addSingleCardMenuItems(slot) {
+    var c = ctx();
+    var b = c.buttons[slot - 1];
+    addCtxItem("pencil", "Edit Card", function () { openCardSettings(slot); });
+
+    var ctxTypeDef = BUTTON_TYPES[(b && b.type) || ""];
+    if (ctxTypeDef && ctxTypeDef.contextMenuItems && (!c.isSub || ctxTypeDef.allowInSubpage)) {
+      ctxTypeDef.contextMenuItems(slot, b, { addCtxItem: addCtxItem });
+    }
+
+    var sz = c.sizes[slot] || 1;
+    addCtxSubmenu("arrow-expand-all", "Size", function (sub) {
+      addSubItem(sub, "", "Single", function () { resizeSlot(slot, 1); }, sz === 1);
+      addSubItem(sub, "", "Tall", function () { resizeSlot(slot, 2); }, sz === 2);
+      addSubItem(sub, "", "Wide", function () { resizeSlot(slot, 3); }, sz === 3);
+      addSubItem(sub, "", "Large", function () { resizeSlot(slot, 4); }, sz === 4);
+    });
+
+    addCtxDivider();
+    addCtxItem("content-copy", "Duplicate", function () {
+      if (c.isSub) { duplicateSubpageButton(slot); } else { duplicateButton(slot); }
+    });
+
+    addCtxItem("clipboard-outline", "Copy", function () { copySlot(slot); });
+    addCtxItem("content-cut", "Cut", function () { cutSlot(slot); });
+    addCtxItem("delete", "Delete", function () { deleteSlot(slot); }, true);
+  }
+
+  function showSelectionMenu(e) {
+    hideContextMenu();
+    var c = ctx();
+    if (!c.selected.length) return;
+
+    ctxMenu = document.createElement("div");
+    ctxMenu.className = "sp-ctx-menu";
+    if (c.selected.length > 1) {
+      addBulkCardMenuItems(c.selected.slice());
+    } else {
+      addSingleCardMenuItems(c.selected[0]);
+    }
+    document.body.appendChild(ctxMenu);
+    positionMenu(ctxMenu, e);
+  }
+
   function showContextMenu(e, slot) {
     hideContextMenu();
     var c = ctx();
 
-    var isMulti = c.selected.length > 1 && c.selected.indexOf(slot) !== -1;
-    if (c.selected.indexOf(slot) === -1 && c.selected.length > 1) {
-      c.selected.push(slot);
-      isMulti = true;
+    if (c.selected.indexOf(slot) === -1) {
+      if (c.selected.length > 1) {
+        c.selected.push(slot);
+      } else {
+        c.setSelected([slot]);
+        c.setLastClicked(slot);
+      }
       renderPreview();
       renderButtonSettings();
+      c = ctx();
     }
 
     ctxMenu = document.createElement("div");
     ctxMenu.className = "sp-ctx-menu";
 
-    if (isMulti) {
-      var bulkSlots = c.selected.slice();
-      addCtxItem("clipboard-outline", "Copy " + bulkSlots.length + " Buttons", function () { copyButtons(bulkSlots); });
-      addCtxItem("content-cut", "Cut " + bulkSlots.length + " Buttons", function () { cutButtons(bulkSlots); });
-      addCtxItem("delete", "Delete " + bulkSlots.length + " Buttons", function () { deleteButtons(bulkSlots); }, true);
+    if (c.selected.length > 1 && c.selected.indexOf(slot) !== -1) {
+      addBulkCardMenuItems(c.selected.slice());
     } else {
-      var b = c.buttons[slot - 1];
-      var ctxTypeDef = BUTTON_TYPES[(b && b.type) || ""];
-      if (ctxTypeDef && ctxTypeDef.contextMenuItems && (!c.isSub || ctxTypeDef.allowInSubpage)) {
-        ctxTypeDef.contextMenuItems(slot, b, { addCtxItem: addCtxItem });
-      }
-
-      var sz = c.sizes[slot] || 1;
-      addCtxSubmenu("arrow-expand-all", "Size", function (sub) {
-        addSubItem(sub, "", "Single", function () { resizeSlot(slot, 1); }, sz === 1);
-        addSubItem(sub, "", "Tall", function () { resizeSlot(slot, 2); }, sz === 2);
-        addSubItem(sub, "", "Wide", function () { resizeSlot(slot, 3); }, sz === 3);
-        addSubItem(sub, "", "Large", function () { resizeSlot(slot, 4); }, sz === 4);
-      });
-
-      addCtxDivider();
-      addCtxItem("content-copy", "Duplicate", function () {
-        if (c.isSub) { duplicateSubpageButton(slot); } else { duplicateButton(slot); }
-      });
-
-      addCtxItem("clipboard-outline", "Copy", function () { copySlot(slot); });
-      addCtxItem("content-cut", "Cut", function () { cutSlot(slot); });
-      addCtxItem("delete", "Delete", function () { deleteSlot(slot); }, true);
+      addSingleCardMenuItems(slot);
     }
 
     document.body.appendChild(ctxMenu);
@@ -4137,20 +4204,25 @@
   }
 
   function showEmptySlotMenu(e, pos) {
-    if (!state.clipboard) return;
     hideContextMenu();
     ctxMenu = document.createElement("div");
     ctxMenu.className = "sp-ctx-menu";
     var c = ctx();
-    var count = state.clipboard.buttons.length;
-    addCtxItem("content-paste", count > 1 ? "Paste " + count + " Buttons" : "Paste", function () {
-      if (c.isSub) {
-        pasteSubpageButton(pos);
-      } else {
-        pasteButton(pos);
-      }
-    });
-    addCtxItem("plus", "Add New Button", function () { addSlot(pos); });
+    if (state.clipboard) {
+      var count = state.clipboard.buttons.length;
+      addCtxItem("content-paste", count > 1 ? "Paste " + count + " Cards" : "Paste", function () {
+        if (c.isSub) {
+          pasteSubpageButton(pos);
+        } else {
+          pasteButton(pos);
+        }
+      });
+      addCtxDivider();
+    }
+    addCtxItem("plus", "Create Card", function () { addSlot(pos); });
+    if (!c.isSub) {
+      addCtxItem("folder-plus", "Create Subpage", function () { addSubpageSlot(pos); });
+    }
     document.body.appendChild(ctxMenu);
     positionMenu(ctxMenu, e);
   }
@@ -4261,7 +4333,7 @@
       if (cell < 0) break;
       var newSlot = subpageFirstFreeSlot(sp);
       while (sp.buttons.length < newSlot) {
-        sp.buttons.push({ entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "", type: "", precision: "" });
+        sp.buttons.push(emptyButtonConfig());
       }
       var e = entries[i];
       sp.buttons[newSlot - 1] = {
