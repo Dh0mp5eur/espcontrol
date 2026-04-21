@@ -103,10 +103,10 @@ script:
       - light.turn_off:
           id: display_backlight
           transition_length: 1s
-      - delay: 1100ms
+      - delay: 3s
       - output.turn_off: gpio_backlight_pwm
       - lvgl.pause:
-          show_snow: false
+          show_snow: true
 
   # Touchscreen long-press sleep. This is stronger than the automatic schedule;
   # the next tap wakes it.
