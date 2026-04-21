@@ -20,6 +20,7 @@ globals:
     initial_value: 'false'
   - id: screen_schedule_asleep
     type: bool
+    restore_value: true
     initial_value: 'false'
   - id: backlight_manual_off
     type: bool
@@ -145,13 +146,21 @@ script:
     mode: restart
     then:
       - delay: 120s
-      - globals.set:
-          id: display_asleep
-          value: 'true'
-      - light.turn_on:
-          id: display_backlight
-          brightness: 50%
-          transition_length: 2s
+      - if:
+          condition:
+            lambda: |-
+              return id(screen_schedule_asleep) ||
+                     (id(schedule_enabled).state && !id(ha_time).now().is_valid());
+          then:
+            - script.execute: backlight_force_display_off
+          else:
+            - globals.set:
+                id: display_asleep
+                value: 'true'
+            - light.turn_on:
+                id: display_backlight
+                brightness: 50%
+                transition_length: 2s
 
   # Home screen return timer (restartable)
   - id: home_screen_idle_check

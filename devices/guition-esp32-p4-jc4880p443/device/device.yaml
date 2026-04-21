@@ -106,14 +106,16 @@ light:
     name: Display Backlight
     icon: mdi:lightbulb-on
     id: display_backlight
-    restore_mode: ALWAYS_ON
+    restore_mode: RESTORE_DEFAULT_ON
     default_transition_length: 0s
     gamma_correct: 1.0
     on_turn_on:
       then:
         - if:
             condition:
-              lambda: 'return id(screen_schedule_asleep);'
+              lambda: |-
+                return id(screen_schedule_asleep) ||
+                       (id(schedule_enabled).state && !id(ha_time).now().is_valid());
             then:
               - script.execute: backlight_force_display_off
             else:

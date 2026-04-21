@@ -49,6 +49,12 @@ text_sensor:
     web_server:
       sorting_group_id: sg_brightness
 
+esphome:
+  on_boot:
+    priority: -250
+    then:
+      - script.execute: screen_schedule_boot_guard
+
 # =============================================================================
 # USER-CONFIGURABLE ENTITIES
 # =============================================================================
@@ -179,6 +185,37 @@ number:
 
 script:
   # ---------------------------------------------------------------------------
+  # Keep the backlight dark after reboot until valid time confirms the schedule.
+  # ---------------------------------------------------------------------------
+  - id: screen_schedule_boot_guard
+    mode: restart
+    then:
+      - if:
+          condition:
+            switch.is_on: schedule_enabled
+          then:
+            - globals.set:
+                id: display_asleep
+                value: 'true'
+            - globals.set:
+                id: screensaver_display_off_active
+                value: 'true'
+            - globals.set:
+                id: screen_schedule_asleep
+                value: 'true'
+            - globals.set:
+                id: backlight_manual_off
+                value: 'false'
+            - globals.set:
+                id: manual_wake_ms
+                value: '0'
+            - script.execute: backlight_force_display_off
+          else:
+            - globals.set:
+                id: screen_schedule_asleep
+                value: 'false'
+
+  # ---------------------------------------------------------------------------
   # Force the screen asleep because it is outside schedule hours
   # ---------------------------------------------------------------------------
   - id: screen_schedule_sleep
@@ -202,6 +239,7 @@ script:
       - globals.set:
           id: manual_wake_ms
           value: '0'
+      - lambda: 'global_preferences->sync();'
       - script.execute: backlight_sleep_display_off
 
   # ---------------------------------------------------------------------------
@@ -223,6 +261,7 @@ script:
       - globals.set:
           id: manual_wake_ms
           value: '0'
+      - lambda: 'global_preferences->sync();'
       - lvgl.resume:
       - script.execute: hide_clock_view
       - delay: 100ms
@@ -278,7 +317,9 @@ script:
             id(manual_wake_ms) = 0;
           }
 
-          if (!id(screen_schedule_asleep)) {
+          if (id(screen_schedule_asleep)) {
+            id(backlight_force_display_off).execute();
+          } else {
             id(screen_schedule_sleep).execute();
           }
 
