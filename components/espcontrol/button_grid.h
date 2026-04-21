@@ -20,6 +20,13 @@
 #include "backlight.h"
 
 constexpr uint32_t DEFAULT_SLIDER_COLOR = 0xFF8C00;
+constexpr int MAX_GRID_SLOTS = 25;
+constexpr int MAX_SUBPAGE_ITEMS = MAX_GRID_SLOTS * MAX_GRID_SLOTS;
+
+inline int bounded_grid_slots(int num_slots) {
+  if (num_slots < 0) return 0;
+  return num_slots > MAX_GRID_SLOTS ? MAX_GRID_SLOTS : num_slots;
+}
 
 // LVGL widget handles for one button slot on the main grid
 struct BtnSlot {
@@ -176,9 +183,9 @@ inline uint32_t correct_color(uint32_t rgb) {
 
 // Result of parsing a button_order CSV string into grid cell positions
 struct OrderResult {
-  int positions[25] = {};    // slot number at each grid position (1-based, 0=empty)
-  bool is_double[25] = {};   // slot uses double height (suffix "d" or "b")
-  bool is_wide[25] = {};     // slot uses double width (suffix "w" or "b")
+  int positions[MAX_GRID_SLOTS] = {};    // slot number at each grid position (1-based, 0=empty)
+  bool is_double[MAX_GRID_SLOTS] = {};   // slot uses double height (suffix "d" or "b")
+  bool is_wide[MAX_GRID_SLOTS] = {};     // slot uses double width (suffix "w" or "b")
 };
 
 // Parse "1,2d,3w,4b,..." into positions + double/wide flags
@@ -186,9 +193,10 @@ inline void parse_order_string(const std::string &order_str, int num_slots, Orde
   memset(result.positions, 0, sizeof(result.positions));
   memset(result.is_double, 0, sizeof(result.is_double));
   memset(result.is_wide, 0, sizeof(result.is_wide));
+  int slot_limit = bounded_grid_slots(num_slots);
   if (order_str.empty()) return;
   size_t gpos = 0, start = 0;
-  while (start <= order_str.length() && gpos < (size_t)num_slots) {
+  while (start <= order_str.length() && gpos < (size_t)slot_limit) {
     size_t comma = order_str.find(',', start);
     if (comma == std::string::npos) comma = order_str.length();
     if (comma > start) {
@@ -199,7 +207,7 @@ inline void parse_order_string(const std::string &order_str, int num_slots, Orde
       if (big) { dbl = true; wide = true; }
       if (dbl || wide) token.pop_back();
       int v = atoi(token.c_str());
-      if (v >= 1 && v <= num_slots) {
+      if (v >= 1 && v <= slot_limit) {
         result.positions[gpos] = v;
         result.is_double[v - 1] = dbl;
         result.is_wide[v - 1] = wide;
@@ -212,21 +220,22 @@ inline void parse_order_string(const std::string &order_str, int num_slots, Orde
 
 // Zero out grid cells that are covered by a neighbouring double/wide/big button
 inline void clear_spanned_cells(const OrderResult &order, int num_slots, int cols, OrderResult &result) {
-  for (int p = 0; p < num_slots; p++) {
+  int slot_limit = bounded_grid_slots(num_slots);
+  for (int p = 0; p < slot_limit; p++) {
     result.positions[p] = order.positions[p];
     result.is_double[p] = order.is_double[p];
     result.is_wide[p] = order.is_wide[p];
   }
-  for (int p = 0; p < num_slots; p++) {
+  for (int p = 0; p < slot_limit; p++) {
     if (result.positions[p] <= 0) continue;
     int idx = result.positions[p] - 1;
-    if (result.is_double[idx] && p + cols < num_slots) {
+    if (result.is_double[idx] && p + cols < slot_limit) {
       result.positions[p + cols] = 0;
     }
-    if (result.is_wide[idx] && (p + 1) % cols != 0 && p + 1 < num_slots) {
+    if (result.is_wide[idx] && (p + 1) % cols != 0 && p + 1 < slot_limit) {
       result.positions[p + 1] = 0;
     }
-    if (result.is_double[idx] && result.is_wide[idx] && (p + 1) % cols != 0 && p + cols + 1 < num_slots) {
+    if (result.is_double[idx] && result.is_wide[idx] && (p + 1) % cols != 0 && p + cols + 1 < slot_limit) {
       result.positions[p + cols + 1] = 0;
     }
   }
@@ -873,21 +882,53 @@ inline std::string get_subpage_order(const std::string &sp_cfg) {
 
 // Subpage grid layout with support for a back button token ("B")
 struct SubpageOrder {
-  int positions[25] = {};
-  bool is_double[25] = {};
-  bool is_wide[25] = {};
+  int positions[MAX_GRID_SLOTS] = {};
+  bool is_double[MAX_GRID_SLOTS] = {};
+  bool is_wide[MAX_GRID_SLOTS] = {};
   int back_pos = 0;
   bool back_dbl = false;
   bool back_wide = false;
   bool has_back_token = false;
 };
 
+inline void subscribe_subpage_parent_indicator(
+    const std::string &entity_id,
+    lv_obj_t *parent_btn, lv_obj_t *parent_icon,
+    int parent_idx, bool *child_was_on,
+    bool has_alt_icon, const char *off_glyph, const char *on_glyph,
+    int *sp_on_count) {
+  esphome::api::global_api_server->subscribe_home_assistant_state(
+    entity_id, {},
+    std::function<void(const std::string &)>(
+      [parent_btn, parent_icon, parent_idx, child_was_on,
+       has_alt_icon, off_glyph, on_glyph, sp_on_count](const std::string &state) {
+        bool is_on = is_entity_on(state);
+        if (is_on && !*child_was_on) {
+          sp_on_count[parent_idx]++;
+          *child_was_on = true;
+        } else if (!is_on && *child_was_on) {
+          sp_on_count[parent_idx]--;
+          *child_was_on = false;
+        }
+        if (sp_on_count[parent_idx] > 0) {
+          lv_obj_add_state(parent_btn, LV_STATE_CHECKED);
+          if (has_alt_icon) lv_label_set_text(parent_icon, on_glyph);
+        } else {
+          lv_obj_clear_state(parent_btn, LV_STATE_CHECKED);
+          if (has_alt_icon) lv_label_set_text(parent_icon, off_glyph);
+        }
+      })
+  );
+}
+
 // Parse subpage order CSV; "B"/"Bd"/"Bw"/"Bb" tokens mark the back button position
 inline void parse_subpage_order(const std::string &order_str, int num_slots, int num_btns,
                                 SubpageOrder &result) {
+  int slot_limit = bounded_grid_slots(num_slots);
+  int btn_limit = bounded_grid_slots(num_btns);
   if (order_str.empty()) return;
   size_t gp2 = 0, st2 = 0;
-  while (st2 <= order_str.length() && gp2 < (size_t)num_slots) {
+  while (st2 <= order_str.length() && gp2 < (size_t)slot_limit) {
     size_t cm = order_str.find(',', st2);
     if (cm == std::string::npos) cm = order_str.length();
     if (cm > st2) {
@@ -904,7 +945,7 @@ inline void parse_subpage_order(const std::string &order_str, int num_slots, int
         if (bg) { d = true; w = true; }
         if (d || w) tk.pop_back();
         int v = atoi(tk.c_str());
-        if (v >= 1 && v <= num_btns) {
+        if (v >= 1 && v <= btn_limit) {
           result.positions[gp2] = v;
           result.is_double[v - 1] = d;
           result.is_wide[v - 1] = w;
@@ -939,8 +980,12 @@ inline void grid_phase1(
     const std::string &on_hex, const std::string &off_hex,
     const std::string &sensor_hex) {
   ESP_LOGI("sensors", "Phase 1: visual setup start (%lu ms)", esphome::millis());
-  int NS = cfg.num_slots;
-  int COLS = cfg.cols;
+  int NS = bounded_grid_slots(cfg.num_slots);
+  int COLS = cfg.cols > 0 ? cfg.cols : 1;
+  if (NS != cfg.num_slots) {
+    ESP_LOGW("sensors", "Grid slot count %d exceeds max %d; ignoring extra slots",
+      cfg.num_slots, MAX_GRID_SLOTS);
+  }
 
   if (!order_str.empty()) {
     bool all_empty = true;
@@ -1032,19 +1077,27 @@ inline void grid_phase2(
     const std::string &sensor_hex,
     lv_obj_t *main_page_obj) {
   ESP_LOGI("sensors", "Phase 2: subscriptions + subpages start (%lu ms)", esphome::millis());
-  int NS = cfg.num_slots;
-  int COLS = cfg.cols;
+  int NS = bounded_grid_slots(cfg.num_slots);
+  int COLS = cfg.cols > 0 ? cfg.cols : 1;
+  if (NS != cfg.num_slots) {
+    ESP_LOGW("sensors", "Grid slot count %d exceeds max %d; ignoring extra slots",
+      cfg.num_slots, MAX_GRID_SLOTS);
+  }
   int ROWS = (NS + COLS - 1) / COLS;
 
-  static bool has_sensor[25] = {};
-  static bool has_icon_on[25] = {};
-  static const char* icon_off_cp[25] = {};
-  static const char* icon_on_cp[25] = {};
+  static bool has_sensor[MAX_GRID_SLOTS] = {};
+  static bool has_icon_on[MAX_GRID_SLOTS] = {};
+  static const char* icon_off_cp[MAX_GRID_SLOTS] = {};
+  static const char* icon_on_cp[MAX_GRID_SLOTS] = {};
 
-  static bool sp_child_was_on[25 * 25] = {};
-  static std::string sp_entity_ids[25 * 25];
-  static int sp_alloc_idx = 0;
-  sp_alloc_idx = 0;
+  static bool sp_child_was_on[MAX_SUBPAGE_ITEMS] = {};
+  static std::string sp_entity_ids[MAX_SUBPAGE_ITEMS];
+  static int sp_child_alloc_idx = 0;
+  static int sp_entity_alloc_idx = 0;
+  sp_child_alloc_idx = 0;
+  sp_entity_alloc_idx = 0;
+  memset(has_sensor, 0, sizeof(has_sensor));
+  memset(has_icon_on, 0, sizeof(has_icon_on));
 
   bool has_on, has_off, has_sensor_color;
   uint32_t on_val = parse_hex_color(on_hex, has_on);
@@ -1160,7 +1213,8 @@ inline void grid_phase2(
   lv_coord_t mp_pad_row = lv_obj_get_style_pad_row(main_page_obj, LV_PART_MAIN);
   lv_coord_t mp_pad_col = lv_obj_get_style_pad_column(main_page_obj, LV_PART_MAIN);
 
-  static int sp_on_count[25] = {};
+  static int sp_on_count[MAX_GRID_SLOTS] = {};
+  memset(sp_on_count, 0, sizeof(sp_on_count));
 
   for (int si = 0; si < NS; si++) {
     ParsedCfg p = parse_cfg(slots[si].config->state);
@@ -1348,32 +1402,16 @@ inline void grid_phase2(
           lv_obj_t *parent_btn = slots[si].btn;
           lv_obj_t *parent_icon = slots[si].icon_lbl;
           int parent_idx = si;
-          int cwi = sp_alloc_idx++;
-          sp_child_was_on[cwi] = false;
-          bool *child_was_on = &sp_child_was_on[cwi];
-          bool has_alt_icon = sp_has_icon_on;
-          const char* off_glyph = sp_icon_off_glyph;
-          const char* on_glyph = sp_icon_on_glyph;
-          esphome::api::global_api_server->subscribe_home_assistant_state(
-            sb.entity, {},
-            std::function<void(const std::string &)>([parent_btn, parent_icon, parent_idx, child_was_on, has_alt_icon, off_glyph, on_glyph](const std::string &state) {
-              bool is_on = is_entity_on(state);
-              if (is_on && !*child_was_on) {
-                sp_on_count[parent_idx]++;
-                *child_was_on = true;
-              } else if (!is_on && *child_was_on) {
-                sp_on_count[parent_idx]--;
-                *child_was_on = false;
-              }
-              if (sp_on_count[parent_idx] > 0) {
-                lv_obj_add_state(parent_btn, LV_STATE_CHECKED);
-                if (has_alt_icon) lv_label_set_text(parent_icon, on_glyph);
-              } else {
-                lv_obj_clear_state(parent_btn, LV_STATE_CHECKED);
-                if (has_alt_icon) lv_label_set_text(parent_icon, off_glyph);
-              }
-            })
-          );
+          int cwi = sp_child_alloc_idx++;
+          if (cwi >= MAX_SUBPAGE_ITEMS) {
+            ESP_LOGW("sensors", "Too many subpage state indicators; skipping %s", sb.entity.c_str());
+          } else {
+            sp_child_was_on[cwi] = false;
+            subscribe_subpage_parent_indicator(
+              sb.entity, parent_btn, parent_icon, parent_idx,
+              &sp_child_was_on[cwi], sp_has_icon_on,
+              sp_icon_off_glyph, sp_icon_on_glyph, sp_on_count);
+          }
         }
 
       } else if (!sb.entity.empty()) {
@@ -1397,40 +1435,28 @@ inline void grid_phase2(
           lv_obj_t *parent_btn = slots[si].btn;
           lv_obj_t *parent_icon = slots[si].icon_lbl;
           int parent_idx = si;
-          int cwi = sp_alloc_idx++;
-          sp_child_was_on[cwi] = false;
-          bool *child_was_on = &sp_child_was_on[cwi];
-          bool has_alt_icon = sp_has_icon_on;
-          const char* off_glyph = sp_icon_off_glyph;
-          const char* on_glyph = sp_icon_on_glyph;
-          esphome::api::global_api_server->subscribe_home_assistant_state(
-            sb.entity, {},
-            std::function<void(const std::string &)>([parent_btn, parent_icon, parent_idx, child_was_on, has_alt_icon, off_glyph, on_glyph](const std::string &state) {
-              bool is_on = is_entity_on(state);
-              if (is_on && !*child_was_on) {
-                sp_on_count[parent_idx]++;
-                *child_was_on = true;
-              } else if (!is_on && *child_was_on) {
-                sp_on_count[parent_idx]--;
-                *child_was_on = false;
-              }
-              if (sp_on_count[parent_idx] > 0) {
-                lv_obj_add_state(parent_btn, LV_STATE_CHECKED);
-                if (has_alt_icon) lv_label_set_text(parent_icon, on_glyph);
-              } else {
-                lv_obj_clear_state(parent_btn, LV_STATE_CHECKED);
-                if (has_alt_icon) lv_label_set_text(parent_icon, off_glyph);
-              }
-            })
-          );
+          int cwi = sp_child_alloc_idx++;
+          if (cwi >= MAX_SUBPAGE_ITEMS) {
+            ESP_LOGW("sensors", "Too many subpage state indicators; skipping %s", sb.entity.c_str());
+          } else {
+            sp_child_was_on[cwi] = false;
+            subscribe_subpage_parent_indicator(
+              sb.entity, parent_btn, parent_icon, parent_idx,
+              &sp_child_was_on[cwi], sp_has_icon_on,
+              sp_icon_off_glyph, sp_icon_on_glyph, sp_on_count);
+          }
         }
 
-        int eid_idx = sp_alloc_idx++;
-        sp_entity_ids[eid_idx] = sb.entity;
-        lv_obj_add_event_cb(sb_btn, [](lv_event_t *e) {
-          std::string *en = (std::string *)lv_event_get_user_data(e);
-          if (en && !en->empty()) send_toggle_action(*en);
-        }, LV_EVENT_CLICKED, &sp_entity_ids[eid_idx]);
+        int eid_idx = sp_entity_alloc_idx++;
+        if (eid_idx >= MAX_SUBPAGE_ITEMS) {
+          ESP_LOGW("sensors", "Too many subpage click handlers; skipping %s", sb.entity.c_str());
+        } else {
+          sp_entity_ids[eid_idx] = sb.entity;
+          lv_obj_add_event_cb(sb_btn, [](lv_event_t *e) {
+            std::string *en = (std::string *)lv_event_get_user_data(e);
+            if (en && !en->empty()) send_toggle_action(*en);
+          }, LV_EVENT_CLICKED, &sp_entity_ids[eid_idx]);
+        }
       } else {
         lv_label_set_text(stl, sb.label.empty() ? "Configure" : sb.label.c_str());
       }
