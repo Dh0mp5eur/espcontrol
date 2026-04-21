@@ -2378,40 +2378,13 @@
     timeoutField.appendChild(timeoutSelect);
     timerPanel.appendChild(timeoutField);
 
-    var clockField = document.createElement("div");
-    clockField.className = "sp-field";
-    clockField.appendChild(fieldLabel("Then"));
-    var clockSelect = document.createElement("select");
-    clockSelect.className = "sp-select";
-    clockSelect.id = "sp-set-clock-mode";
-    var clockOff = document.createElement("option");
-    clockOff.value = "off";
-    clockOff.textContent = "Display Off";
-    var clockOn = document.createElement("option");
-    clockOn.value = "clock";
-    clockOn.textContent = "Clock";
-    clockSelect.appendChild(clockOff);
-    clockSelect.appendChild(clockOn);
-    clockSelect.value = state.clockScreensaverOn ? "clock" : "off";
-    clockSelect.addEventListener("change", function () {
-      state.clockScreensaverOn = this.value === "clock";
-      postSwitch("Screen Saver: Clock", state.clockScreensaverOn);
-      clockBrightnessField.style.display = state.clockScreensaverOn ? "" : "none";
-    });
-    clockField.appendChild(clockSelect);
-    timerPanel.appendChild(clockField);
-    els.setClockSelect = clockSelect;
-
-    var clockBrightnessField = document.createElement("div");
-    clockBrightnessField.style.display = state.clockScreensaverOn ? "" : "none";
-    var clockSlider = createRangeSlider("Clock Brightness", state.clockBrightness, "Screen Saver: Clock Brightness");
-    clockSlider.range.min = "1";
-    clockSlider.range.step = "1";
-    clockBrightnessField.appendChild(clockSlider.wrap);
-    timerPanel.appendChild(clockBrightnessField);
-    els.setClockBrightness = clockSlider.range;
-    els.setClockBrightnessVal = clockSlider.val;
-    els.setClockBrightnessField = clockBrightnessField;
+    var timerClockControls = createScreensaverThenControls("sp-set-clock-mode");
+    timerPanel.appendChild(timerClockControls.clockField);
+    timerPanel.appendChild(timerClockControls.brightnessField);
+    els.setClockSelect = timerClockControls.clockSelect;
+    els.setClockBrightness = timerClockControls.clockBrightness;
+    els.setClockBrightnessVal = timerClockControls.clockBrightnessVal;
+    els.setClockBrightnessField = timerClockControls.brightnessField;
 
     ssBody.appendChild(timerPanel);
     els.setSSTimeout = timeoutSelect;
@@ -2421,8 +2394,16 @@
     var presInp = textInput("sp-set-presence", "", "Presence sensor entity");
     sensorPanel.appendChild(presInp);
     bindTextPost(presInp, "Presence Sensor Entity", {});
+    var sensorClockControls = createScreensaverThenControls("sp-set-sensor-clock-mode");
+    sensorPanel.appendChild(sensorClockControls.clockField);
+    sensorPanel.appendChild(sensorClockControls.brightnessField);
     ssBody.appendChild(sensorPanel);
     els.setPresence = presInp;
+    els.setSensorClockSelect = sensorClockControls.clockSelect;
+    els.setSensorClockBrightness = sensorClockControls.clockBrightness;
+    els.setSensorClockBrightnessVal = sensorClockControls.clockBrightnessVal;
+    els.setSensorClockBrightnessField = sensorClockControls.brightnessField;
+    syncClockScreensaverControls();
 
     function setSsMode(mode) {
       ssMode = mode;
@@ -2728,6 +2709,68 @@
     row.appendChild(val);
     wrap.appendChild(row);
     return { wrap: wrap, range: range, val: val };
+  }
+
+  function syncClockScreensaverControls() {
+    var mode = state.clockScreensaverOn ? "clock" : "off";
+    var brightness = Math.round(state.clockBrightness) + "%";
+    var display = state.clockScreensaverOn ? "" : "none";
+
+    if (els.setClockSelect) els.setClockSelect.value = mode;
+    if (els.setSensorClockSelect) els.setSensorClockSelect.value = mode;
+    if (els.setClockBrightnessField) els.setClockBrightnessField.style.display = display;
+    if (els.setSensorClockBrightnessField) els.setSensorClockBrightnessField.style.display = display;
+    if (els.setClockBrightness) {
+      els.setClockBrightness.value = state.clockBrightness;
+      els.setClockBrightnessVal.textContent = brightness;
+    }
+    if (els.setSensorClockBrightness) {
+      els.setSensorClockBrightness.value = state.clockBrightness;
+      els.setSensorClockBrightnessVal.textContent = brightness;
+    }
+  }
+
+  function createScreensaverThenControls(selectId) {
+    var clockField = document.createElement("div");
+    clockField.className = "sp-field";
+    clockField.appendChild(fieldLabel("Then", selectId));
+    var clockSelect = document.createElement("select");
+    clockSelect.className = "sp-select";
+    clockSelect.id = selectId;
+    var clockOff = document.createElement("option");
+    clockOff.value = "off";
+    clockOff.textContent = "Display Off";
+    var clockOn = document.createElement("option");
+    clockOn.value = "clock";
+    clockOn.textContent = "Clock";
+    clockSelect.appendChild(clockOff);
+    clockSelect.appendChild(clockOn);
+    clockSelect.value = state.clockScreensaverOn ? "clock" : "off";
+    clockSelect.addEventListener("change", function () {
+      state.clockScreensaverOn = this.value === "clock";
+      syncClockScreensaverControls();
+      postSwitch("Screen Saver: Clock", state.clockScreensaverOn);
+    });
+    clockField.appendChild(clockSelect);
+
+    var clockBrightnessField = document.createElement("div");
+    clockBrightnessField.style.display = state.clockScreensaverOn ? "" : "none";
+    var clockSlider = createRangeSlider("Clock Brightness", state.clockBrightness, "Screen Saver: Clock Brightness");
+    clockSlider.range.min = "1";
+    clockSlider.range.step = "1";
+    clockSlider.range.addEventListener("input", function () {
+      state.clockBrightness = parseFloat(this.value) || 35;
+      syncClockScreensaverControls();
+    });
+    clockBrightnessField.appendChild(clockSlider.wrap);
+
+    return {
+      clockField: clockField,
+      clockSelect: clockSelect,
+      brightnessField: clockBrightnessField,
+      clockBrightness: clockSlider.range,
+      clockBrightnessVal: clockSlider.val,
+    };
   }
 
   function createHourSelect(label, id, initial, onChange) {
@@ -4859,12 +4902,7 @@
           els.setOutdoorField.className = "sp-cond-field" + (state._outdoorOn ? " sp-visible" : "");
           syncInput(els.setOutdoorEntity, state.outdoorEntity);
           syncInput(els.setPresence, state.presenceEntity);
-          if (els.setClockSelect) els.setClockSelect.value = state.clockScreensaverOn ? "clock" : "off";
-          if (els.setClockBrightnessField) els.setClockBrightnessField.style.display = state.clockScreensaverOn ? "" : "none";
-          if (els.setClockBrightness) {
-            els.setClockBrightness.value = state.clockBrightness;
-            els.setClockBrightnessVal.textContent = Math.round(state.clockBrightness) + "%";
-          }
+          syncClockScreensaverControls();
           if (els.setSSTimeout) els.setSSTimeout.value = String(state.screensaverTimeout);
           if (els.setHSTimeout) els.setHSTimeout.value = String(state.homeScreenTimeout);
           if (els.setScreenRotation) els.setScreenRotation.value = state.screenRotation;
@@ -5035,15 +5073,11 @@
       },
       "switch-screen_saver__clock": function (val, d) {
         state.clockScreensaverOn = d.value === true || val === "ON";
-        if (els.setClockSelect) els.setClockSelect.value = state.clockScreensaverOn ? "clock" : "off";
-        if (els.setClockBrightnessField) els.setClockBrightnessField.style.display = state.clockScreensaverOn ? "" : "none";
+        syncClockScreensaverControls();
       },
       "number-screen_saver__clock_brightness": function (val) {
         state.clockBrightness = parseFloat(val) || 35;
-        if (els.setClockBrightness) {
-          els.setClockBrightness.value = state.clockBrightness;
-          els.setClockBrightnessVal.textContent = Math.round(state.clockBrightness) + "%";
-        }
+        syncClockScreensaverControls();
       },
       "text-presence_sensor_entity": function (val) {
         state.presenceEntity = val;

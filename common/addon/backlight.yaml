@@ -75,12 +75,12 @@ script:
           else:
             - script.execute: screensaver_sleep_display_off
 
-  # Sensor mode always turns the display off and leaves LVGL snow underneath.
+  # Sensor mode honours the same clock/display-off setting as timer mode.
   - id: screensaver_sleep_sensor
     mode: restart
     then:
       - script.stop: screensaver_idle_check
-      - script.execute: screensaver_sleep_display_off
+      - script.execute: screensaver_sleep_timer
 
   - id: screensaver_sleep_display_off
     mode: restart
