@@ -436,7 +436,7 @@ struct TransientStatusLabel {
 };
 
 inline void transient_status_label_revert_cb(lv_timer_t *timer) {
-  TransientStatusLabel *ctx = static_cast<TransientStatusLabel *>(timer->user_data);
+  TransientStatusLabel *ctx = static_cast<TransientStatusLabel *>(lv_timer_get_user_data(timer));
   if (!ctx) return;
   ctx->showing_status = false;
   if (ctx->label) lv_label_set_text(ctx->label, ctx->steady_text.c_str());
