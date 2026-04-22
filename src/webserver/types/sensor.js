@@ -58,26 +58,22 @@ registerButtonType("sensor", {
     var pf = document.createElement("div");
     pf.className = "sp-field";
     pf.appendChild(helpers.fieldLabel("Unit Precision", helpers.idPrefix + "precision"));
-    var precSeg = document.createElement("div");
-    precSeg.className = "sp-segment";
+    var precisionSelect = document.createElement("select");
+    precisionSelect.className = "sp-select";
+    precisionSelect.id = helpers.idPrefix + "precision";
     var precOpts = [["0", "10"], ["1", "10.2"], ["2", "10.21"]];
     for (var i = 0; i < precOpts.length; i++) {
-      (function (val, label) {
-        var btn = document.createElement("button");
-        btn.type = "button";
-        btn.textContent = label;
-        if (!isTextMode && (b.precision || "0") === val) btn.classList.add("active");
-        btn.addEventListener("click", function () {
-          b.precision = val === "0" ? "" : val;
-          helpers.saveField("precision", b.precision);
-          var btns = precSeg.querySelectorAll("button");
-          for (var j = 0; j < btns.length; j++) btns[j].classList.remove("active");
-          btn.classList.add("active");
-        });
-        precSeg.appendChild(btn);
-      })(precOpts[i][0], precOpts[i][1]);
+      var opt = document.createElement("option");
+      opt.value = precOpts[i][0];
+      opt.textContent = precOpts[i][1];
+      precisionSelect.appendChild(opt);
     }
-    pf.appendChild(precSeg);
+    precisionSelect.value = !isTextMode ? (b.precision || "0") : "0";
+    precisionSelect.addEventListener("change", function () {
+      b.precision = this.value === "0" ? "" : this.value;
+      helpers.saveField("precision", b.precision);
+    });
+    pf.appendChild(precisionSelect);
     numericSection.appendChild(pf);
     panel.appendChild(numericSection);
 
@@ -119,8 +115,7 @@ registerButtonType("sensor", {
         if (iconPreview) iconPreview.className = "sp-icon-picker-preview mdi mdi-cog";
         var iconInput = textIconPicker.querySelector(".sp-icon-picker-input");
         if (iconInput) iconInput.value = "Auto";
-        var pbs = precSeg.querySelectorAll("button");
-        for (var j = 0; j < pbs.length; j++) pbs[j].classList.toggle("active", j === 0);
+        precisionSelect.value = "0";
       }
     }
 
