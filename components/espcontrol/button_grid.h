@@ -445,12 +445,54 @@ inline bool parse_calendar_date_text(const std::string &value, int &day, int &mo
   return true;
 }
 
+inline bool parse_calendar_date_text_dmy(const std::string &value, int &day, int &month) {
+  if (value.length() < 10) return false;
+  if (!std::isdigit(static_cast<unsigned char>(value[0])) ||
+      !std::isdigit(static_cast<unsigned char>(value[1])) ||
+      (value[2] != '/' && value[2] != '-') ||
+      !std::isdigit(static_cast<unsigned char>(value[3])) ||
+      !std::isdigit(static_cast<unsigned char>(value[4])) ||
+      (value[5] != '/' && value[5] != '-') ||
+      !std::isdigit(static_cast<unsigned char>(value[6])) ||
+      !std::isdigit(static_cast<unsigned char>(value[7])) ||
+      !std::isdigit(static_cast<unsigned char>(value[8])) ||
+      !std::isdigit(static_cast<unsigned char>(value[9]))) {
+    return false;
+  }
+  int parsed_day = (value[0] - '0') * 10 + (value[1] - '0');
+  int parsed_month = (value[3] - '0') * 10 + (value[4] - '0');
+  if (parsed_day < 1 || parsed_day > 31 || parsed_month < 1 || parsed_month > 12) return false;
+  day = parsed_day;
+  month = parsed_month;
+  return true;
+}
+
 inline bool update_calendar_cards_from_date_text(const std::string &value) {
   int day = 0;
   int month = 0;
-  bool valid = parse_calendar_date_text(value, day, month);
+  bool valid = parse_calendar_date_text(value, day, month) ||
+               parse_calendar_date_text_dmy(value, day, month);
   if (valid) update_calendar_cards(true, day, month);
   return valid;
+}
+
+inline std::string calendar_date_entity_or_default(const std::string &entity_id) {
+  return entity_id.empty() ? std::string("sensor.date") : entity_id;
+}
+
+inline void subscribe_calendar_date_source(const std::string &entity_id) {
+  std::string source = calendar_date_entity_or_default(entity_id);
+  static std::vector<std::string> subscribed;
+  for (const auto &existing : subscribed) {
+    if (existing == source) return;
+  }
+  subscribed.push_back(source);
+  esphome::api::global_api_server->subscribe_home_assistant_state(
+    source, {},
+    std::function<void(const std::string &)>([](const std::string &state) {
+      update_calendar_cards_from_date_text(state);
+    })
+  );
 }
 
 inline void setup_calendar_card(BtnSlot &s, bool has_sensor_color, uint32_t sensor_val) {
@@ -1342,6 +1384,7 @@ inline void grid_phase2(
       continue;
     }
     if (p.type == "calendar") {
+      subscribe_calendar_date_source(p.entity);
       continue;
     }
     if (p.type == "weather") {
@@ -1614,6 +1657,7 @@ inline void grid_phase2(
 
         lv_label_set_text(stl, "Date");
         register_calendar_card(svl, stl);
+        subscribe_calendar_date_source(sb.entity);
 
       } else if (sb.type == "weather") {
         if (has_sensor_color)
