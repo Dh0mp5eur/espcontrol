@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parent.parent
 TIME_YAML = ROOT / "common" / "addon" / "time.yaml"
 SUN_CALC_H = ROOT / "components" / "espcontrol" / "sun_calc.h"
+WWW_JS = ROOT / "src" / "webserver" / "www.js"
 
 
 def load_timezone_options() -> dict[str, str]:
@@ -25,6 +26,24 @@ def load_timezone_options() -> dict[str, str]:
         tz_id = option.split(" (", 1)[0]
         options[tz_id] = option
     return options
+
+
+def load_timezone_option_list() -> list[str]:
+    options: list[str] = []
+    for match in re.finditer(r'^\s+- "([^"]+)"$', TIME_YAML.read_text(), re.M):
+        option = match.group(1)
+        if " (GMT" not in option or ("/" not in option and not option.startswith("UTC ")):
+            continue
+        options.append(option)
+    return options
+
+
+def load_web_timezone_options() -> list[str]:
+    text = WWW_JS.read_text()
+    match = re.search(r"var TIMEZONE_OPTIONS = \[(.*?)\];", text, re.S)
+    if not match:
+        return []
+    return re.findall(r'"([^"]+)"', match.group(1))
 
 
 def load_posix_table() -> dict[str, str]:
@@ -136,9 +155,14 @@ def expected_casablanca_pauses() -> list[tuple[tuple[int, ...], tuple[int, ...]]
 
 def main() -> int:
     errors: list[str] = []
-    options = load_timezone_options()
+    option_list = load_timezone_option_list()
+    options = {option.split(" (", 1)[0]: option for option in option_list}
+    web_options = load_web_timezone_options()
     posix_table = load_posix_table()
     casablanca_pauses = load_casablanca_pauses()
+
+    if web_options != option_list:
+        errors.append("Web UI TIMEZONE_OPTIONS does not match common/addon/time.yaml")
 
     missing = sorted(set(options) - set(posix_table))
     extra = sorted(set(posix_table) - set(options))
