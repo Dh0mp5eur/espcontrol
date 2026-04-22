@@ -5620,8 +5620,14 @@
   };
   var ANSI_RE = /\033\[[\d;]*m/g;
 
+  function shouldHideLogMessage(msg) {
+    var clean = String(msg || "").replace(ANSI_RE, "");
+    return /\[[DS]\]\[text_sensor(?::[^\]]*)?\].*['"]Screen: Date['"].*(>>|Sending state)/.test(clean);
+  }
+
   function appendLog(msg, lvl) {
     if (!els.logOutput) return;
+    if (shouldHideLogMessage(msg)) return;
     var line = document.createElement("div");
     line.className = "sp-log-line";
 
