@@ -6,7 +6,7 @@ font:
   # Main page: large statistics / sensor values
   - file: "gfonts://Roboto@Light"
     id: statistics_font
-    size: 48
+    size: 44
     bpp: 4
     glyphs: "0123456789:.-°/%kWhVA "
 
