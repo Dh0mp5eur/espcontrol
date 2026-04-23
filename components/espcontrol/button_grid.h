@@ -595,6 +595,14 @@ inline void apply_button_colors(lv_obj_t *btn, bool has_on, uint32_t on_val,
   }
 }
 
+// Match the main-page button widget label behavior so longer titles wrap
+// instead of running off the edge of the tile.
+inline void configure_button_label_wrap(lv_obj_t *label) {
+  if (!label) return;
+  lv_label_set_long_mode(label, LV_LABEL_LONG_WRAP);
+  lv_obj_set_width(label, lv_pct(100));
+}
+
 // Configure a button as a read-only sensor card (non-clickable, shows value + unit)
 inline void setup_sensor_card(BtnSlot &s, const ParsedCfg &p,
                               bool has_sensor_color, uint32_t sensor_val) {
@@ -1954,6 +1962,7 @@ inline void grid_phase2(
     lv_obj_t *bl = lv_label_create(back_btn);
     lv_label_set_text(bl, "Back");
     lv_obj_align(bl, LV_ALIGN_BOTTOM_LEFT, 0, 0);
+    configure_button_label_wrap(bl);
 
     lv_obj_add_event_cb(back_btn, [](lv_event_t *e) {
       lv_scr_load_anim((lv_obj_t *)lv_event_get_user_data(e), LV_SCR_LOAD_ANIM_NONE, 0, 0, false);
@@ -1992,10 +2001,7 @@ inline void grid_phase2(
 
       lv_obj_t *stl = lv_label_create(sb_btn);
       lv_obj_align(stl, LV_ALIGN_BOTTOM_LEFT, 0, 0);
-      if (cfg.wrap_tall_labels && rs > 1) {
-        lv_label_set_long_mode(stl, LV_LABEL_LONG_WRAP);
-        lv_obj_set_width(stl, lv_pct(100));
-      }
+      configure_button_label_wrap(stl);
 
       if (is_text_sensor_card(sb.type, sb.precision)) {
         if (has_sensor_color)
