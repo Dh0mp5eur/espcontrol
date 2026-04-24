@@ -1,0 +1,17 @@
+# =============================================================================
+# DEV CONFIG - Local development entry point (4.3" S3 landscape panel)
+# Flash with: esphome run dev.yaml
+# =============================================================================
+
+substitutions:
+  name: "sunton-esp32-s3-8048s043c-dev"
+  friendly_name: "Sunton ESP32-S3-8048S043C Dev"
+  espcontrol_component_url: "../.."
+  espcontrol_component_ref: "HEAD"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+packages:
+  espcontrol: !include packages.yaml

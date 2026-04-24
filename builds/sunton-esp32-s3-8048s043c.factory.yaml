@@ -1,0 +1,27 @@
+# =============================================================================
+# FACTORY BUILD - Sunton ESP32-S3-8048S043C (4.3" landscape)
+# =============================================================================
+# Factory image: www.js bundled inline for first-boot web UI access.
+# =============================================================================
+
+substitutions:
+  firmware_version: "0.0.0"
+  espcontrol_component_url: "file:///config"
+  espcontrol_component_ref: "HEAD"
+
+packages:
+  core: !include sunton-esp32-s3-8048s043c.yaml
+
+esphome:
+  project:
+    name: jtenniswood.espcontrol
+    version: "${firmware_version}"
+
+dashboard_import:
+  package_import_url: github://jtenniswood/espcontrol/devices/sunton-esp32-s3-8048s043c/esphome.yaml@main
+
+web_server:
+  port: 80
+  version: 3
+  js_url: ""
+  js_include: "../docs/public/webserver/sunton-esp32-s3-8048s043c/www.js"

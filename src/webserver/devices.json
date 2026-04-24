@@ -70,5 +70,21 @@
     "sensorBadge": { "top": 2.08, "right": 2.08, "fontSize": 3.33 },
     "subpageBadge": { "bottom": 2.08, "right": 2.08, "fontSize": 4 },
     "backBtn": { "radius": 1.67, "padding": 2.92, "iconSize": 9.58, "labelSize": 3.96, "labelLines": 2, "labelLinesDouble": 3 }
+  },
+  "sunton-esp32-s3-8048s043c": {
+    "slots": 12,
+    "cols": 4,
+    "rows": 3,
+    "dragMode": "swap",
+    "dragAnimation": true,
+    "features": { "screenRotation": true, "screenRotationOptions": ["0", "180"] },
+    "screen": { "width": "100%", "aspect": "800/480" },
+    "topbar": { "height": 5.5, "padding": "0.63cqw", "fontSize": 3 },
+    "grid": { "top": 6.5, "compactTop": 0.63, "left": 0.63, "right": 0.63, "bottom": 0.63, "gap": 1.25, "fr": "1fr" },
+    "btn": { "radius": 1, "padding": 1.75, "iconSize": 6.5, "labelSize": 2.75, "labelLines": 2, "labelLinesDouble": 3 },
+    "emptyCell": { "radius": 1 },
+    "sensorBadge": { "top": 1.25, "right": 1.25, "fontSize": 2 },
+    "subpageBadge": { "bottom": 1.25, "right": 1.25, "fontSize": 2.5 },
+    "backBtn": { "radius": 1, "padding": 1.75, "iconSize": 6.5, "labelSize": 2.75, "labelLines": 2, "labelLinesDouble": 3 }
   }
 }

@@ -31,6 +31,9 @@ jobs:
           - device: guition-esp32-s3-4848s040
             slug: guition-esp32-s3-4848s040
             chip: ESP32-S3
+          - device: sunton-esp32-s3-8048s043c
+            slug: sunton-esp32-s3-8048s043c
+            chip: ESP32-S3
     steps:
       - uses: actions/checkout@v6
 

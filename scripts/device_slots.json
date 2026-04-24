@@ -35,6 +35,15 @@
       "sensor_font": "statistics_font",
       "color_correction": false,
       "wrap_tall_labels": false
+    },
+    {
+      "slug": "sunton-esp32-s3-8048s043c",
+      "slots": 12,
+      "cols": 4,
+      "grid": "3x4",
+      "sensor_font": "statistics_font",
+      "color_correction": false,
+      "wrap_tall_labels": false
     }
   ]
 }

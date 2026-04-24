@@ -1,0 +1,23 @@
+# =============================================================================
+# BUILD PROFILE - Sunton ESP32-S3-8048S043C (4.3" landscape)
+# =============================================================================
+# CI/local build entry point for the 800×480 landscape ESP32-S3 panel.
+# =============================================================================
+
+substitutions:
+  name: "espcontrol-8048s043c"
+  friendly_name: "Sunton ESP32-S3-8048S043C"
+  espcontrol_component_url: "file:///config"
+  espcontrol_component_ref: "HEAD"
+
+esphome:
+  name_add_mac_suffix: true
+
+packages:
+  espcontrol: !include ../devices/sunton-esp32-s3-8048s043c/packages.yaml
+
+wifi:
+  ap:
+    ssid: "${friendly_name}"
+
+captive_portal:
