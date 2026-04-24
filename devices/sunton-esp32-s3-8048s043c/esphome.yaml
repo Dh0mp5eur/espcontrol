@@ -25,6 +25,6 @@ wifi:
 # ---------------------------------------------------------------------------
 packages:
   setup:
-    url: https://github.com/jtenniswood/espcontrol/
+    url: https://github.com/Dh0mp5eur/espcontrol/
     file: devices/sunton-esp32-s3-8048s043c/packages.yaml
     refresh: 1d
