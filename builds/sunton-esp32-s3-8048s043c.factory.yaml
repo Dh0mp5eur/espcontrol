@@ -18,7 +18,7 @@ esphome:
     version: "${firmware_version}"
 
 dashboard_import:
-  package_import_url: github://jtenniswood/espcontrol/devices/sunton-esp32-s3-8048s043c/esphome.yaml@main
+  package_import_url: github://Dh0mp5eur/espcontrol/devices/sunton-esp32-s3-8048s043c/esphome.yaml@main
 
 web_server:
   port: 80
