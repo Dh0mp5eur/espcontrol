@@ -44,6 +44,15 @@
       "sensor_font": "statistics_font",
       "color_correction": false,
       "wrap_tall_labels": false
+    },
+    {
+      "slug": "esp32-2432s028r",
+      "slots": 6,
+      "cols": 2,
+      "grid": "3x2",
+      "sensor_font": "statistics_font_xs",
+      "color_correction": false,
+      "wrap_tall_labels": false
     }
   ]
 }

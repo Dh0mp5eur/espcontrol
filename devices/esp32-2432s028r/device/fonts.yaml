@@ -1,0 +1,37 @@
+# =============================================================================
+# FONTS (DEVICE OVERRIDE) - Smaller fonts for the 320x240 display
+# =============================================================================
+# Supplements the common fonts with smaller variants for the main UI.
+# The common fonts (icon_font, label_font, etc.) still load for setup screens;
+# these _xs variants are referenced by the device theme and LVGL config.
+# =============================================================================
+
+font:
+  # Button icons (32px, smaller for 320x240)
+  - file: 'https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf'
+    id: icon_font_xs
+    size: 32
+    bpp: 4
+    glyphs: !include ../../../common/assets/icon_glyphs.yaml
+
+  # Button labels (14px)
+  - file: "gfonts://Roboto"
+    id: label_font_xs
+    size: 14
+    bpp: 4
+    glyphs: !include ../../../common/assets/text_glyphs.yaml
+
+  # Sensor value number (28px)
+  - file: "gfonts://Roboto@Light"
+    id: statistics_font_xs
+    size: 28
+    bpp: 4
+    glyphs:
+      - "0123456789.-°/%kWhVA "
+      - ":"
+
+  # Top bar clock and temperature (14px)
+  - file: "gfonts://Roboto"
+    id: clockbar_font_xs
+    size: 14
+    bpp: 4

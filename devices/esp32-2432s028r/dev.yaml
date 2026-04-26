@@ -1,0 +1,17 @@
+# =============================================================================
+# DEV CONFIG - Local development entry point (2.8" CYD panel)
+# Flash with: esphome run dev.yaml
+# =============================================================================
+
+substitutions:
+  name: "esp32-2432s028r-dev"
+  friendly_name: "ESP32-2432S028R Dev"
+  espcontrol_component_url: "../.."
+  espcontrol_component_ref: "HEAD"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+packages:
+  espcontrol: !include packages.yaml

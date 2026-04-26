@@ -86,5 +86,21 @@
     "sensorBadge": { "top": 1.25, "right": 1.25, "fontSize": 2 },
     "subpageBadge": { "bottom": 1.25, "right": 1.25, "fontSize": 2.5 },
     "backBtn": { "radius": 1, "padding": 1.75, "iconSize": 6.5, "labelSize": 2.75, "labelLines": 2, "labelLinesDouble": 3 }
+  },
+  "esp32-2432s028r": {
+    "slots": 6,
+    "cols": 2,
+    "rows": 3,
+    "dragMode": "displace",
+    "dragAnimation": true,
+    "features": { "screenRotation": true, "screenRotationOptions": ["0", "180"] },
+    "screen": { "width": "38%", "aspect": "320/240" },
+    "topbar": { "height": 8, "padding": "1.25cqw", "fontSize": 5 },
+    "grid": { "top": 10, "compactTop": 1, "left": 1, "right": 1, "bottom": 1, "gap": 1.88, "fr": "1fr" },
+    "btn": { "radius": 1.88, "padding": 2.5, "iconSize": 10, "labelSize": 4.38, "labelLines": 2, "labelLinesDouble": 3 },
+    "emptyCell": { "radius": 1.88 },
+    "sensorBadge": { "top": 1.88, "right": 1.88, "fontSize": 3.75 },
+    "subpageBadge": { "bottom": 1.88, "right": 1.88, "fontSize": 4.38 },
+    "backBtn": { "radius": 1.88, "padding": 2.5, "iconSize": 10, "labelSize": 4.38, "labelLines": 2, "labelLinesDouble": 3 }
   }
 }

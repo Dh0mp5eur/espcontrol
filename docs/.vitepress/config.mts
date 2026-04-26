@@ -163,7 +163,9 @@ export default defineConfig({
           { text: '10.1-inch JC8012P4A1', link: '/screens/jc8012p4a1' },
           { text: '7-inch JC1060P470', link: '/screens/jc1060p470' },
           { text: '4.3-inch JC4880P443', link: '/screens/jc4880p443' },
+          { text: '4.3-inch 8048S043C', link: '/screens/8048s043c' },
           { text: '4-inch 4848S040', link: '/screens/4848s040' },
+          { text: '2.8-inch 2432S028R', link: '/screens/2432s028r' },
         ],
       },
       {

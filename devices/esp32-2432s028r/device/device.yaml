@@ -1,0 +1,183 @@
+# =============================================================================
+# DEVICE - ESP32-2432S028R hardware definition
+# =============================================================================
+# Pin assignments, peripherals, and platform config for the 2.8" CYD panel.
+# Includes the ESP32 SoC (native WiFi), ILI9341 SPI display, XPT2046
+# resistive touchscreen, and backlight PWM.
+# =============================================================================
+
+substitutions:
+  espcontrol_component_url: "https://github.com/Dh0mp5eur/espcontrol"
+  espcontrol_component_ref: "main"
+
+# ---------------------------------------------------------------------------
+# ESP32 platform (4MB flash, ESP-IDF framework)
+# ---------------------------------------------------------------------------
+esp32:
+  board: esp32dev
+  flash_size: 4MB
+  framework:
+    type: esp-idf
+
+# ---------------------------------------------------------------------------
+# External component
+# ---------------------------------------------------------------------------
+external_components:
+  - source:
+      type: git
+      url: ${espcontrol_component_url}
+      ref: ${espcontrol_component_ref}
+      path: components
+    components: [espcontrol]
+    refresh: 0s
+
+espcontrol:
+
+# ---------------------------------------------------------------------------
+# ESPHome core (device name from substitutions)
+# ---------------------------------------------------------------------------
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  on_boot:
+    - priority: -100
+      then:
+        - script.execute: apply_screen_rotation
+
+# ---------------------------------------------------------------------------
+# OTA updates (ESPHome native + HTTP-based)
+# ---------------------------------------------------------------------------
+ota:
+  - platform: esphome
+    on_begin:
+      then:
+        - light.turn_off: display_backlight
+  - platform: http_request
+
+# ---------------------------------------------------------------------------
+# Shared infrastructure (API, logging, web server, restart button)
+# ---------------------------------------------------------------------------
+packages:
+  core_infra: !include ../../../common/device/core_infra.yaml
+
+# ---------------------------------------------------------------------------
+# SPI bus (shared by ILI9341 display and XPT2046 touchscreen)
+# ---------------------------------------------------------------------------
+spi:
+  - id: lcd_spi
+    clk_pin: GPIO14
+    mosi_pin: GPIO13
+    miso_pin: GPIO12
+
+# ---------------------------------------------------------------------------
+# Backlight (LEDC PWM output + monochromatic light entity)
+# ---------------------------------------------------------------------------
+output:
+  - platform: ledc
+    pin: GPIO21
+    id: gpio_backlight_pwm
+    frequency: 150Hz
+    min_power: 0.01
+    zero_means_zero: true
+
+light:
+  - platform: monochromatic
+    output: gpio_backlight_pwm
+    name: Display Backlight
+    icon: mdi:lightbulb-on
+    id: display_backlight
+    restore_mode: RESTORE_DEFAULT_ON
+    default_transition_length: 0s
+    gamma_correct: 1.0
+    on_turn_on:
+      then:
+        - if:
+            condition:
+              lambda: |-
+                return id(screen_schedule_asleep) ||
+                       (id(schedule_enabled).state && !id(ha_time).now().is_valid());
+            then:
+              - script.execute: backlight_force_display_off
+            else:
+              - if:
+                  condition:
+                    lambda: 'return id(screensaver_display_off_active);'
+                  then:
+                    - script.execute: screensaver_wake
+
+# ---------------------------------------------------------------------------
+# Touchscreen (XPT2046 resistive, wakes screensaver on touch)
+# ---------------------------------------------------------------------------
+touchscreen:
+  - platform: xpt2046
+    id: my_touchscreen
+    display: my_display
+    spi_id: lcd_spi
+    cs_pin: GPIO33
+    interrupt_pin: GPIO36
+    update_interval: 50ms
+    threshold: 400
+    calibration_x_min: 260
+    calibration_x_max: 3860
+    calibration_y_min: 340
+    calibration_y_max: 3860
+    on_touch:
+      - script.execute: screensaver_wake
+
+# ---------------------------------------------------------------------------
+# Display (2.8" 320x240 ILI9341 SPI panel)
+# ---------------------------------------------------------------------------
+display:
+  - platform: ili9xxx
+    id: my_display
+    model: ILI9341
+    spi_id: lcd_spi
+    cs_pin: GPIO15
+    dc_pin: GPIO2
+    dimensions:
+      width: 320
+      height: 240
+    color_order: BGR
+    invert_colors: false
+    update_interval: never
+    auto_clear_enabled: false
+
+# ---------------------------------------------------------------------------
+# LVGL base (display binding, must be before any page definitions)
+# ---------------------------------------------------------------------------
+lvgl:
+  id: main_lvgl
+  buffer_size: 25%
+  displays: my_display
+  touchscreens:
+    - touchscreen_id: my_touchscreen
+      long_press_time: 3s
+
+script:
+  - id: apply_screen_rotation
+    then:
+      - if:
+          condition:
+            lambda: 'return id(screen_rotation_select).current_option() == "180";'
+          then:
+            - lvgl.display.set_rotation: 180
+          else:
+            - lvgl.display.set_rotation: 0
+
+select:
+  - platform: template
+    name: "Screen: Rotation"
+    internal: true
+    disabled_by_default: true
+    id: screen_rotation_select
+    entity_category: config
+    icon: "mdi:screen-rotation"
+    optimistic: true
+    restore_value: true
+    initial_option: "0"
+    options:
+      - "0"
+      - "180"
+    on_value:
+      then:
+        - script.execute: apply_screen_rotation
