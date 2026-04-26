@@ -18,9 +18,9 @@ Date cards are read-only — tapping them does nothing.
 
 ## How It Works on the Panel
 
-- In **Date only** mode, the card reads `sensor.date`, and it also falls back to the panel's Home Assistant time source.
+- In **Date only** mode, the card reads `sensor.date`, and it also falls back to the panel's own time source.
 - In **Date & time** mode, the large time display follows the timezone and 12/24-hour setting selected in [Clock](/features/clock).
 - The label underneath follows the same local timezone, so it stays matched to the time shown above.
 - The panel publishes a **Screen: Date** diagnostic value, so you can check whether the device currently knows the date.
-- The card uses the **tertiary** colour from [Appearance](/features/appearance), like sensor and weather cards.
+- The card uses the **tertiary** colour from [Appearance](/features/appearance), like Sensor and Weather cards.
 - If the panel has not synced time yet, the card shows `--` until time becomes available.

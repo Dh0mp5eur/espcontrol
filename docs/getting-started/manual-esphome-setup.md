@@ -13,7 +13,7 @@ The normal [browser install](/getting-started/install) is the easiest route. Use
 - A supported Guition ESP32 panel.
 - ESPHome Device Builder in Home Assistant, or the ESPHome command line on your computer.
 - A USB-C data cable for the first install.
-- Your WiFi name and password.
+- Your WiFi name and password, unless you are using the advanced wired Ethernet option for the 7-inch Ethernet model.
 
 ::: tip First install or update?
 Use USB for a blank screen or a screen that is not already running Espcontrol. Once Espcontrol is installed and connected to WiFi, later ESPHome installs can usually be done wirelessly with OTA.
@@ -63,6 +63,27 @@ wifi:
   password: "Your WiFi Password"
 ```
 
+## Advanced: 7-inch Ethernet Option
+
+Some 7-inch JC1060P470 panels include wired Ethernet. ESPHome cannot run WiFi and Ethernet in the same firmware, so this option is Ethernet-only and is intended for manual installs.
+
+Use this template for the Ethernet model. Do not add a `wifi:` block.
+
+```yaml
+substitutions:
+  name: "espcontrol-office"
+  friendly_name: "Espcontrol Office"
+  network_transport: ethernet
+
+packages:
+  setup:
+    url: https://github.com/jtenniswood/espcontrol/
+    file: devices/guition-esp32-p4-jc1060p470/packages.yaml
+    refresh: 1d
+```
+
+If Ethernet is unplugged or your network does not give the display an IP address, the display will show an Ethernet setup message. It will not create a WiFi hotspot in this mode.
+
 ::: warning Keep the device name simple
 Use lowercase letters, numbers, and hyphens for `name`. For example, `espcontrol-kitchen` is better than `Kitchen Touchscreen`.
 :::
@@ -93,7 +114,7 @@ ESPHome will compile the firmware and ask where to install it. Choose the serial
 1. Wait for the display to join WiFi.
 2. Add it to Home Assistant when the ESPHome integration discovers it.
 3. Open the display address in a browser, for example `http://192.168.1.42`.
-4. Configure buttons, colours, brightness, and other settings from the built-in web page.
+4. Configure cards, colours, brightness, and other settings from the built-in web page.
 5. Follow [Home Assistant Actions](/getting-started/home-assistant-actions) so the display is allowed to control your Home Assistant devices.
 
 ## Updating Later
