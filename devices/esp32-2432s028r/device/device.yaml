@@ -15,6 +15,7 @@ substitutions:
 # ---------------------------------------------------------------------------
 esp32:
   board: esp32dev
+  variant: esp32
   flash_size: 4MB
   framework:
     type: esp-idf
