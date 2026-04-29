@@ -1152,7 +1152,7 @@ inline void climate_update_detail(ClimateCardCtx *ctx) {
   if (ui.target_unit && ui.target_value) {
     lv_label_set_text(ui.target_unit, display_temperature_unit_symbol());
     lv_obj_update_layout(ui.target_value);
-    lv_obj_align_to(ui.target_unit, ui.target_value, LV_ALIGN_OUT_RIGHT_TOP, 6, 8);
+    lv_obj_align_to(ui.target_unit, ui.target_value, LV_ALIGN_OUT_RIGHT_TOP, 2, 8);
   }
   if (ui.target_hint) {
     if (climate_dual_target(ctx)) {
@@ -1323,8 +1323,8 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
   }
 
   lv_obj_align(ui.state_label, LV_ALIGN_CENTER, 0, -arc_size / 4);
-  lv_obj_align(ui.target_value, LV_ALIGN_CENTER, -18, -arc_size / 18);
-  lv_obj_align_to(ui.target_unit, ui.target_value, LV_ALIGN_OUT_RIGHT_TOP, 6, 8);
+  lv_obj_align(ui.target_value, LV_ALIGN_CENTER, 0, -arc_size / 18);
+  lv_obj_align_to(ui.target_unit, ui.target_value, LV_ALIGN_OUT_RIGHT_TOP, 2, 8);
   lv_obj_align(ui.current_value, LV_ALIGN_CENTER, 20, arc_size / 5);
   lv_obj_update_layout(ui.current_value);
   lv_obj_align_to(ui.current_title, ui.current_value, LV_ALIGN_OUT_LEFT_MID, -4, 0);
@@ -1422,8 +1422,8 @@ inline void climate_ensure_detail_ui(ClimateCardCtx *ctx) {
 
   const lv_font_t *unit_font = ctx && ctx->unit_font ? ctx->unit_font : (ctx ? ctx->label_font : nullptr);
   ui.state_label = climate_create_label(ui.page, "Idle", LV_ALIGN_CENTER, 0, -38, ctx ? ctx->label_font : nullptr, CLIMATE_DETAIL_TEXT_COLOR);
-  ui.target_value = climate_create_label(ui.page, "20.0", LV_ALIGN_CENTER, -14, 14, ctx ? ctx->target_font : nullptr);
-  ui.target_unit = climate_create_label(ui.page, display_temperature_unit_symbol(), LV_ALIGN_CENTER, 64, -2, unit_font);
+  ui.target_value = climate_create_label(ui.page, "20.0", LV_ALIGN_CENTER, 0, 14, ctx ? ctx->target_font : nullptr);
+  ui.target_unit = climate_create_label(ui.page, display_temperature_unit_symbol(), LV_ALIGN_CENTER, 66, -2, unit_font);
   ui.target_hint = climate_create_label(ui.page, "Target", LV_ALIGN_CENTER, 0, 78, ctx ? ctx->label_font : nullptr, 0xBDBDBD);
   ui.current_title = climate_create_label(ui.page, find_icon("Thermometer"), LV_ALIGN_CENTER, -40, 70, control_icon_font, CLIMATE_DETAIL_TEXT_COLOR);
   std::string current_placeholder = std::string("-- ") + display_temperature_unit_symbol();
