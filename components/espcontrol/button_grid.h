@@ -1065,6 +1065,13 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
   if (chip_w < 86) chip_w = 86;
   lv_coord_t chip_h = sh < 520 ? 56 : 64;
   lv_coord_t bottom = sh < 520 ? -10 : -22;
+  lv_coord_t back_size = short_side < 520 ? 44 : 48;
+  lv_coord_t top_clearance = short_side < 520 ? 44 : 56;
+
+  lv_obj_set_size(ui.back_btn, back_size, back_size);
+  lv_obj_set_style_radius(ui.back_btn, back_size / 2, LV_PART_MAIN);
+  lv_obj_align(ui.back_btn, LV_ALIGN_TOP_LEFT, 12, top_clearance);
+  lv_obj_move_foreground(ui.back_btn);
 
   lv_obj_set_size(ui.arc, arc_size, arc_size);
   lv_obj_align(ui.arc, LV_ALIGN_CENTER, 0, sh < 520 ? -6 : -12);
@@ -1136,7 +1143,6 @@ inline void climate_ensure_detail_ui(ClimateCardCtx *ctx) {
   lv_obj_clear_flag(ui.page, LV_OBJ_FLAG_SCROLLABLE);
 
   ui.back_btn = climate_create_round_button(ui.page, 48, "\U000F0141", ctx ? ctx->icon_font : nullptr);
-  lv_obj_align(ui.back_btn, LV_ALIGN_TOP_LEFT, 12, 12);
   lv_obj_add_event_cb(ui.back_btn, [](lv_event_t *e) {
     ClimateDetailUi &ui = climate_detail_ui();
     climate_hide_popup();
