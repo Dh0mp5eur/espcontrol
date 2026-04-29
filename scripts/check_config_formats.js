@@ -368,6 +368,17 @@ assert.deepStrictEqual(buttonShape(hooks.parseButtonConfig("~light.compact,Compa
   precision: "2",
 }, "compact button parse");
 
+assert.deepStrictEqual(buttonShape(hooks.parseButtonConfig("light.strip;Strip;Lightbulb;Lightbulb On;h;;slider")), {
+  entity: "light.strip",
+  label: "Strip",
+  icon: "Lightbulb",
+  icon_on: "Lightbulb On",
+  sensor: "",
+  unit: "",
+  type: "slider",
+  precision: "",
+}, "legacy horizontal slider parse");
+
 assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("1,B,2|light.legacy:Legacy:Auto:Lightbulb:::|sensor.room:Room:Thermometer:Auto:sensor.room:deg C:sensor:1")), {
   order: ["1", "B", "2"],
   buttons: [
@@ -431,7 +442,7 @@ assertSubpageRoundTrip(hooks, "delimiter subpage", {
 assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B,2|L,light.strip,Strip%20A,Lightbulb,Lightbulb%20On,h,,|S,sensor.temp,Temp,Thermometer,,sensor.temp,deg%20C,1")), {
   order: ["1", "B", "2"],
   buttons: [
-    buttonShape({ entity: "light.strip", label: "Strip A", icon: "Lightbulb", icon_on: "Lightbulb On", sensor: "h", type: "slider" }),
+    buttonShape({ entity: "light.strip", label: "Strip A", icon: "Lightbulb", icon_on: "Lightbulb On", sensor: "", type: "slider" }),
     buttonShape({ entity: "sensor.temp", label: "Temp", icon: "Thermometer", icon_on: "Auto", sensor: "sensor.temp", unit: "deg C", type: "sensor", precision: "1" }),
   ],
 }, "compact subpage parse");

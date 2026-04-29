@@ -98,11 +98,18 @@ struct ParsedCfg {
   std::string label;       // 1  display name (blank = use HA friendly_name)
   std::string icon;        // 2  icon name for off/default state
   std::string icon_on;     // 3  icon name for on state (blank = no swap)
-  std::string sensor;      // 4  sensor entity, or action name for Action cards
+  std::string sensor;      // 4  sensor entity, cover mode, or action name for Action cards
   std::string unit;        // 5  unit suffix for sensor display
   std::string type;        // 6  button type: "" (toggle), action, sensor, calendar, timezone, climate, weather_forecast, slider, cover, garage, push, subpage
   std::string precision;   // 7  decimal places for sensors; "text" = text sensor mode
 };
+
+inline ParsedCfg normalize_parsed_cfg(ParsedCfg p) {
+  // Slider cards used to store "h" here for horizontal layout. Sliders are
+  // now always vertical, so treat any saved slider sensor value as legacy.
+  if (p.type == "slider" && !p.sensor.empty()) p.sensor.clear();
+  return p;
+}
 
 inline ParsedCfg parse_cfg(const std::string &cfg) {
   ParsedCfg p;
@@ -116,7 +123,7 @@ inline ParsedCfg parse_cfg(const std::string &cfg) {
     p.unit      = f.size() > 5 ? decode_compact_field(f[5]) : "";
     p.type      = f.size() > 6 ? decode_compact_field(f[6]) : "";
     p.precision = f.size() > 7 ? decode_compact_field(f[7]) : "";
-    return p;
+    return normalize_parsed_cfg(p);
   }
   p.entity    = cfg_field(cfg, 0);
   p.label     = cfg_field(cfg, 1);
@@ -126,7 +133,7 @@ inline ParsedCfg parse_cfg(const std::string &cfg) {
   p.unit      = cfg_field(cfg, 5);
   p.type      = cfg_field(cfg, 6);
   p.precision = cfg_field(cfg, 7);
-  return p;
+  return normalize_parsed_cfg(p);
 }
 
 inline int parse_precision(const std::string &s) {
@@ -2912,7 +2919,7 @@ inline void setup_slider_visual(BtnSlot &s, const ParsedCfg &p, uint32_t on_colo
   if (p.type == "cover")
     lv_label_set_text(s.icon_lbl, slider_icon_off(p.type, p.entity, p.icon));
 
-  bool horizontal = p.type == "slider" && p.sensor == "h";
+  bool horizontal = false;
   lv_obj_t *slider = setup_slider_widget(s.btn, on_color, horizontal);
   lv_coord_t pad = lv_obj_get_style_radius(s.btn, LV_PART_MAIN) + 4;
   lv_obj_align(s.icon_lbl, LV_ALIGN_TOP_LEFT, pad, pad);
@@ -3039,7 +3046,7 @@ struct SubpageBtn {
   std::string label;
   std::string icon;
   std::string icon_on;
-  std::string sensor;     // sensor entity, slider mode, or action name
+  std::string sensor;     // sensor entity, cover mode, or action name
   std::string unit;
   std::string type;       // button type: "" (toggle), action, sensor, calendar, timezone, climate, weather_forecast, slider, cover, garage, push, subpage
   std::string precision;  // decimal places for sensor display; "text" = text sensor mode
@@ -3077,13 +3084,18 @@ inline std::string decode_compact_subpage_field(const std::string &value) {
   return decode_compact_field(value);
 }
 
+inline SubpageBtn normalize_subpage_btn(SubpageBtn b) {
+  if (b.type == "slider" && !b.sensor.empty()) b.sensor.clear();
+  return b;
+}
+
 // Create a slider button inside a subpage screen (reuses main grid slider logic)
 inline lv_obj_t *setup_subpage_slider(lv_obj_t *btn, lv_obj_t *icon_lbl, lv_obj_t *text_lbl,
                                        const SubpageBtn &sb, uint32_t on_color, lv_coord_t radius) {
   if (!sb.label.empty()) lv_label_set_text(text_lbl, sb.label.c_str());
   else subscribe_friendly_name(text_lbl, sb.entity);
 
-  bool horiz = sb.type == "slider" && sb.sensor == "h";
+  bool horiz = false;
   lv_obj_t *sl = setup_slider_widget(btn, on_color, horiz);
   lv_coord_t pad = radius + 4;
   lv_obj_align(icon_lbl, LV_ALIGN_TOP_LEFT, pad, pad);
@@ -3157,7 +3169,7 @@ inline std::vector<SubpageBtn> parse_subpage_config(const std::string &sp_cfg) {
       std::string sn = flds.size() > 5 ? decode_compact_subpage_field(flds[5]) : "";
       std::string un = flds.size() > 6 ? decode_compact_subpage_field(flds[6]) : "";
       std::string pr = flds.size() > 7 ? decode_compact_subpage_field(flds[7]) : "";
-      btns.push_back({e, l, ic, io, sn, un, tp, pr});
+      btns.push_back(normalize_subpage_btn({e, l, ic, io, sn, un, tp, pr}));
       continue;
     }
     std::vector<std::string> flds = split_subpage_fields(pipes[pi], ':');
@@ -3171,7 +3183,7 @@ inline std::vector<SubpageBtn> parse_subpage_config(const std::string &sp_cfg) {
     std::string un = flds.size() > 5 ? flds[5] : "";
     std::string tp = flds.size() > 6 ? flds[6] : "";
     std::string pr = flds.size() > 7 ? flds[7] : "";
-    btns.push_back({e, l, ic, io, sn, un, tp, pr});
+    btns.push_back(normalize_subpage_btn({e, l, ic, io, sn, un, tp, pr}));
   }
   return btns;
 }

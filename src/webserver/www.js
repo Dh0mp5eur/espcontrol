@@ -220,8 +220,6 @@
     ".sp-slider-track{width:100%;height:100%;position:relative}" +
     ".sp-slider-fill{position:absolute;left:0;bottom:0;width:100%;height:80%;background:var(--accent);" +
     "border-radius:var(--r)}" +
-    ".sp-slider-horiz .sp-slider-fill{left:0;bottom:0;top:0;width:80%;height:100%;" +
-    "border-radius:var(--r)}" +
     ".sp-btn-double{grid-row:span 2}" +
     ".sp-btn-double .sp-btn-label{-webkit-line-clamp:var(--btn-lines-dbl)}" +
     ".sp-btn-double .sp-btn-label-row .sp-btn-label{-webkit-line-clamp:var(--btn-lines-dbl)}" +
@@ -672,7 +670,7 @@
 
   function clockBarTemperatureUnitSymbol() {
     var unit = temperatureUnitSymbol();
-    return state.temperatureDegreeSymbolOn ? unit : unit.replace("\u00B0", "");
+    return state.temperatureDegreeSymbolOn ? unit : "";
   }
 
   function appendScreenRotationOption(select, opt) {
@@ -957,6 +955,8 @@
   var dragEnterCount = 0;
   var orderReceived = false;
   var migrationTimer = null;
+  var sliderMigrationTimer = null;
+  var pendingSliderSubpageMigrations = {};
   var _eventSource = null;
 
   // ── Utilities ──────────────────────────────────────────────────────────
@@ -1363,6 +1363,18 @@
     postText("Subpage " + slot + " Config Ext 3", chunks[3]);
   }
 
+  function scheduleSliderSubpageMigration(slot) {
+    pendingSliderSubpageMigrations[slot] = true;
+    clearTimeout(sliderMigrationTimer);
+    sliderMigrationTimer = setTimeout(function () {
+      var pending = pendingSliderSubpageMigrations;
+      pendingSliderSubpageMigrations = {};
+      for (var key in pending) {
+        if (state.subpages[key]) saveSubpageEntity(key);
+      }
+    }, 5000);
+  }
+
   function postSelect(name, option) {
     post("/select/" + encodeURIComponent(name) + "/set?option=" + encodeURIComponent(option));
   }
@@ -1561,6 +1573,9 @@
   // ── Subpage helpers ────────────────────────────────────────────────────
 
   function normalizeButtonConfig(b) {
+    if (b && b.type === "slider" && b.sensor) {
+      b.sensor = "";
+    }
     if (b && b.type === "text_sensor") {
       b.type = "sensor";
       b.precision = "text";
@@ -1580,7 +1595,7 @@
 
   function buttonConfigFields(b) {
     var type = b && b.type || "";
-    var sensor = b && b.sensor || "";
+    var sensor = type === "slider" ? "" : (b && b.sensor || "");
     var unit = b && b.unit || "";
     var precision = b && b.precision || "";
     if (!type && !sensor) {
@@ -1624,13 +1639,13 @@
     return "~" + fields.map(encodeConfigField).join(",");
   }
 
-  function parseButtonConfig(str) {
+  function parseRawButtonConfig(str) {
     var compact = str && str.charAt(0) === "~";
     var parts = compact ? str.substring(1).split(",") : (str || "").split(";");
     if (compact) {
       parts = parts.map(decodeConfigField);
     }
-    return normalizeButtonConfig({
+    return {
       entity: parts[0] || "",
       label: parts[1] || "",
       icon: parts[2] || "Auto",
@@ -1639,11 +1654,23 @@
       unit: parts[5] || "",
       type: parts[6] || "",
       precision: parts[7] || "",
-    });
+    };
   }
 
-  function parseSubpageConfig(str) {
-    if (str && str.charAt(0) === "~") return parseCompactSubpageConfig(str);
+  function parseButtonConfig(str) {
+    return normalizeButtonConfig(parseRawButtonConfig(str));
+  }
+
+  function hasLegacySliderDirection(b) {
+    return !!(b && b.type === "slider" && b.sensor);
+  }
+
+  function buttonConfigHasLegacySliderDirection(str) {
+    return hasLegacySliderDirection(parseRawButtonConfig(str || ""));
+  }
+
+  function parseSubpageConfig(str, raw) {
+    if (str && str.charAt(0) === "~") return parseCompactSubpageConfig(str, raw);
     if (!str || !str.trim()) return { order: [], buttons: [] };
     var parts = str.split("|");
     var order = [];
@@ -1657,7 +1684,7 @@
     var buttons = [];
     for (var i = 1; i < parts.length; i++) {
       var f = parts[i].split(":");
-      buttons.push(normalizeButtonConfig({
+      var button = {
         entity: f[0] || "",
         label: f[1] || "",
         icon: f[2] || "Auto",
@@ -1666,7 +1693,8 @@
         unit: f[5] || "",
         type: f[6] || "",
         precision: f[7] || "",
-      }));
+      };
+      buttons.push(raw ? button : normalizeButtonConfig(button));
     }
     return { order: order, buttons: buttons };
   }
@@ -1715,7 +1743,7 @@
     return decodeConfigField(value);
   }
 
-  function parseCompactSubpageConfig(str) {
+  function parseCompactSubpageConfig(str, raw) {
     if (!str || str.length < 2) return { order: [], buttons: [] };
     var parts = str.substring(1).split("|");
     var order = [];
@@ -1726,7 +1754,7 @@
     var buttons = [];
     for (var i = 1; i < parts.length; i++) {
       var f = parts[i].split(",");
-      buttons.push(normalizeButtonConfig({
+      var button = {
         type: subpageTypeFromCode(f[0] || ""),
         entity: decodeSubpageField(f[1]),
         label: decodeSubpageField(f[2]),
@@ -1735,9 +1763,18 @@
         sensor: decodeSubpageField(f[5]),
         unit: decodeSubpageField(f[6]),
         precision: decodeSubpageField(f[7]),
-      }));
+      };
+      buttons.push(raw ? button : normalizeButtonConfig(button));
     }
     return { order: order, buttons: buttons };
+  }
+
+  function subpageConfigHasLegacySliderDirection(str) {
+    var sp = parseSubpageConfig(str, true);
+    for (var i = 0; i < sp.buttons.length; i++) {
+      if (hasLegacySliderDirection(sp.buttons[i])) return true;
+    }
+    return false;
   }
 
   function serializeSubpageConfig(sp) {
@@ -1767,7 +1804,8 @@
     var out = sp.order.join(",");
     for (var i = 0; i < sp.buttons.length; i++) {
       var b = sp.buttons[i];
-      var fields = [b.entity || "", b.label || "", b.icon || "Auto", b.icon_on || "Auto", b.sensor || "", b.unit || "", b.type || "", b.precision || ""];
+      var sensor = b.type === "slider" ? "" : (b.sensor || "");
+      var fields = [b.entity || "", b.label || "", b.icon || "Auto", b.icon_on || "Auto", sensor, b.unit || "", b.type || "", b.precision || ""];
       while (fields.length > 1 && !fields[fields.length - 1]) fields.pop();
       if (fields.length > 1 && fields[fields.length - 1] === "Auto") {
         while (fields.length > 1 && (fields[fields.length - 1] === "Auto" || !fields[fields.length - 1])) fields.pop();
@@ -1782,13 +1820,14 @@
     var out = "~" + sp.order.join(",");
     for (var i = 0; i < sp.buttons.length; i++) {
       var b = sp.buttons[i];
+      var sensor = b.type === "slider" ? "" : (b.sensor || "");
       var fields = [
         subpageTypeCode(b.type || ""),
         encodeSubpageField(b.entity),
         encodeSubpageField(b.label),
         b.icon && b.icon !== "Auto" ? encodeSubpageField(b.icon) : "",
         b.icon_on && b.icon_on !== "Auto" ? encodeSubpageField(b.icon_on) : "",
-        encodeSubpageField(b.sensor),
+        encodeSubpageField(sensor),
         encodeSubpageField(b.unit),
         encodeSubpageField(b.precision),
       ];
@@ -1823,10 +1862,12 @@
       }
     }
     if (combined) {
+      var migrateSliderDirection = subpageConfigHasLegacySliderDirection(combined);
       var sp = parseSubpageConfig(combined);
       sp.sizes = sp.sizes || {};
       buildSubpageGrid(sp);
       state.subpages[slot] = sp;
+      if (migrateSliderDirection) scheduleSliderSubpageMigration(slot);
     } else {
       delete state.subpages[slot];
     }
@@ -5419,6 +5460,8 @@
       });
       clearTimeout(migrationTimer);
       migrationTimer = setTimeout(scheduleMigration, 5000);
+      clearTimeout(sliderMigrationTimer);
+      pendingSliderSubpageMigrations = {};
       refreshFirmwareVersion();
     });
 
@@ -5737,6 +5780,7 @@
           var slot = parseInt(m[1], 10);
           if (slot < 1 || slot > NUM_SLOTS) return;
           var b = state.buttons[slot - 1];
+          var migrateSliderDirection = buttonConfigHasLegacySliderDirection(val || "");
           var parsed = parseButtonConfig(val || "");
           b.entity = parsed.entity;
           b.label = parsed.label;
@@ -5746,6 +5790,7 @@
           b.unit = parsed.unit;
           b.type = parsed.type;
           b.precision = parsed.precision;
+          if (migrateSliderDirection) saveButtonConfig(slot);
           scheduleRender();
         },
       },
