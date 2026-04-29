@@ -16,6 +16,14 @@ font:
       - "0123456789.-°/%kWhVA "
       - ":"
 
+  # Climate detail page: oversized target temperature
+  - file: "gfonts://Roboto@Light"
+    id: climate_target_font_lt
+    size: 118
+    bpp: 4
+    glyphs:
+      - "0123456789.-"
+
   # Main page: forecast high / low values
   - file: "gfonts://Roboto@Light"
     id: forecast_font_lt

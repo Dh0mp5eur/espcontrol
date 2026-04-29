@@ -53,6 +53,7 @@ esphome:
             cfg.color_correction = true;
             cfg.wrap_tall_labels = true;
             cfg.sp_sensor_font = id(statistics_font_lt)->get_lv_font();
+            cfg.climate_target_font = id(climate_target_font_lt)->get_lv_font();
             cfg.forecast_font = id(forecast_font_lt)->get_lv_font();
             cfg.forecast_unit_font = id(forecast_unit_font_lt)->get_lv_font();
             // END GENERATED PHASE 1 GRID WIRING
@@ -133,6 +134,7 @@ esphome:
             cfg.color_correction = true;
             cfg.wrap_tall_labels = true;
             cfg.sp_sensor_font = id(statistics_font_lt)->get_lv_font();
+            cfg.climate_target_font = id(climate_target_font_lt)->get_lv_font();
             cfg.forecast_font = id(forecast_font_lt)->get_lv_font();
             cfg.forecast_unit_font = id(forecast_unit_font_lt)->get_lv_font();
             // END GENERATED PHASE 2 GRID WIRING

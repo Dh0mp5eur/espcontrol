@@ -633,6 +633,7 @@ struct ClimateCardCtx {
   lv_obj_t *unit_lbl = nullptr;
   lv_obj_t *text_lbl = nullptr;
   const lv_font_t *value_font = nullptr;
+  const lv_font_t *target_font = nullptr;
   const lv_font_t *label_font = nullptr;
   const lv_font_t *unit_font = nullptr;
   const lv_font_t *icon_font = nullptr;
@@ -1080,7 +1081,11 @@ inline void climate_update_detail(ClimateCardCtx *ctx) {
     climate_format_temp(tbuf, sizeof(tbuf), climate_selected_target(ctx));
     lv_label_set_text(ui.target_value, tbuf);
   }
-  if (ui.target_unit) lv_label_set_text(ui.target_unit, "\u00B0C");
+  if (ui.target_unit && ui.target_value) {
+    lv_label_set_text(ui.target_unit, "\u00B0C");
+    lv_obj_update_layout(ui.target_value);
+    lv_obj_align_to(ui.target_unit, ui.target_value, LV_ALIGN_OUT_RIGHT_TOP, 6, 8);
+  }
   if (ui.target_hint) {
     if (climate_dual_target(ctx)) {
       lv_label_set_text(ui.target_hint, ctx->edit_high ? "High target" : "Low target");
@@ -1233,14 +1238,14 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
 
   lv_obj_align(ui.state_label, LV_ALIGN_CENTER, 0, -arc_size / 5);
   lv_obj_align(ui.target_value, LV_ALIGN_CENTER, -18, -arc_size / 18);
-  lv_obj_align(ui.target_unit, LV_ALIGN_CENTER, 74, -arc_size / 12);
+  lv_obj_align_to(ui.target_unit, ui.target_value, LV_ALIGN_OUT_RIGHT_TOP, 6, 8);
   lv_obj_align(ui.current_title, LV_ALIGN_CENTER, -64, arc_size / 5);
   lv_obj_align(ui.current_value, LV_ALIGN_CENTER, 22, arc_size / 5);
   lv_obj_align(ui.target_hint, LV_ALIGN_CENTER, 0, arc_size / 3);
   lv_obj_align(ui.low_btn, LV_ALIGN_CENTER, -44, arc_size / 3 + 32);
   lv_obj_align(ui.high_btn, LV_ALIGN_CENTER, 44, arc_size / 3 + 32);
-  if (ctx && ctx->value_font) {
-    lv_obj_set_style_text_font(ui.target_value, ctx->value_font, LV_PART_MAIN);
+  if (ctx && ctx->target_font) {
+    lv_obj_set_style_text_font(ui.target_value, ctx->target_font, LV_PART_MAIN);
   }
   if (ctx && ctx->label_font) {
     lv_obj_set_style_text_font(ui.state_label, ctx->label_font, LV_PART_MAIN);
@@ -1322,7 +1327,7 @@ inline void climate_ensure_detail_ui(ClimateCardCtx *ctx) {
 
   const lv_font_t *unit_font = ctx && ctx->unit_font ? ctx->unit_font : (ctx ? ctx->label_font : nullptr);
   ui.state_label = climate_create_label(ui.page, "Idle", LV_ALIGN_CENTER, 0, -50, ctx ? ctx->label_font : nullptr, CLIMATE_HEAT_COLOR);
-  ui.target_value = climate_create_label(ui.page, "20.0", LV_ALIGN_CENTER, -14, 14, ctx ? ctx->value_font : nullptr);
+  ui.target_value = climate_create_label(ui.page, "20.0", LV_ALIGN_CENTER, -14, 14, ctx ? ctx->target_font : nullptr);
   ui.target_unit = climate_create_label(ui.page, "\u00B0C", LV_ALIGN_CENTER, 64, -2, unit_font);
   ui.target_hint = climate_create_label(ui.page, "Target", LV_ALIGN_CENTER, 0, 78, ctx ? ctx->label_font : nullptr, 0xBDBDBD);
   ui.current_title = climate_create_label(ui.page, find_icon("Thermometer"), LV_ALIGN_CENTER, -64, 70, ctx ? ctx->icon_font : nullptr, CLIMATE_HEAT_COLOR);
@@ -1534,7 +1539,8 @@ inline ClimateCardCtx *create_climate_context(lv_obj_t *card_btn,
                                               const ParsedCfg &p,
                                               uint32_t on_color,
                                               uint32_t off_color,
-                                              const lv_font_t *value_font) {
+                                              const lv_font_t *value_font,
+                                              const lv_font_t *target_font) {
   ClimateCardCtx *ctx = new ClimateCardCtx();
   ctx->entity_id = p.entity;
   ctx->label = p.label;
@@ -1544,6 +1550,7 @@ inline ClimateCardCtx *create_climate_context(lv_obj_t *card_btn,
   ctx->unit_lbl = unit_lbl;
   ctx->text_lbl = text_lbl;
   ctx->value_font = value_font;
+  ctx->target_font = target_font ? target_font : value_font;
   ctx->label_font = text_lbl ? lv_obj_get_style_text_font(text_lbl, LV_PART_MAIN) : nullptr;
   ctx->unit_font = unit_lbl ? lv_obj_get_style_text_font(unit_lbl, LV_PART_MAIN) : ctx->label_font;
   ctx->icon_font = icon_lbl ? lv_obj_get_style_text_font(icon_lbl, LV_PART_MAIN) : nullptr;
@@ -3139,6 +3146,7 @@ struct GridConfig {
   bool color_correction;
   bool wrap_tall_labels;
   const lv_font_t *sp_sensor_font;
+  const lv_font_t *climate_target_font;
   const lv_font_t *forecast_font;
   const lv_font_t *forecast_unit_font;
 };
@@ -3358,7 +3366,8 @@ inline void grid_phase2(
           s.btn, s.sensor_container, s.sensor_lbl, s.unit_lbl, s.text_lbl, s.icon_lbl, p,
           has_on ? on_val : DEFAULT_SLIDER_COLOR,
           has_off ? off_val : CLIMATE_NEUTRAL_COLOR,
-          cfg.sp_sensor_font);
+          cfg.sp_sensor_font,
+          cfg.climate_target_font ? cfg.climate_target_font : cfg.sp_sensor_font);
         subscribe_climate_card(climate_ctx);
       }
       continue;
@@ -3780,7 +3789,8 @@ inline void grid_phase2(
             sb_btn, sc, svl, sul, stl, sil, cp,
             has_on ? on_val : DEFAULT_SLIDER_COLOR,
             has_off ? off_val : CLIMATE_NEUTRAL_COLOR,
-            cfg.sp_sensor_font);
+            cfg.sp_sensor_font,
+            cfg.climate_target_font ? cfg.climate_target_font : cfg.sp_sensor_font);
           subscribe_climate_card(climate_ctx);
           if (sp_indicator) {
             lv_obj_t *parent_btn = slots[si].btn;

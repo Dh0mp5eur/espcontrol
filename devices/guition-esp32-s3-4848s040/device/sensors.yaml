@@ -38,6 +38,7 @@ esphome:
             cfg.num_slots = 9;
             cfg.cols = 3;
             cfg.sp_sensor_font = id(statistics_font)->get_lv_font();
+            cfg.climate_target_font = id(climate_target_font_sm)->get_lv_font();
             cfg.forecast_font = id(forecast_font_sm)->get_lv_font();
             cfg.forecast_unit_font = id(forecast_unit_font)->get_lv_font();
             // END GENERATED PHASE 1 GRID WIRING
@@ -97,6 +98,7 @@ esphome:
             cfg.num_slots = 9;
             cfg.cols = 3;
             cfg.sp_sensor_font = id(statistics_font)->get_lv_font();
+            cfg.climate_target_font = id(climate_target_font_sm)->get_lv_font();
             cfg.forecast_font = id(forecast_font_sm)->get_lv_font();
             cfg.forecast_unit_font = id(forecast_unit_font)->get_lv_font();
             // END GENERATED PHASE 2 GRID WIRING
