@@ -1196,6 +1196,14 @@ inline void climate_set_button_label_font(lv_obj_t *btn, const lv_font_t *font) 
   if (label) lv_obj_set_style_text_font(label, font, LV_PART_MAIN);
 }
 
+inline const lv_font_t *climate_control_symbol_font(const ClimateCardCtx *ctx,
+                                                    lv_coord_t short_side) {
+  if (!ctx) return nullptr;
+  if (short_side >= 520 && ctx->value_font) return ctx->value_font;
+  if (ctx->label_font) return ctx->label_font;
+  return ctx->unit_font;
+}
+
 inline lv_obj_t *climate_create_chip(lv_obj_t *parent, const char *text,
                                      const lv_font_t *font = nullptr) {
   lv_obj_t *btn = lv_btn_create(parent);
@@ -1294,19 +1302,22 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
     lv_obj_set_style_text_font(ui.state_label, ctx->label_font, LV_PART_MAIN);
     lv_obj_set_style_text_font(ui.current_value, ctx->label_font, LV_PART_MAIN);
     lv_obj_set_style_text_font(ui.target_hint, ctx->label_font, LV_PART_MAIN);
+    climate_set_button_label_font(ui.back_btn, ctx->label_font);
     climate_set_button_label_font(ui.low_btn, ctx->label_font);
     climate_set_button_label_font(ui.high_btn, ctx->label_font);
     climate_set_button_label_font(ui.preset_chip, ctx->label_font);
     climate_set_button_label_font(ui.fan_chip, ctx->label_font);
     climate_set_button_label_font(ui.swing_chip, ctx->label_font);
   }
+  const lv_font_t *control_font = climate_control_symbol_font(ctx, short_side);
+  if (control_font) {
+    climate_set_button_label_font(ui.minus_btn, control_font);
+    climate_set_button_label_font(ui.plus_btn, control_font);
+  }
   const lv_font_t *unit_font = ctx && ctx->unit_font ? ctx->unit_font : (ctx ? ctx->label_font : nullptr);
   if (unit_font) lv_obj_set_style_text_font(ui.target_unit, unit_font, LV_PART_MAIN);
   if (ctx && ctx->icon_font) {
     lv_obj_set_style_text_font(ui.current_title, ctx->icon_font, LV_PART_MAIN);
-    climate_set_button_label_font(ui.back_btn, ctx->icon_font);
-    climate_set_button_label_font(ui.minus_btn, ctx->icon_font);
-    climate_set_button_label_font(ui.plus_btn, ctx->icon_font);
   }
 }
 
@@ -1334,9 +1345,9 @@ inline void climate_ensure_detail_ui(ClimateCardCtx *ctx) {
   lv_obj_set_style_shadow_width(ui.back_btn, 0, LV_PART_MAIN);
   lv_obj_set_style_pad_all(ui.back_btn, 0, LV_PART_MAIN);
   lv_obj_t *back_icon = lv_label_create(ui.back_btn);
-  lv_label_set_text(back_icon, "\U000F0141");
+  lv_label_set_text(back_icon, "<");
   lv_obj_set_style_text_color(back_icon, lv_color_hex(0xD8D8D8), LV_PART_MAIN);
-  if (ctx && ctx->icon_font) lv_obj_set_style_text_font(back_icon, ctx->icon_font, LV_PART_MAIN);
+  if (ctx && ctx->label_font) lv_obj_set_style_text_font(back_icon, ctx->label_font, LV_PART_MAIN);
   lv_obj_center(back_icon);
   lv_obj_add_event_cb(ui.back_btn, [](lv_event_t *e) {
     ClimateDetailUi &ui = climate_detail_ui();
@@ -1375,8 +1386,8 @@ inline void climate_ensure_detail_ui(ClimateCardCtx *ctx) {
   ui.target_hint = climate_create_label(ui.page, "Target", LV_ALIGN_CENTER, 0, 78, ctx ? ctx->label_font : nullptr, 0xBDBDBD);
   ui.current_title = climate_create_label(ui.page, find_icon("Thermometer"), LV_ALIGN_CENTER, -64, 70, ctx ? ctx->icon_font : nullptr, CLIMATE_DETAIL_TEXT_COLOR);
   ui.current_value = climate_create_label(ui.page, "-- \u00B0C", LV_ALIGN_CENTER, 22, 70, ctx ? ctx->label_font : nullptr, CLIMATE_DETAIL_TEXT_COLOR);
-  ui.minus_btn = climate_create_round_button(ui.page, 60, find_icon("Minus"), ctx ? ctx->icon_font : nullptr);
-  ui.plus_btn = climate_create_round_button(ui.page, 60, find_icon("Plus"), ctx ? ctx->icon_font : nullptr);
+  ui.minus_btn = climate_create_round_button(ui.page, 60, "-", ctx ? ctx->label_font : nullptr);
+  ui.plus_btn = climate_create_round_button(ui.page, 60, "+", ctx ? ctx->label_font : nullptr);
   ui.low_btn = climate_create_chip(ui.page, "Low", ctx ? ctx->label_font : nullptr);
   ui.high_btn = climate_create_chip(ui.page, "High", ctx ? ctx->label_font : nullptr);
   lv_obj_set_size(ui.low_btn, 76, 36);
