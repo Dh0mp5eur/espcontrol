@@ -1274,13 +1274,15 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
   lv_coord_t chip_h = sh < 520 ? 56 : 64;
   lv_coord_t bottom = sh < 520 ? -10 : -22;
   lv_coord_t control_bottom = bottom;
-  lv_coord_t back_size = short_side < 520 ? 44 : 48;
+  lv_coord_t back_size = short_side < 520 ? 60 : 72;
+  lv_coord_t menu_size = short_side < 520 ? 44 : 48;
   lv_coord_t top_clearance = short_side < 520 ? 44 : 56;
+  lv_coord_t card_start_top = sw < sh ? 50 : (short_side < 520 ? 38 : 42);
 
   lv_obj_set_size(ui.back_btn, back_size, back_size);
-  lv_obj_align(ui.back_btn, LV_ALIGN_TOP_LEFT, 22, top_clearance + 12);
+  lv_obj_align(ui.back_btn, LV_ALIGN_TOP_LEFT, 5, card_start_top);
   lv_obj_move_foreground(ui.back_btn);
-  lv_obj_set_size(ui.preset_chip, back_size, back_size);
+  lv_obj_set_size(ui.preset_chip, menu_size, menu_size);
   lv_obj_set_style_radius(ui.preset_chip, 8, LV_PART_MAIN);
   lv_obj_align(ui.preset_chip, LV_ALIGN_TOP_RIGHT, -12, top_clearance);
   lv_obj_move_foreground(ui.preset_chip);
