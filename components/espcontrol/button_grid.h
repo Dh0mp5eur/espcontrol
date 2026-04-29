@@ -1440,11 +1440,14 @@ inline void climate_open_options(ClimateCardCtx *ctx, const char *kind,
   ClimateDetailUi &ui = climate_detail_ui();
   if (!ctx || !ui.overlay || !ui.popup || options.empty()) return;
   lv_obj_clean(ui.popup);
-  lv_obj_t *title_lbl = lv_label_create(ui.popup);
-  lv_label_set_text(title_lbl, title);
-  lv_obj_set_style_text_color(title_lbl, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
-  lv_obj_set_style_text_align(title_lbl, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-  if (ctx->label_font) lv_obj_set_style_text_font(title_lbl, ctx->label_font, LV_PART_MAIN);
+  bool compact_menu = std::strcmp(kind, "preset") == 0;
+  if (!compact_menu) {
+    lv_obj_t *title_lbl = lv_label_create(ui.popup);
+    lv_label_set_text(title_lbl, title);
+    lv_obj_set_style_text_color(title_lbl, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+    lv_obj_set_style_text_align(title_lbl, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+    if (ctx->label_font) lv_obj_set_style_text_font(title_lbl, ctx->label_font, LV_PART_MAIN);
+  }
 
   for (const auto &value : options) {
     lv_obj_t *btn = climate_create_chip(ui.popup, climate_mode_label(value).c_str(), ctx->label_font);
@@ -1459,16 +1462,18 @@ inline void climate_open_options(ClimateCardCtx *ctx, const char *kind,
       delete static_cast<ClimateOptionCtx *>(lv_event_get_user_data(e));
     }, LV_EVENT_DELETE, opt);
   }
-  lv_obj_t *cancel = climate_create_chip(ui.popup, "Cancel", ctx->label_font);
-  lv_obj_set_width(cancel, lv_pct(72));
-  lv_obj_set_height(cancel, 40);
-  lv_obj_add_event_cb(cancel, [](lv_event_t *e) { climate_hide_popup(); }, LV_EVENT_CLICKED, nullptr);
+  if (!compact_menu) {
+    lv_obj_t *cancel = climate_create_chip(ui.popup, "Cancel", ctx->label_font);
+    lv_obj_set_width(cancel, lv_pct(72));
+    lv_obj_set_height(cancel, 40);
+    lv_obj_add_event_cb(cancel, [](lv_event_t *e) { climate_hide_popup(); }, LV_EVENT_CLICKED, nullptr);
+  }
 
   lv_obj_clear_flag(ui.overlay, LV_OBJ_FLAG_HIDDEN);
   lv_obj_clear_flag(ui.popup, LV_OBJ_FLAG_HIDDEN);
   lv_obj_move_foreground(ui.overlay);
   lv_obj_move_foreground(ui.popup);
-  if (std::strcmp(kind, "preset") == 0) {
+  if (compact_menu) {
     lv_disp_t *disp = lv_disp_get_default();
     lv_coord_t sw = disp ? lv_disp_get_hor_res(disp) : 480;
     lv_coord_t sh = disp ? lv_disp_get_ver_res(disp) : 480;
