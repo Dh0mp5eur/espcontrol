@@ -44,8 +44,6 @@ Action cards do not currently pass script variables or extra data. If a script n
 | **Press Button** | `button.restart_router` | None |
 | **Press Input Button** | `input_button.doorbell` | None |
 | **Toggle Helper** | `input_boolean.guest_mode` | None |
-| **Turn Helper On** | `input_boolean.guest_mode` | None |
-| **Turn Helper Off** | `input_boolean.guest_mode` | None |
 | **Set Number Helper** | `input_number.target_level` | Value |
 | **Select Option Helper** | `input_select.house_mode` | Option |
 

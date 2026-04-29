@@ -308,28 +308,6 @@ assertButtonRoundTrip(hooks, "input boolean toggle action card", {
   precision: "",
 }, false);
 
-assertButtonRoundTrip(hooks, "input boolean on action card", {
-  entity: "input_boolean.guest_mode",
-  label: "Guest Mode On",
-  icon: "Flash",
-  icon_on: "Auto",
-  sensor: "input_boolean.turn_on",
-  unit: "",
-  type: "action",
-  precision: "",
-}, false);
-
-assertButtonRoundTrip(hooks, "input boolean off action card", {
-  entity: "input_boolean.guest_mode",
-  label: "Guest Mode Off",
-  icon: "Flash",
-  icon_on: "Auto",
-  sensor: "input_boolean.turn_off",
-  unit: "",
-  type: "action",
-  precision: "",
-}, false);
-
 assertButtonRoundTrip(hooks, "input number action card", {
   entity: "input_number.target_level",
   label: "Target Level",
