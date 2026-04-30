@@ -1286,15 +1286,15 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
   lv_coord_t sw = disp ? lv_disp_get_hor_res(disp) : 480;
   lv_coord_t sh = disp ? lv_disp_get_ver_res(disp) : 480;
   lv_coord_t short_side = sw < sh ? sw : sh;
-  lv_coord_t outer_margin = short_side < 520 ? 12 : 24;
-  lv_coord_t top_clearance = sw < sh ? 50 : (short_side < 520 ? 38 : 42);
+  lv_coord_t outer_margin = short_side < 520 ? 12 : 28;
+  lv_coord_t top_clearance = sw < sh ? 58 : (short_side < 520 ? 48 : 104);
   lv_coord_t card_w = sw - outer_margin * 2;
   lv_coord_t card_h = sh - top_clearance - outer_margin;
   if (card_w < sw / 2) card_w = sw;
   if (card_h < sh / 2) card_h = sh;
   lv_coord_t card_x = (sw - card_w) / 2;
   lv_coord_t card_y = top_clearance;
-  lv_coord_t card_pad = short_side < 520 ? 18 : 28;
+  lv_coord_t card_pad = short_side < 520 ? 18 : 42;
   lv_coord_t frame_w = card_w - card_pad * 2;
   lv_coord_t frame_h = card_h - card_pad * 2;
   if (frame_w < 1) frame_w = card_w;
@@ -1303,13 +1303,13 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
   lv_coord_t frame_y = card_y + card_pad;
   lv_coord_t frame_cx = frame_x + frame_w / 2 - sw / 2;
   lv_coord_t frame_cy = frame_y + frame_h / 2 - sh / 2;
-  lv_coord_t arc_size = (frame_w < frame_h ? frame_w : frame_h) * 86 / 100;
-  if (arc_size < 300) arc_size = (frame_w < frame_h ? frame_w : frame_h) * 88 / 100;
+  lv_coord_t arc_size = (frame_w < frame_h ? frame_w : frame_h) * (short_side < 520 ? 90 : 96) / 100;
+  if (arc_size < 300) arc_size = (frame_w < frame_h ? frame_w : frame_h) * 92 / 100;
   lv_coord_t arc_cx = frame_cx;
-  lv_coord_t arc_cy = frame_cy + (sh < 520 ? 8 : 14);
-  lv_coord_t round_btn = short_side * 14 / 100;
+  lv_coord_t arc_cy = frame_cy + (sh < 520 ? 8 : 34);
+  lv_coord_t round_btn = short_side * 15 / 100;
   if (round_btn < 66) round_btn = 66;
-  if (round_btn > 90) round_btn = 90;
+  if (round_btn > 116) round_btn = 116;
   lv_coord_t chip_w = (frame_w - 56) / 4;
   if (chip_w > 140) chip_w = 140;
   if (chip_w < 86) chip_w = 86;
@@ -1318,7 +1318,7 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
 
   if (ui.card) {
     lv_obj_set_size(ui.card, card_w, card_h);
-    lv_obj_set_style_radius(ui.card, short_side < 520 ? 12 : 16, LV_PART_MAIN);
+    lv_obj_set_style_radius(ui.card, short_side < 520 ? 12 : 28, LV_PART_MAIN);
     lv_obj_align(ui.card, LV_ALIGN_TOP_LEFT, card_x, card_y);
     lv_obj_move_background(ui.card);
   }
@@ -1335,9 +1335,9 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
 
   lv_obj_set_size(ui.arc, arc_size, arc_size);
   lv_obj_align(ui.arc, LV_ALIGN_CENTER, arc_cx, arc_cy);
-  lv_obj_set_style_arc_width(ui.arc, short_side < 520 ? 18 : 22, LV_PART_MAIN);
-  lv_obj_set_style_arc_width(ui.arc, short_side < 520 ? 18 : 22, LV_PART_INDICATOR);
-  lv_obj_set_style_pad_all(ui.arc, 8, LV_PART_KNOB);
+  lv_obj_set_style_arc_width(ui.arc, short_side < 520 ? 18 : 28, LV_PART_MAIN);
+  lv_obj_set_style_arc_width(ui.arc, short_side < 520 ? 18 : 28, LV_PART_INDICATOR);
+  lv_obj_set_style_pad_all(ui.arc, short_side < 520 ? 8 : 12, LV_PART_KNOB);
   lv_obj_set_size(ui.minus_btn, round_btn, round_btn);
   lv_obj_set_style_radius(ui.minus_btn, round_btn / 2, LV_PART_MAIN);
   lv_obj_set_size(ui.plus_btn, round_btn, round_btn);
@@ -1351,7 +1351,7 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
   for (bool is_visible : visible) {
     if (is_visible) visible_count++;
   }
-  lv_coord_t adjust_btn_x = round_btn * 7 / 10;
+  lv_coord_t adjust_btn_x = round_btn * 8 / 10;
   lv_coord_t adjust_btn_y_abs = sh / 2 + arc_cy + arc_size / 2 - round_btn / 2;
   lv_coord_t max_btn_y_abs = (visible_count > 0 ? control_y - 12 : frame_y + frame_h) - round_btn / 2;
   if (adjust_btn_y_abs > max_btn_y_abs) adjust_btn_y_abs = max_btn_y_abs;
