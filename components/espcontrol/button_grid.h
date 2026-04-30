@@ -1164,6 +1164,7 @@ inline void climate_update_detail(ClimateCardCtx *ctx) {
   }
   if (ui.target_unit && ui.target_value) {
     lv_label_set_text(ui.target_unit, display_temperature_unit_symbol());
+    lv_obj_set_style_text_color(ui.target_unit, lv_color_hex(CLIMATE_DETAIL_TEXT_COLOR), LV_PART_MAIN);
     lv_obj_update_layout(ui.target_value);
     lv_obj_align_to(ui.target_unit, ui.target_value, LV_ALIGN_OUT_RIGHT_TOP, 2, 8);
     if (ui.state_label) lv_obj_align_to(ui.state_label, ui.target_value, LV_ALIGN_OUT_BOTTOM_MID, 0, 8);
@@ -1480,7 +1481,7 @@ inline void climate_ensure_detail_ui(ClimateCardCtx *ctx) {
   const lv_font_t *unit_font = ctx && ctx->unit_font ? ctx->unit_font : (ctx ? ctx->label_font : nullptr);
   ui.state_label = climate_create_label(ui.page, "Idle", LV_ALIGN_CENTER, 0, -38, ctx ? ctx->label_font : nullptr, CLIMATE_DETAIL_TEXT_COLOR);
   ui.target_value = climate_create_label(ui.page, "20.0", LV_ALIGN_CENTER, 0, 14, ctx ? ctx->target_font : nullptr);
-  ui.target_unit = climate_create_label(ui.page, display_temperature_unit_symbol(), LV_ALIGN_CENTER, 66, -2, unit_font);
+  ui.target_unit = climate_create_label(ui.page, display_temperature_unit_symbol(), LV_ALIGN_CENTER, 66, -2, unit_font, CLIMATE_DETAIL_TEXT_COLOR);
   ui.target_hint = climate_create_label(ui.page, "Target", LV_ALIGN_CENTER, 0, 78, ctx ? ctx->label_font : nullptr, 0xBDBDBD);
   ui.minus_btn = climate_create_round_button(ui.page, 72, find_icon("Minus"), control_icon_font,
     0xBDBDBD, 0xD8D8D8, CLIMATE_DETAIL_CARD_COLOR);
