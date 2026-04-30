@@ -65,7 +65,8 @@ Use the dedicated card types for richer controls:
 
 - Use [Cover](/card-types/covers) for blinds, shutters, and covers.
 - Use [Switch](/card-types/switches) or [Slider](/card-types/sliders) for lights.
-- Media and climate controls are not part of Action cards.
+- Use [Climate](/card-types/climate) for thermostats, heat pumps, radiator valves, and air conditioners.
+- Media controls are not a dedicated card type yet.
 
 ::: info Requires Home Assistant actions
 Action cards send Home Assistant actions from the panel. If tapping a card does nothing, check [Home Assistant Actions](/getting-started/home-assistant-actions).

@@ -8,7 +8,7 @@ description:
 
 A Climate card controls a Home Assistant `climate` entity, such as a thermostat, heat pump, radiator valve, or air conditioner.
 
-On the main screen it shows the target temperature. Tapping the card opens a full-screen thermostat page with a target temperature arc, plus and minus buttons, mode tabs, and a preset menu.
+On the main screen it shows the target temperature. Tapping the card opens a thermostat control page with a target temperature arc, plus and minus buttons, a mode menu, and optional fan and swing controls.
 
 ## Setting Up a Climate Card
 
@@ -24,6 +24,8 @@ Climate cards can also be placed inside a [Subpage](/features/subpages).
 - The dashboard card shows the target temperature.
 - The card label changes to the active action, such as **Heating**, **Cooling**, **Drying**, or **Fan**, while Home Assistant reports that action.
 - The card uses the normal on colour only while `hvac_action` is active, such as `heating`, `cooling`, `drying`, or `fan`. If Home Assistant reports `hvac_action` as `idle`, the card uses the off colour even when the mode is not **Off**.
+- The thermostat page appears as a large control card with a Back button in the top-left corner.
+- The top-right menu shows the climate modes reported by Home Assistant, such as **Heat**, **Cool**, **Auto**, or **Off**.
 - The detail page uses `min_temp`, `max_temp`, and `target_temp_step` when Home Assistant provides them. Until those arrive, it uses 5-35 °C/°F with 0.5° steps.
 - The displayed unit comes from the panel's **Temperature Unit** setting.
 - The displayed temperature precision comes from the card's **Unit Precision** setting. Whole numbers are used by default.
@@ -35,10 +37,9 @@ The detail page only shows controls that the climate entity supports:
 
 | Home Assistant attribute | Control shown |
 |---|---|
-| `hvac_modes` | Mode tabs along the bottom |
+| `hvac_modes` | Top-right mode menu |
 | `fan_modes` | Fan selector |
 | `swing_modes` | Swing selector |
-| `preset_modes` | Top-right preset menu |
 
 ## Heat/Cool Mode
 

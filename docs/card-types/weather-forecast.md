@@ -20,6 +20,7 @@ It is intentionally simple: the label always says **Tomorrow**, and the main val
 - The card asks Home Assistant for the daily forecast for the configured weather entity.
 - It uses tomorrow's daily forecast only.
 - Its unit label comes from the panel's **Temperature Unit** setting.
+- The card uses the **tertiary** colour from [Appearance](/features/appearance), like Sensor, Date, World Clock, and Weather cards.
 - If the forecast is missing or unavailable, the card shows **-- / --** instead of leaving the card blank.
 
 ::: tip Home Assistant actions permission
