@@ -16,7 +16,7 @@ font:
   # Climate detail controls (chevron-left, dots-horizontal, minus, plus, thermometer)
   - file: 'https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf'
     id: climate_control_icon_font
-    size: 34
+    size: 44
     bpp: 4
     glyphs:
       - "\U000F0141"  # mdi-chevron-left
