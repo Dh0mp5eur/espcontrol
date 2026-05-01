@@ -61,7 +61,12 @@
       "slots": 12,
       "cols": 4,
       "grid": "3x4",
+      "icon_font": "icon_font",
+      "climate_control_icon_font": "climate_control_icon_font",
       "sensor_font": "statistics_font",
+      "climate_target_font": "climate_target_font",
+      "forecast_font": "forecast_font",
+      "forecast_unit_font": "forecast_unit_font",
       "color_correction": false,
       "wrap_tall_labels": false
     },
@@ -70,7 +75,12 @@
       "slots": 6,
       "cols": 2,
       "grid": "3x2",
+      "icon_font": "icon_font_xs",
+      "climate_control_icon_font": "climate_control_icon_font_xs",
       "sensor_font": "statistics_font_xs",
+      "climate_target_font": "climate_target_font_xs",
+      "forecast_font": "forecast_font_xs",
+      "forecast_unit_font": "forecast_unit_font_xs",
       "color_correction": false,
       "wrap_tall_labels": false
     }
