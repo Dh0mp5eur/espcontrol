@@ -17,7 +17,7 @@ packages:
   espcontrol: !include ../devices/esp32-2432s028r/packages.yaml
 
 esp32:
-  partitions: ../devices/esp32-2432s028r/partitions_4mb.csv
+  partitions: partitions_esp32_4mb.csv
 
 wifi:
   ap:
