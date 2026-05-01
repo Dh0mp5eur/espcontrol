@@ -74,6 +74,7 @@ substitutions:
   name: "espcontrol-office"
   friendly_name: "EspControl Office"
   network_transport: ethernet
+  disable_updates: "true"
 
 packages:
   setup:
@@ -83,6 +84,8 @@ packages:
 ```
 
 If Ethernet is unplugged or your network does not give the display an IP address, the display will show an Ethernet setup message. It will not create a WiFi hotspot in this mode.
+
+The `disable_updates: "true"` substitution removes EspControl's built-in GitHub firmware update checker and update controls. ESPHome OTA stays enabled, so you can still install firmware manually once the display is online.
 
 The Ethernet firmware is intentionally different from the normal WiFi firmware:
 
