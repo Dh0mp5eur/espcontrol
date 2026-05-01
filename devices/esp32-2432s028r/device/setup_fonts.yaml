@@ -1,0 +1,47 @@
+# =============================================================================
+# SETUP SCREEN FONTS - Minimal font set for setup/onboarding screens
+# =============================================================================
+# Replaces common/assets/fonts.yaml and common/assets/icons.yaml for this
+# device. Only the three fonts hard-coded by ID in common setup screens are
+# defined here. All main-UI fonts are in fonts.yaml as _xs variants.
+# Skipping the duplicate base fonts (48px icon_font, 112px climate_target, etc.)
+# saves ~300KB of flash — essential on the 4MB CYD.
+# =============================================================================
+
+font:
+  # Setup screens: titles (40px light Roboto)
+  - file: "gfonts://Roboto@Light"
+    id: setup_title_font
+    size: 40
+    bpp: 4
+    glyphs: >-
+      !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+      ¡¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ—–…·°•€£¥¢
+
+  # Setup screens: body text (24px Roboto)
+  - file: "gfonts://Roboto"
+    id: setup_body_font
+    size: 24
+    bpp: 4
+    glyphs: >-
+      !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+      ¡¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ—–…·°•€£¥¢
+
+  # Setup screens: icons (64px MDI — wifi, ethernet, cog, home-assistant)
+  - file: 'https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf'
+    id: icon_font_setup
+    size: 64
+    bpp: 4
+    glyphs:
+      - "\U000F05A9"  # mdi-wifi
+      - "\U000F0200"  # mdi-ethernet
+      - "\U000F0493"  # mdi-cog
+      - "\U000F07D0"  # mdi-home-assistant
+
+substitutions:
+  icon_wifi: "\U000F05A9"
+  icon_ethernet: "\U000F0200"
+  icon_cog: "\U000F0493"
+  icon_home_assistant: "\U000F07D0"
+  icon_chevron_left: "\U000F0141"
+  icon_chevron_right: "\U000F0142"
