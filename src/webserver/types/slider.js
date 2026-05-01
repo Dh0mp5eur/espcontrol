@@ -1,7 +1,7 @@
 // Slider and cover button types: draggable brightness/position control.
 // Factory creates both "slider" (light.turn_on w/ brightness) and "cover"
-// variants. b.sensor stores slider orientation ("h" or "") for lights, and
-// for covers it stores "toggle", "" (position slider), or "tilt".
+// variants. Slider cards are always vertical. For covers, b.sensor stores
+// "toggle", "" (position slider), or "tilt".
 function sliderTypeFactory(opts) {
   return {
     label: opts.label,
@@ -125,10 +125,15 @@ function sliderTypeFactory(opts) {
       }
 
       if (opts.alwaysShowIconPair) {
-        var closedIconVal = b.icon && b.icon !== "Auto" ? b.icon : opts.defaultIcon;
-        var openIconVal = b.icon_on && b.icon_on !== "Auto" ? b.icon_on : opts.defaultIconOn;
-        panel.appendChild(iconField("Closed Icon", "icon", "icon", closedIconVal, opts.defaultIcon));
-        panel.appendChild(iconField("Open Icon", "icon-on", "icon_on", openIconVal, opts.defaultIconOn));
+        var offIconVal = b.icon && b.icon !== "Auto" ? b.icon : opts.defaultIcon;
+        var onIconDefault = opts.onIconInheritsOff ? offIconVal : opts.defaultIconOn;
+        var onIconVal = b.icon_on && b.icon_on !== "Auto" ? b.icon_on : onIconDefault;
+        panel.appendChild(iconField(
+          opts.iconOffFieldLabel || "Closed Icon", "icon", "icon", offIconVal, opts.defaultIcon
+        ));
+        panel.appendChild(iconField(
+          opts.iconOnFieldLabel || "Open Icon", "icon-on", "icon_on", onIconVal, opts.defaultIconOn
+        ));
       } else {
         panel.appendChild(helpers.makeIconPicker(
           helpers.idPrefix + "icon-picker", helpers.idPrefix + "icon",
@@ -139,42 +144,9 @@ function sliderTypeFactory(opts) {
         ));
       }
 
-      var allowDirection = opts.allowDirection !== false;
-      if (!allowDirection && !opts.interactionMode && b.sensor) {
+      if (!opts.interactionMode && b.sensor) {
         b.sensor = "";
         helpers.saveField("sensor", "");
-      }
-
-      if (allowDirection) {
-        var isHoriz = b.sensor === "h";
-        var of = document.createElement("div");
-        of.className = "sp-field";
-        of.appendChild(helpers.fieldLabel("Direction"));
-        var seg = document.createElement("div");
-        seg.className = "sp-segment";
-        var btnV = document.createElement("button");
-        btnV.type = "button"; btnV.tabIndex = -1;
-        btnV.textContent = "Vertical";
-        if (!isHoriz) btnV.classList.add("active");
-        var btnH = document.createElement("button");
-        btnH.type = "button"; btnH.tabIndex = -1;
-        btnH.textContent = "Horizontal";
-        if (isHoriz) btnH.classList.add("active");
-        seg.appendChild(btnV);
-        seg.appendChild(btnH);
-        of.appendChild(seg);
-        panel.appendChild(of);
-
-        btnV.addEventListener("click", function () {
-          btnV.classList.add("active"); btnH.classList.remove("active");
-          b.sensor = "";
-          helpers.saveField("sensor", "");
-        });
-        btnH.addEventListener("click", function () {
-          btnH.classList.add("active"); btnV.classList.remove("active");
-          b.sensor = "h";
-          helpers.saveField("sensor", "h");
-        });
       }
 
       if (!opts.alwaysShowIconPair) {
@@ -233,11 +205,10 @@ function sliderTypeFactory(opts) {
             '<span class="sp-type-badge mdi mdi-' + opts.badgeIcon + '"></span></span>',
         };
       }
-      var horizClass = opts.allowDirection !== false && b.sensor === "h" ? " sp-slider-horiz" : "";
       return {
         iconHtml:
           '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>' +
-          '<span class="sp-slider-preview' + horizClass + '"><span class="sp-slider-track">' +
+          '<span class="sp-slider-preview"><span class="sp-slider-track">' +
             '<span class="sp-slider-fill"></span>' +
           '</span></span>',
         labelHtml:
@@ -257,8 +228,10 @@ registerButtonType("slider", sliderTypeFactory({
   fallbackLabel: "Slider",
   fallbackIcon: "lightbulb",
   badgeIcon: "tune-vertical-variant",
-  iconOnLabel: "Change Icon When On",
-  iconOnFieldLabel: "Icon When On",
+  alwaysShowIconPair: true,
+  onIconInheritsOff: true,
+  iconOffFieldLabel: "Off Icon",
+  iconOnFieldLabel: "On Icon",
 }));
 
 registerButtonType("cover", sliderTypeFactory({
@@ -270,7 +243,6 @@ registerButtonType("cover", sliderTypeFactory({
   fallbackLabel: "Cover",
   fallbackIcon: "blinds",
   badgeIcon: "blinds-horizontal",
-  allowDirection: false,
   alwaysShowIconPair: true,
   hideLabel: true,
   renderLabelInSettings: true,

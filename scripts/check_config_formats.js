@@ -48,9 +48,13 @@ function decodeField(value) {
 
 function subpageTypeFromCode(code) {
   return {
+    A: "action",
     D: "calendar",
+    T: "timezone",
+    H: "climate",
     S: "sensor",
     W: "weather",
+    F: "weather_forecast",
     L: "slider",
     C: "cover",
     R: "garage",
@@ -150,6 +154,11 @@ function assertSubpageRoundTrip(hooks, name, subpage, expectCompact) {
 
 const hooks = loadHooks();
 assert(hooks, "web config helpers were not exported");
+assert.strictEqual(hooks.normalizeTemperatureUnit("fahrenheit"), "°F", "fahrenheit unit normalization");
+assert.strictEqual(hooks.normalizeTemperatureUnit("centigrade"), "°C", "centigrade unit normalization");
+assert.strictEqual(hooks.temperatureUnitSymbolFor("America/New_York (GMT-5)", "Auto"), "°F", "auto unit for US timezone");
+assert.strictEqual(hooks.temperatureUnitSymbolFor("Europe/London (GMT+0)", "Auto"), "°C", "auto unit for UK timezone");
+assert.strictEqual(hooks.temperatureUnitSymbolFor("Europe/London (GMT+0)", "°F"), "°F", "manual fahrenheit override");
 
 assertButtonRoundTrip(hooks, "normal button", {
   entity: "light.kitchen",
@@ -160,6 +169,17 @@ assertButtonRoundTrip(hooks, "normal button", {
   unit: "W",
   type: "",
   precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "switch text sensor when on", {
+  entity: "switch.washing_machine",
+  label: "Washer",
+  icon: "Washer",
+  icon_on: "Washer",
+  sensor: "sensor.washing_machine_status",
+  unit: "",
+  type: "",
+  precision: "text",
 }, false);
 
 assertButtonRoundTrip(hooks, "delimiter button", {
@@ -195,6 +215,28 @@ assertButtonRoundTrip(hooks, "garage label button", {
   precision: "",
 }, false);
 
+assertButtonRoundTrip(hooks, "climate button", {
+  entity: "climate.living_room",
+  label: "Living Room",
+  icon: "Thermostat",
+  icon_on: "Auto",
+  sensor: "",
+  unit: "",
+  type: "climate",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "climate precision button", {
+  entity: "climate.bedroom",
+  label: "Bedroom",
+  icon: "Thermostat",
+  icon_on: "Auto",
+  sensor: "",
+  unit: "",
+  type: "climate",
+  precision: "1",
+}, false);
+
 assertButtonRoundTrip(hooks, "cover toggle button", {
   entity: "cover.office_blind",
   label: "Office Blind",
@@ -217,6 +259,116 @@ assertButtonRoundTrip(hooks, "cover tilt button", {
   precision: "",
 }, false);
 
+assertButtonRoundTrip(hooks, "timezone card", {
+  entity: "America/New_York (GMT-5)",
+  label: "",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "",
+  unit: "",
+  type: "timezone",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "weather tomorrow card", {
+  entity: "weather.forecast_home",
+  label: "",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "",
+  unit: "",
+  type: "weather",
+  precision: "tomorrow",
+}, false);
+
+assert.deepStrictEqual(buttonShape(hooks.parseButtonConfig("weather.forecast_home;Weather;Auto;Auto;;;weather_forecast")), {
+  entity: "weather.forecast_home",
+  label: "Weather",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "",
+  unit: "",
+  type: "weather",
+  precision: "tomorrow",
+}, "legacy weather forecast card parse");
+
+assertButtonRoundTrip(hooks, "scene action card", {
+  entity: "scene.movie_mode",
+  label: "Movie Mode",
+  icon: "Flash",
+  icon_on: "Auto",
+  sensor: "scene.turn_on",
+  unit: "",
+  type: "action",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "script action card", {
+  entity: "script.goodnight",
+  label: "Goodnight",
+  icon: "Flash",
+  icon_on: "Auto",
+  sensor: "script.turn_on",
+  unit: "",
+  type: "action",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "button action card", {
+  entity: "button.restart_router",
+  label: "Restart Router",
+  icon: "Flash",
+  icon_on: "Auto",
+  sensor: "button.press",
+  unit: "",
+  type: "action",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "input button action card", {
+  entity: "input_button.doorbell",
+  label: "Doorbell",
+  icon: "Flash",
+  icon_on: "Auto",
+  sensor: "input_button.press",
+  unit: "",
+  type: "action",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "input boolean toggle action card", {
+  entity: "input_boolean.guest_mode",
+  label: "Guest Mode",
+  icon: "Flash",
+  icon_on: "Auto",
+  sensor: "input_boolean.toggle",
+  unit: "",
+  type: "action",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "input number action card", {
+  entity: "input_number.target_level",
+  label: "Target Level",
+  icon: "Flash",
+  icon_on: "Auto",
+  sensor: "input_number.set_value",
+  unit: "50",
+  type: "action",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "input select delimiter action card", {
+  entity: "input_select.house_mode",
+  label: "House Mode",
+  icon: "Flash",
+  icon_on: "Auto",
+  sensor: "input_select.select_option",
+  unit: "Away; overnight | 50%, main",
+  type: "action",
+  precision: "",
+}, true);
+
 assert.deepStrictEqual(buttonShape(hooks.parseButtonConfig("light.legacy;Legacy;Auto;Lightbulb;sensor.legacy;W;sensor;1")), {
   entity: "light.legacy",
   label: "Legacy",
@@ -238,6 +390,17 @@ assert.deepStrictEqual(buttonShape(hooks.parseButtonConfig("~light.compact,Compa
   type: "sensor",
   precision: "2",
 }, "compact button parse");
+
+assert.deepStrictEqual(buttonShape(hooks.parseButtonConfig("light.strip;Strip;Lightbulb;Lightbulb On;h;;slider")), {
+  entity: "light.strip",
+  label: "Strip",
+  icon: "Lightbulb",
+  icon_on: "Lightbulb On",
+  sensor: "",
+  unit: "",
+  type: "slider",
+  precision: "",
+}, "legacy horizontal slider parse");
 
 assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("1,B,2|light.legacy:Legacy:Auto:Lightbulb:::|sensor.room:Room:Thermometer:Auto:sensor.room:deg C:sensor:1")), {
   order: ["1", "B", "2"],
@@ -284,6 +447,21 @@ assertSubpageRoundTrip(hooks, "cover tilt subpage", {
   ],
 }, true);
 
+assertSubpageRoundTrip(hooks, "climate subpage", {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "climate.living_room", label: "Living Room", icon: "Thermostat", type: "climate" }),
+  ],
+}, true);
+
+assertSubpageRoundTrip(hooks, "action subpage", {
+  order: ["1", "B", "2"],
+  buttons: [
+    buttonShape({ entity: "scene.movie_mode", label: "Movie Mode", icon: "Flash", sensor: "scene.turn_on", type: "action" }),
+    buttonShape({ entity: "input_select.house_mode", label: "House Mode", icon: "Flash", sensor: "input_select.select_option", unit: "Away: overnight | 50%, main", type: "action" }),
+  ],
+}, true);
+
 assertSubpageRoundTrip(hooks, "delimiter subpage", {
   order: ["1", "B", "2"],
   buttons: [
@@ -295,7 +473,7 @@ assertSubpageRoundTrip(hooks, "delimiter subpage", {
 assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B,2|L,light.strip,Strip%20A,Lightbulb,Lightbulb%20On,h,,|S,sensor.temp,Temp,Thermometer,,sensor.temp,deg%20C,1")), {
   order: ["1", "B", "2"],
   buttons: [
-    buttonShape({ entity: "light.strip", label: "Strip A", icon: "Lightbulb", icon_on: "Lightbulb On", sensor: "h", type: "slider" }),
+    buttonShape({ entity: "light.strip", label: "Strip A", icon: "Lightbulb", icon_on: "Lightbulb On", sensor: "", type: "slider" }),
     buttonShape({ entity: "sensor.temp", label: "Temp", icon: "Thermometer", icon_on: "Auto", sensor: "sensor.temp", unit: "deg C", type: "sensor", precision: "1" }),
   ],
 }, "compact subpage parse");
@@ -306,6 +484,27 @@ assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|D")), {
     buttonShape({ type: "calendar" }),
   ],
 }, "compact calendar subpage parse");
+
+assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|T,America/New_York%20%28GMT-5%29")), {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "America/New_York (GMT-5)", type: "timezone" }),
+  ],
+}, "compact timezone subpage parse");
+
+assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|F,weather.forecast_home")), {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "weather.forecast_home", type: "weather", precision: "tomorrow" }),
+  ],
+}, "compact weather forecast subpage parse");
+
+assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|H,climate.living_room,Living%20Room,Thermostat")), {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "climate.living_room", label: "Living Room", icon: "Thermostat", type: "climate" }),
+  ],
+}, "compact climate subpage parse");
 
 assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|R,cover.garage,,Garage,Garage%20Open")), {
   order: ["1", "B"],
@@ -341,6 +540,13 @@ assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|I,relay_2,Gat
     buttonShape({ entity: "relay_2", label: "Gate", icon: "Power Plug", icon_on: "Power", sensor: "push", type: "internal" }),
   ],
 }, "compact internal relay subpage parse");
+
+assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|A,scene.movie_mode,Movie%20Mode,Flash,,scene.turn_on")), {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "scene.movie_mode", label: "Movie Mode", icon: "Flash", icon_on: "Auto", sensor: "scene.turn_on", type: "action" }),
+  ],
+}, "compact action subpage parse");
 
 const largeSubpage = {
   order: Array.from({ length: 25 }, (_, i) => (i === 4 ? "B" : String(i + 1))),

@@ -10,6 +10,10 @@ esphome:
     # Apply restored clock-bar layout before subpages copy main-page padding.
     priority: -150
     then:
+      - lambda: |-
+          set_display_temperature_unit(id(temperature_unit_select).current_option(),
+                                       id(timezone_select).current_option());
+          set_display_temperature_degree_symbol(id(temperature_degree_symbol_enabled).state);
       - script.execute: clock_bar_apply
 
 script:
@@ -32,12 +36,12 @@ script:
 
           if (lv_scr_act() == id(main_page)->obj) {
             lv_obj_clear_flag(id(display_time), LV_OBJ_FLAG_HIDDEN);
-            if (id(indoor_temp_enable).state || id(outdoor_temp_enable).state) {
-              lv_obj_clear_flag(id(temperatures), LV_OBJ_FLAG_HIDDEN);
-            } else {
-              lv_obj_add_flag(id(temperatures), LV_OBJ_FLAG_HIDDEN);
-            }
           }
+          refresh_temp_label_values(id(temperatures), id(main_page)->obj,
+                                    enabled,
+                                    id(indoor_temp_enable).state,
+                                    id(outdoor_temp_enable).state,
+                                    id(indoor_temp), id(outdoor_temp));
 
 switch:
   - platform: template
@@ -67,18 +71,18 @@ switch:
       sorting_group_id: sg_display
     on_turn_on:
       - lambda: |-
-          if (id(clock_bar_enabled).state) {
-            update_temp_label(id(temperatures), id(main_page)->obj, true, id(outdoor_temp_enable).state);
-          } else {
-            lv_obj_add_flag(id(temperatures), LV_OBJ_FLAG_HIDDEN);
-          }
+          refresh_temp_label_values(id(temperatures), id(main_page)->obj,
+                                    id(clock_bar_enabled).state,
+                                    id(indoor_temp_enable).state,
+                                    id(outdoor_temp_enable).state,
+                                    id(indoor_temp), id(outdoor_temp));
     on_turn_off:
       - lambda: |-
-          if (id(clock_bar_enabled).state) {
-            update_temp_label(id(temperatures), id(main_page)->obj, false, id(outdoor_temp_enable).state);
-          } else {
-            lv_obj_add_flag(id(temperatures), LV_OBJ_FLAG_HIDDEN);
-          }
+          refresh_temp_label_values(id(temperatures), id(main_page)->obj,
+                                    id(clock_bar_enabled).state,
+                                    id(indoor_temp_enable).state,
+                                    id(outdoor_temp_enable).state,
+                                    id(indoor_temp), id(outdoor_temp));
 
   - platform: template
     name: "Outdoor Temp Enable"
@@ -92,18 +96,45 @@ switch:
       sorting_group_id: sg_display
     on_turn_on:
       - lambda: |-
-          if (id(clock_bar_enabled).state) {
-            update_temp_label(id(temperatures), id(main_page)->obj, true, id(indoor_temp_enable).state);
-          } else {
-            lv_obj_add_flag(id(temperatures), LV_OBJ_FLAG_HIDDEN);
-          }
+          refresh_temp_label_values(id(temperatures), id(main_page)->obj,
+                                    id(clock_bar_enabled).state,
+                                    id(indoor_temp_enable).state,
+                                    id(outdoor_temp_enable).state,
+                                    id(indoor_temp), id(outdoor_temp));
     on_turn_off:
       - lambda: |-
-          if (id(clock_bar_enabled).state) {
-            update_temp_label(id(temperatures), id(main_page)->obj, false, id(indoor_temp_enable).state);
-          } else {
-            lv_obj_add_flag(id(temperatures), LV_OBJ_FLAG_HIDDEN);
-          }
+          refresh_temp_label_values(id(temperatures), id(main_page)->obj,
+                                    id(clock_bar_enabled).state,
+                                    id(indoor_temp_enable).state,
+                                    id(outdoor_temp_enable).state,
+                                    id(indoor_temp), id(outdoor_temp));
+
+  - platform: template
+    name: "Screen: Temperature Degree Symbol"
+    internal: true
+    id: temperature_degree_symbol_enabled
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    entity_category: config
+    icon: "mdi:temperature-celsius"
+    web_server:
+      sorting_group_id: sg_display
+    on_turn_on:
+      - lambda: |-
+          set_display_temperature_degree_symbol(true);
+          refresh_temp_label_values(id(temperatures), id(main_page)->obj,
+                                    id(clock_bar_enabled).state,
+                                    id(indoor_temp_enable).state,
+                                    id(outdoor_temp_enable).state,
+                                    id(indoor_temp), id(outdoor_temp));
+    on_turn_off:
+      - lambda: |-
+          set_display_temperature_degree_symbol(false);
+          refresh_temp_label_values(id(temperatures), id(main_page)->obj,
+                                    id(clock_bar_enabled).state,
+                                    id(indoor_temp_enable).state,
+                                    id(outdoor_temp_enable).state,
+                                    id(indoor_temp), id(outdoor_temp));
 
   - platform: template
     name: "Screen Saver: Clock"
@@ -127,6 +158,35 @@ switch:
             lambda: 'return !id(display_asleep) && lv_scr_act() == id(main_page)->obj;'
           then:
             - script.execute: screensaver_idle_check
+
+select:
+  - platform: template
+    name: "Screen: Temperature Unit"
+    internal: true
+    disabled_by_default: true
+    id: temperature_unit_select
+    entity_category: config
+    icon: "mdi:temperature-celsius"
+    optimistic: true
+    restore_value: true
+    initial_option: "Auto"
+    options:
+      - "Auto"
+      - "°C"
+      - "°F"
+    web_server:
+      sorting_group_id: sg_display
+    on_value:
+      then:
+        - lambda: |-
+            set_display_temperature_unit(id(temperature_unit_select).current_option(),
+                                         id(timezone_select).current_option());
+            refresh_temperature_unit_labels();
+            refresh_temp_label_values(id(temperatures), id(main_page)->obj,
+                                      id(clock_bar_enabled).state,
+                                      id(indoor_temp_enable).state,
+                                      id(outdoor_temp_enable).state,
+                                      id(indoor_temp), id(outdoor_temp));
 
 text:
   - platform: template

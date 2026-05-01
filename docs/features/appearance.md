@@ -1,7 +1,7 @@
 ---
-title: Appearance
+title: EspControl Appearance Settings
 description:
-  How to customise the primary, secondary, and tertiary colours on your Espcontrol panel.
+  How to customise the primary, secondary, and tertiary colours on your EspControl panel.
 ---
 
 # Appearance
@@ -10,4 +10,4 @@ These settings control the colours used across your panel. You'll find them in t
 
 - **Primary** — the colour cards show when an entity is active. Use the colour picker or type a colour code (for example, `FF8C00` for orange).
 - **Secondary** — the colour cards show when an entity is not active.
-- **Tertiary** — the background colour used for Sensor, Date, and Weather cards.
+- **Tertiary** — the background colour used for Sensor, Date, World Clock, and Weather cards.

@@ -7,7 +7,7 @@
 //
 // Per-device config (grid size, styling) is injected between __DEVICE_CONFIG__
 // markers by scripts/build.py. Button type plugins (switch, sensor, weather,
-// calendar, slider, cover, garage, push, subpage) are injected between __BUTTON_TYPES__ markers.
+// action, calendar, timezone, slider, cover, garage, push, subpage) are injected between __BUTTON_TYPES__ markers.
 // Icon data is generated between GENERATED:ICONS / GENERATED:DOMAIN_ICONS.
 // =============================================================================
 
@@ -26,6 +26,7 @@
     Auto: "cog",
     Alarm: "bell-ring",
     Application: "application-outline",
+    "Ceiling Lights Multiple": "ceiling-light-multiple",
     Clock: "clock-outline",
     Downlight: "light-recessed",
     Doorbell: "doorbell-video",
@@ -35,7 +36,6 @@
     "Grid Export": "transmission-tower-export",
     "Grid Import": "transmission-tower-import",
     "Grid Off": "transmission-tower-off",
-    Heater: "radiator",
     Humidifier: "air-humidifier",
     "Humidity Alert": "water-percent-alert",
     Key: "key-variant",
@@ -49,6 +49,7 @@
     Spotlight: "spotlight-beam",
     Sun: "white-balance-sunny",
     Table: "table-furniture",
+    "Home-Thermostat": "home-thermometer",
     Timer: "timer-outline",
     "Wall Outlet": "power-socket",
     Washer: "washing-machine",
@@ -62,36 +63,39 @@
     "Battery Charging", "Battery Charging 100", "Battery Charging 70", "Battery High", "Battery Low", "Battery Medium",
     "Battery Off", "Battery Outline", "Battery Unknown", "Bed", "Bell", "Blinds",
     "Blinds Horizontal", "Blinds Horizontal Closed", "Blinds Open", "Bluetooth", "Broom", "Camera",
-    "Car Electric", "Cast", "CCTV", "Ceiling Fan", "Ceiling Light", "Chandelier",
-    "Clock", "Coffee Maker", "Current AC", "Current DC", "Curtains", "Curtains Closed",
-    "Desk Lamp", "Dishwasher", "Dog", "Downlight", "Door", "Door Open",
-    "Doorbell", "Dryer", "EV Charger", "Fan", "Fire", "Fireplace",
-    "Flash", "Floor Lamp", "Fountain", "Fridge", "Gamepad", "Garage",
-    "Garage Open", "Garage Open Variant", "Garage Variant", "Gate", "Gate Open", "Gesture Tap",
-    "Gauge", "Gauge Empty", "Gauge Full", "Gauge Low", "Grid Export", "Grid Import",
-    "Grid Off", "Headphones", "Heater", "Home", "Hot Tub", "Humidifier",
+    "Car Electric", "Cast", "CCTV", "Ceiling Fan", "Ceiling Light", "Ceiling Lights Multiple",
+    "Chandelier", "Clock", "Coffee Maker", "Current AC", "Current DC", "Curtains",
+    "Curtains Closed", "Desk Lamp", "Dishwasher", "Dog", "Downlight", "Door",
+    "Door Open", "Doorbell", "Dots Horizontal", "Dryer", "EV Charger", "Fan",
+    "Fire", "Fireplace", "Flash", "Floor Lamp", "Fountain", "Fridge",
+    "Gamepad", "Garage", "Garage Open", "Garage Open Variant", "Garage Variant", "Gate",
+    "Gate Open", "Gesture Tap", "Gauge", "Gauge Empty", "Gauge Full", "Gauge Low",
+    "Grid Export", "Grid Import", "Grid Off", "Headphones", "Radiator", "Radiator Off",
+    "Home", "Heat Pump", "HVAC", "HVAC Off", "Hot Tub", "Humidifier",
     "Humidity Alert", "Iron", "Kettle", "Key", "Lamp", "Lamp Outline",
     "LAN", "Lawnmower", "Leaf", "LED Strip", "LED Strip Variant", "LED Strip Variant Off",
     "Light Switch", "Lightbulb", "Lightbulb Group", "Lightbulb Group Outline", "Lightbulb Night", "Lightbulb Night Outline",
     "Lightbulb Off", "Lightbulb On Outline", "Lightbulb Spot", "Lightbulb Spot Off", "Lightbulb Variant", "Lightbulb Variant Outline",
     "Lightbulb Outline", "Lightning Bolt", "Lock", "Lock Open", "Lock Open Outline", "Lock Outline",
     "Mailbox", "Message Video", "Medication", "Medication Outline", "Meter Electric", "Meter Gas",
-    "Microsoft Xbox", "Microwave", "Monitor", "Motion Sensor", "Movie Roll", "Music",
-    "Outdoor Lamp", "Oven", "Package", "Package Closed", "Pill", "Pill Multiple",
-    "Pool", "Power", "Power Plug", "Printer", "Printer 3D", "Projector",
-    "Projector Off", "Robot Vacuum", "Roller Shade", "Roller Shade Closed", "Router", "Router Network",
-    "Security", "Shower", "Smoke Detector", "Snowflake", "Snowflake Alert", "Snowflake Thermometer",
-    "Sofa", "Solar Panel", "Solar Panel Large", "Solar Power", "Solar Power Variant", "Speaker",
-    "Spotlight", "Sprinkler", "String Lights", "String Lights Off", "Sun", "Table",
-    "Television", "Television Off", "Thermometer", "Thermometer Alert", "Thermometer High", "Thermometer Low",
-    "Thermostat", "Timer", "Toilet", "Transmission Tower", "Trash Can", "Wall Outlet",
-    "Wall Sconce", "Washer", "Water", "Water Heater", "Water Percent", "Weather Cloudy",
-    "Weather Cloudy Alert", "Weather Dust", "Weather Fog", "Weather Hail", "Weather Hazy", "Weather Hurricane",
-    "Weather Lightning", "Weather Lightning Rainy", "Weather Night", "Weather Night Cloudy", "Weather Partly Cloudy", "Weather Partly Lightning",
-    "Weather Partly Rainy", "Weather Partly Snowy", "Weather Partly Snowy Rainy", "Weather Pouring", "Weather Rainy", "Weather Snowy",
-    "Weather Snowy Heavy", "Weather Snowy Rainy", "Weather Sunny", "Weather Sunny Alert", "Weather Sunny Off", "Weather Sunset",
-    "Weather Sunset Down", "Weather Sunset Up", "Weather Tornado", "Weather Windy", "Weather Windy Variant", "Wind Power",
-    "Wind Turbine", "Wind Turbine Alert", "Wind Turbine Check", "Window Shutter", "Window Shutter Open",
+    "Microsoft Xbox", "Microwave", "Minus", "Monitor", "Motion Sensor", "Movie Roll",
+    "Music", "Outdoor Lamp", "Oven", "Package", "Package Closed", "Pill",
+    "Pill Multiple", "Plus", "Pool", "Power", "Power Plug", "Printer",
+    "Printer 3D", "Projector", "Projector Off", "Robot Vacuum", "Roller Shade", "Roller Shade Closed",
+    "Router", "Router Network", "Security", "Shower", "Smoke Detector", "Snowflake",
+    "Snowflake Alert", "Snowflake Thermometer", "Sofa", "Solar Panel", "Solar Panel Large", "Solar Power",
+    "Solar Power Variant", "Speaker", "Spotlight", "Sprinkler", "String Lights", "String Lights Off",
+    "Power Socket UK", "Power Socket EU", "Power Socket US", "Sun", "Table", "Television",
+    "Television Off", "Thermometer", "Thermometer Alert", "Thermometer High", "Thermometer Low", "Thermostat",
+    "Home-Thermostat", "Thermostat Auto", "Thermometer Water", "Timer", "Toilet", "Transmission Tower",
+    "Trash Can", "Wall Outlet", "Wall Sconce", "Washer", "Water", "Water Heater",
+    "Water Percent", "Water Alert", "Weather Cloudy", "Weather Cloudy Alert", "Weather Dust", "Weather Fog",
+    "Weather Hail", "Weather Hazy", "Weather Hurricane", "Weather Lightning", "Weather Lightning Rainy", "Weather Night",
+    "Weather Night Cloudy", "Weather Partly Cloudy", "Weather Partly Lightning", "Weather Partly Rainy", "Weather Partly Snowy", "Weather Partly Snowy Rainy",
+    "Weather Pouring", "Weather Rainy", "Weather Snowy", "Weather Snowy Heavy", "Weather Snowy Rainy", "Weather Sunny",
+    "Weather Sunny Alert", "Weather Sunny Off", "Weather Sunset", "Weather Sunset Down", "Weather Sunset Up", "Weather Tornado",
+    "Weather Windy", "Weather Windy Variant", "Wind Power", "Wind Turbine", "Wind Turbine Alert", "Wind Turbine Check",
+    "Window Closed", "Window Open", "Window Shutter", "Window Shutter Open",
   ];
   // --- GENERATED:ICONS END ---
 
@@ -133,7 +137,19 @@
       renderSettings: null,
       renderPreview: null,
       contextMenuItems: null,
+      experimental: null,
     }, def);
+  }
+  function developerExperimentalUrlFlag() {
+    var value = "";
+    try {
+      value = new URLSearchParams(window.location.search).get("developer") || "";
+    } catch (e) {}
+    return value.trim().toLowerCase() === "experimental";
+  }
+
+  function isExperimentalEnabled(key) {
+    return !!state.developerExperimentalFeatures;
   }
   // __BUTTON_TYPES_START__
   // __BUTTON_TYPES_END__
@@ -169,14 +185,8 @@
 
     ".sp-page{display:none}.sp-page.active{display:block}" +
 
-    ".sp-support-btn{position:fixed;right:18px;bottom:18px;z-index:150;display:inline-flex;" +
-    "align-items:center;justify-content:center;gap:10px;min-height:56px;padding:8px 20px 8px 16px;" +
-    "border:1px solid #000;border-radius:999px;background:#ffdd00;color:#000;text-decoration:none;" +
-    "font-family:'Cookie',cursive;font-size:28px;font-weight:400;line-height:1;letter-spacing:0;" +
-    "box-shadow:0 6px 18px rgba(0,0,0,.32);transition:transform .2s,box-shadow .2s,filter .2s}" +
-    ".sp-support-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.38);filter:brightness(1.03)}" +
-    ".sp-support-btn:active{transform:translateY(0);filter:brightness(.96)}" +
-    ".sp-support-btn svg{width:30px;height:30px;flex-shrink:0;display:block}" +
+    ".sp-support-btn{position:fixed;right:28px;bottom:28px;z-index:150;display:inline-block;line-height:0}" +
+    ".sp-support-btn img{height:60px;display:block;border-radius:999px}" +
 
     ".fade-in{animation:fadeIn .3s ease}" +
     "@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}" +
@@ -210,12 +220,11 @@
     ".sp-sensor-badge{position:absolute;top:var(--sensor-top);right:var(--sensor-right);font-size:var(--sensor-fs);opacity:.5}" +
     ".sp-sensor-preview{display:flex;align-items:baseline;gap:1px;color:#fff}" +
     ".sp-sensor-value{font-size:var(--btn-icon);line-height:1;font-weight:300}" +
+    ".sp-forecast-value{font-size:calc(var(--btn-icon)*.72)}" +
     ".sp-sensor-unit{font-size:var(--btn-label);line-height:1;opacity:.7}" +
     ".sp-slider-preview{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;pointer-events:none}" +
     ".sp-slider-track{width:100%;height:100%;position:relative}" +
     ".sp-slider-fill{position:absolute;left:0;bottom:0;width:100%;height:80%;background:var(--accent);" +
-    "border-radius:var(--r)}" +
-    ".sp-slider-horiz .sp-slider-fill{left:0;bottom:0;top:0;width:80%;height:100%;" +
     "border-radius:var(--r)}" +
     ".sp-btn-double{grid-row:span 2}" +
     ".sp-btn-double .sp-btn-label{-webkit-line-clamp:var(--btn-lines-dbl)}" +
@@ -306,6 +315,8 @@
     "margin-bottom:var(--gap);border:1px solid var(--border)}" +
 
     ".sp-field{margin-bottom:28px}.sp-field:last-child{margin-bottom:0}" +
+    ".sp-field-stack{display:grid;gap:10px}" +
+    ".sp-field-stack.sp-hidden{display:none}" +
     ".sp-field-label{display:block;font-size:.8rem;font-weight:500;color:var(--text2);margin-bottom:8px}" +
     ".sp-input,.sp-select{width:100%;padding:10px 12px;background:var(--surface2);" +
     "border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.875rem;" +
@@ -520,14 +531,14 @@
     ".sp-header{padding:0 10px}" +
     ".sp-tab{padding:0 10px;font-size:.75rem}" +
     ".sp-tab-docs{margin-left:2px;padding-left:16px;gap:4px}" +
-    ".sp-support-btn{right:12px;bottom:12px;min-height:48px;padding:7px 16px 7px 12px;font-size:24px}" +
-    ".sp-support-btn svg{width:26px;height:26px}" +
     ".sp-color-row{flex-wrap:wrap}" +
     ".sp-backup-btns{flex-direction:column}" +
     ".sp-fw-row{flex-direction:column;align-items:flex-start;gap:12px}" +
     "}";
 
   // ── State ──────────────────────────────────────────────────────────────
+
+  var NTP_SERVER_DEFAULTS = ["0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org"];
 
   var state = {
     grid: [],
@@ -545,7 +556,9 @@
     _outdoorVal: null,
     indoorEntity: "",
     outdoorEntity: "",
+    temperatureUnit: "Auto",
     clockBarOn: true,
+    temperatureDegreeSymbolOn: true,
     presenceEntity: "",
     screensaverMode: "disabled",
     _screensaverModeReceived: false,
@@ -571,9 +584,10 @@
     timezoneOptions: [],
     clockFormat: "24h",
     clockFormatOptions: ["12h", "24h"],
-    ntpServer1: "0.pool.ntp.org",
-    ntpServer2: "1.pool.ntp.org",
-    ntpServer3: "2.pool.ntp.org",
+    customNtpServers: false,
+    ntpServer1: NTP_SERVER_DEFAULTS[0],
+    ntpServer2: NTP_SERVER_DEFAULTS[1],
+    ntpServer3: NTP_SERVER_DEFAULTS[2],
     screenRotation: "0",
     screenRotationOptions: (CFG.features && CFG.features.screenRotationOptions) || ["0", "90", "180", "270"],
     sunrise: "",
@@ -586,6 +600,7 @@
     autoUpdate: true,
     updateFrequency: "Daily",
     updateFreqOptions: ["Hourly", "Daily", "Weekly", "Monthly"],
+    developerExperimentalFeatures: false,
     subpages: {},
     subpageRaw: {},
     subpageSavePending: {},
@@ -621,6 +636,46 @@
     var n = parseInt(value, 10);
     if (!isFinite(n)) return value;
     return String((n + offset + 360) % 360);
+  }
+
+  function normalizeTemperatureUnit(value) {
+    var unit = String(value == null ? "" : value).trim().toLowerCase();
+    if (unit === "f" || unit === "\u00B0f" || unit === "fahrenheit") return "\u00B0F";
+    if (unit === "c" || unit === "\u00B0c" || unit === "celsius" || unit === "centigrade") return "\u00B0C";
+    return "Auto";
+  }
+
+  function timezonePrefersFahrenheit(timezone) {
+    var tz = getTzId(timezone || state.timezone);
+    var fahrenheitZones = {
+      "America/Adak": true,
+      "America/Anchorage": true,
+      "America/Boise": true,
+      "America/Chicago": true,
+      "America/Denver": true,
+      "America/Detroit": true,
+      "America/Juneau": true,
+      "America/Los_Angeles": true,
+      "America/New_York": true,
+      "America/Phoenix": true,
+      "America/Puerto_Rico": true,
+      "Pacific/Guam": true,
+      "Pacific/Honolulu": true,
+      "Pacific/Pago_Pago": true,
+    };
+    return !!fahrenheitZones[tz];
+  }
+
+  function temperatureUnitSymbol() {
+    var unit = normalizeTemperatureUnit(state.temperatureUnit);
+    if (unit === "\u00B0F") return "\u00B0F";
+    if (unit === "\u00B0C") return "\u00B0C";
+    return timezonePrefersFahrenheit(state.timezone) ? "\u00B0F" : "\u00B0C";
+  }
+
+  function clockBarTemperatureUnitSymbol() {
+    var unit = temperatureUnitSymbol();
+    return state.temperatureDegreeSymbolOn ? unit : "";
   }
 
   function appendScreenRotationOption(select, opt) {
@@ -697,6 +752,18 @@
   function normalizeNtpServer(value, fallback) {
     var v = String(value == null ? "" : value).trim();
     return v || fallback;
+  }
+
+  function hasCustomNtpServers() {
+    return normalizeNtpServer(state.ntpServer1, NTP_SERVER_DEFAULTS[0]) !== NTP_SERVER_DEFAULTS[0] ||
+      normalizeNtpServer(state.ntpServer2, NTP_SERVER_DEFAULTS[1]) !== NTP_SERVER_DEFAULTS[1] ||
+      normalizeNtpServer(state.ntpServer3, NTP_SERVER_DEFAULTS[2]) !== NTP_SERVER_DEFAULTS[2];
+  }
+
+  function resetNtpServersToDefaults() {
+    state.ntpServer1 = NTP_SERVER_DEFAULTS[0];
+    state.ntpServer2 = NTP_SERVER_DEFAULTS[1];
+    state.ntpServer3 = NTP_SERVER_DEFAULTS[2];
   }
 
   function formatDuration(seconds) {
@@ -843,10 +910,19 @@
     if (els.setOutdoorField) {
       els.setOutdoorField.className = "sp-cond-field" + (state._outdoorOn ? " sp-visible" : "");
     }
-    if (els.setTemperatureBadge) {
-      els.setTemperatureBadge.className = "sp-card-badge" +
-        (state._indoorOn || state._outdoorOn ? "" : " sp-hidden");
+  }
+
+  function syncNtpServerUi() {
+    if (els.setCustomNtpServersToggle) {
+      els.setCustomNtpServersToggle.checked = !!state.customNtpServers;
     }
+    if (els.setNtpServerFields) {
+      els.setNtpServerFields.className =
+        "sp-field-stack" + (state.customNtpServers ? "" : " sp-hidden");
+    }
+    syncInput(els.setNtpServer1, state.ntpServer1);
+    syncInput(els.setNtpServer2, state.ntpServer2);
+    syncInput(els.setNtpServer3, state.ntpServer3);
   }
 
   function syncClockBarUi() {
@@ -857,6 +933,9 @@
     if (els.setClockBarToggle) els.setClockBarToggle.checked = !!state.clockBarOn;
     if (els.setClockBarBadge) {
       els.setClockBarBadge.className = "sp-card-badge" + (state.clockBarOn ? "" : " sp-hidden");
+    }
+    if (els.setTemperatureDegreeSymbolToggle) {
+      els.setTemperatureDegreeSymbolToggle.checked = !!state.temperatureDegreeSymbolOn;
     }
     updateTempPreview();
   }
@@ -881,6 +960,8 @@
   var dragEnterCount = 0;
   var orderReceived = false;
   var migrationTimer = null;
+  var sliderMigrationTimer = null;
+  var pendingSliderSubpageMigrations = {};
   var _eventSource = null;
 
   // ── Utilities ──────────────────────────────────────────────────────────
@@ -1287,6 +1368,18 @@
     postText("Subpage " + slot + " Config Ext 3", chunks[3]);
   }
 
+  function scheduleSliderSubpageMigration(slot) {
+    pendingSliderSubpageMigrations[slot] = true;
+    clearTimeout(sliderMigrationTimer);
+    sliderMigrationTimer = setTimeout(function () {
+      var pending = pendingSliderSubpageMigrations;
+      pendingSliderSubpageMigrations = {};
+      for (var key in pending) {
+        if (state.subpages[key]) saveSubpageEntity(key);
+      }
+    }, 5000);
+  }
+
   function postSelect(name, option) {
     post("/select/" + encodeURIComponent(name) + "/set?option=" + encodeURIComponent(option));
   }
@@ -1372,6 +1465,17 @@
       "screen_clock_bar",
       "clock_bar_enabled",
     ], on, CLOCK_BAR_UNAVAILABLE);
+  }
+
+  var TEMPERATURE_DEGREE_SYMBOL_UNAVAILABLE =
+    "Temperature degree symbol setting is not available on this firmware. Update the device firmware, then reload this page.";
+
+  function postTemperatureDegreeSymbol(on) {
+    postSwitchWithObjectIds("Screen: Temperature Degree Symbol", [
+      "screen__temperature_degree_symbol",
+      "screen_temperature_degree_symbol",
+      "temperature_degree_symbol_enabled",
+    ], on, TEMPERATURE_DEGREE_SYMBOL_UNAVAILABLE);
   }
 
   var SCREEN_SCHEDULE_UNAVAILABLE =
@@ -1474,6 +1578,13 @@
   // ── Subpage helpers ────────────────────────────────────────────────────
 
   function normalizeButtonConfig(b) {
+    if (b && b.type === "slider" && b.sensor) {
+      b.sensor = "";
+    }
+    if (b && b.type === "weather_forecast") {
+      b.type = "weather";
+      b.precision = "tomorrow";
+    }
     if (b && b.type === "text_sensor") {
       b.type = "sensor";
       b.precision = "text";
@@ -1492,15 +1603,23 @@
   }
 
   function buttonConfigFields(b) {
+    var type = b && b.type || "";
+    var sensor = type === "slider" ? "" : (b && b.sensor || "");
+    var unit = b && b.unit || "";
+    var precision = b && b.precision || "";
+    if (!type && !sensor) {
+      unit = "";
+      precision = "";
+    }
     return trimConfigFields([
       b && b.entity || "",
       b && b.label || "",
       b && b.icon || "Auto",
       b && b.icon_on || "Auto",
-      b && b.sensor || "",
-      b && b.unit || "",
-      b && b.type || "",
-      b && b.precision || "",
+      sensor,
+      unit,
+      type,
+      precision,
     ]);
   }
 
@@ -1529,13 +1648,13 @@
     return "~" + fields.map(encodeConfigField).join(",");
   }
 
-  function parseButtonConfig(str) {
+  function parseRawButtonConfig(str) {
     var compact = str && str.charAt(0) === "~";
     var parts = compact ? str.substring(1).split(",") : (str || "").split(";");
     if (compact) {
       parts = parts.map(decodeConfigField);
     }
-    return normalizeButtonConfig({
+    return {
       entity: parts[0] || "",
       label: parts[1] || "",
       icon: parts[2] || "Auto",
@@ -1544,11 +1663,23 @@
       unit: parts[5] || "",
       type: parts[6] || "",
       precision: parts[7] || "",
-    });
+    };
   }
 
-  function parseSubpageConfig(str) {
-    if (str && str.charAt(0) === "~") return parseCompactSubpageConfig(str);
+  function parseButtonConfig(str) {
+    return normalizeButtonConfig(parseRawButtonConfig(str));
+  }
+
+  function hasLegacySliderDirection(b) {
+    return !!(b && b.type === "slider" && b.sensor);
+  }
+
+  function buttonConfigHasLegacySliderDirection(str) {
+    return hasLegacySliderDirection(parseRawButtonConfig(str || ""));
+  }
+
+  function parseSubpageConfig(str, raw) {
+    if (str && str.charAt(0) === "~") return parseCompactSubpageConfig(str, raw);
     if (!str || !str.trim()) return { order: [], buttons: [] };
     var parts = str.split("|");
     var order = [];
@@ -1562,7 +1693,7 @@
     var buttons = [];
     for (var i = 1; i < parts.length; i++) {
       var f = parts[i].split(":");
-      buttons.push(normalizeButtonConfig({
+      var button = {
         entity: f[0] || "",
         label: f[1] || "",
         icon: f[2] || "Auto",
@@ -1571,16 +1702,21 @@
         unit: f[5] || "",
         type: f[6] || "",
         precision: f[7] || "",
-      }));
+      };
+      buttons.push(raw ? button : normalizeButtonConfig(button));
     }
     return { order: order, buttons: buttons };
   }
 
   function subpageTypeCode(type) {
     var map = {
+      action: "A",
       calendar: "D",
+      timezone: "T",
+      climate: "H",
       sensor: "S",
       weather: "W",
+      weather_forecast: "F",
       slider: "L",
       cover: "C",
       garage: "R",
@@ -1593,9 +1729,13 @@
 
   function subpageTypeFromCode(code) {
     var map = {
+      A: "action",
       D: "calendar",
+      T: "timezone",
+      H: "climate",
       S: "sensor",
       W: "weather",
+      F: "weather_forecast",
       L: "slider",
       C: "cover",
       R: "garage",
@@ -1614,7 +1754,7 @@
     return decodeConfigField(value);
   }
 
-  function parseCompactSubpageConfig(str) {
+  function parseCompactSubpageConfig(str, raw) {
     if (!str || str.length < 2) return { order: [], buttons: [] };
     var parts = str.substring(1).split("|");
     var order = [];
@@ -1625,7 +1765,7 @@
     var buttons = [];
     for (var i = 1; i < parts.length; i++) {
       var f = parts[i].split(",");
-      buttons.push(normalizeButtonConfig({
+      var button = {
         type: subpageTypeFromCode(f[0] || ""),
         entity: decodeSubpageField(f[1]),
         label: decodeSubpageField(f[2]),
@@ -1634,9 +1774,18 @@
         sensor: decodeSubpageField(f[5]),
         unit: decodeSubpageField(f[6]),
         precision: decodeSubpageField(f[7]),
-      }));
+      };
+      buttons.push(raw ? button : normalizeButtonConfig(button));
     }
     return { order: order, buttons: buttons };
+  }
+
+  function subpageConfigHasLegacySliderDirection(str) {
+    var sp = parseSubpageConfig(str, true);
+    for (var i = 0; i < sp.buttons.length; i++) {
+      if (hasLegacySliderDirection(sp.buttons[i])) return true;
+    }
+    return false;
   }
 
   function serializeSubpageConfig(sp) {
@@ -1666,7 +1815,8 @@
     var out = sp.order.join(",");
     for (var i = 0; i < sp.buttons.length; i++) {
       var b = sp.buttons[i];
-      var fields = [b.entity || "", b.label || "", b.icon || "Auto", b.icon_on || "Auto", b.sensor || "", b.unit || "", b.type || "", b.precision || ""];
+      var sensor = b.type === "slider" ? "" : (b.sensor || "");
+      var fields = [b.entity || "", b.label || "", b.icon || "Auto", b.icon_on || "Auto", sensor, b.unit || "", b.type || "", b.precision || ""];
       while (fields.length > 1 && !fields[fields.length - 1]) fields.pop();
       if (fields.length > 1 && fields[fields.length - 1] === "Auto") {
         while (fields.length > 1 && (fields[fields.length - 1] === "Auto" || !fields[fields.length - 1])) fields.pop();
@@ -1681,13 +1831,14 @@
     var out = "~" + sp.order.join(",");
     for (var i = 0; i < sp.buttons.length; i++) {
       var b = sp.buttons[i];
+      var sensor = b.type === "slider" ? "" : (b.sensor || "");
       var fields = [
         subpageTypeCode(b.type || ""),
         encodeSubpageField(b.entity),
         encodeSubpageField(b.label),
         b.icon && b.icon !== "Auto" ? encodeSubpageField(b.icon) : "",
         b.icon_on && b.icon_on !== "Auto" ? encodeSubpageField(b.icon_on) : "",
-        encodeSubpageField(b.sensor),
+        encodeSubpageField(sensor),
         encodeSubpageField(b.unit),
         encodeSubpageField(b.precision),
       ];
@@ -1722,10 +1873,12 @@
       }
     }
     if (combined) {
+      var migrateSliderDirection = subpageConfigHasLegacySliderDirection(combined);
       var sp = parseSubpageConfig(combined);
       sp.sizes = sp.sizes || {};
       buildSubpageGrid(sp);
       state.subpages[slot] = sp;
+      if (migrateSliderDirection) scheduleSliderSubpageMigration(slot);
     } else {
       delete state.subpages[slot];
     }
@@ -1869,7 +2022,30 @@
 
   // ── Init ───────────────────────────────────────────────────────────────
 
+  var FAVICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#5c73e7" d="M12,3L2,12H5V20H19V12H22L12,3M12,8.5C14.34,8.5 16.46,9.43 18,10.94L16.8,12.12C15.58,10.91 13.88,10.17 12,10.17C10.12,10.17 8.42,10.91 7.2,12.12L6,10.94C7.54,9.43 9.66,8.5 12,8.5M12,11.83C13.4,11.83 14.67,12.39 15.6,13.3L14.4,14.47C13.79,13.87 12.94,13.5 12,13.5C11.06,13.5 10.21,13.87 9.6,14.47L8.4,13.3C9.33,12.39 10.6,11.83 12,11.83M12,15.17C12.94,15.17 13.7,15.91 13.7,16.83C13.7,17.75 12.94,18.5 12,18.5C11.06,18.5 10.3,17.75 10.3,16.83C10.3,15.91 11.06,15.17 12,15.17Z"/></svg>';
+
+  function setFavicon() {
+    var link = document.querySelector('link[rel="icon"]') || document.createElement("link");
+    link.rel = "icon";
+    link.type = "image/svg+xml";
+    link.href = "data:image/svg+xml," + encodeURIComponent(FAVICON_SVG);
+    if (!link.parentNode) document.head.appendChild(link);
+  }
+
+  function addSupportButton() {
+    if (document.querySelector(".sp-support-btn")) return;
+    var link = document.createElement("a");
+    link.className = "sp-support-btn";
+    link.href = "https://www.buymeacoffee.com/jtenniswood";
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.innerHTML = '<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60" style="border-radius:999px;">';
+    document.body.appendChild(link);
+  }
+
   function init() {
+    setFavicon();
+
     // Set CSS custom properties from device config
     var r = document.documentElement.style;
     r.setProperty("--screen-w", CFG.screen.width);
@@ -1920,6 +2096,7 @@
     document.head.appendChild(fonts);
 
     buildUI();
+    addSupportButton();
     syncClockBarUi();
     setupPreviewEvents();
     renderPreview();
@@ -2283,15 +2460,6 @@
 
     var clockBody = document.createElement("div");
 
-    var clockBar = toggleRow("Show Clock Bar", "sp-set-clock-bar", state.clockBarOn);
-    clockBody.appendChild(clockBar.row);
-    els.setClockBarToggle = clockBar.input;
-    clockBar.input.addEventListener("change", function () {
-      state.clockBarOn = this.checked;
-      syncClockBarUi();
-      postClockBar(state.clockBarOn);
-    });
-
     var tzField = document.createElement("div");
     tzField.className = "sp-field";
     tzField.appendChild(fieldLabel("Timezone", "sp-set-timezone"));
@@ -2307,6 +2475,10 @@
     tzSelect.addEventListener("change", function () {
       state.timezone = this.value;
       postSelect("Screen: Timezone", this.value);
+      if (normalizeTemperatureUnit(state.temperatureUnit) === "Auto") {
+        updateTempPreview();
+        renderPreview();
+      }
       updateClock();
     });
     tzField.appendChild(tzSelect);
@@ -2333,41 +2505,115 @@
     clockBody.appendChild(cfField);
     els.setClockFormat = cfSelect;
 
-    function addNtpServerField(label, id, stateKey, postName, placeholder) {
-      var field = document.createElement("div");
-      field.className = "sp-field";
-      field.appendChild(fieldLabel(label, id));
+    var ntpField = document.createElement("div");
+    ntpField.className = "sp-field";
+    ntpField.appendChild(fieldLabel("NTP Servers", "sp-set-custom-ntp-servers"));
+    state.customNtpServers = state.customNtpServers || hasCustomNtpServers();
+    var customNtpServers = toggleRow("Custom NTP Servers", "sp-set-custom-ntp-servers", state.customNtpServers);
+    ntpField.appendChild(customNtpServers.row);
+    els.setCustomNtpServersToggle = customNtpServers.input;
+    customNtpServers.input.addEventListener("change", function () {
+      state.customNtpServers = this.checked;
+      if (!state.customNtpServers) {
+        resetNtpServersToDefaults();
+        postText("Screen: NTP Server 1", state.ntpServer1);
+        postText("Screen: NTP Server 2", state.ntpServer2);
+        postText("Screen: NTP Server 3", state.ntpServer3);
+      }
+      syncNtpServerUi();
+    });
+
+    var ntpList = document.createElement("div");
+    ntpList.className = "sp-field-stack";
+    els.setNtpServerFields = ntpList;
+
+    function addNtpServerInput(id, stateKey, postName, placeholder, ariaLabel) {
       var input = textInput(id, state[stateKey], placeholder);
+      input.setAttribute("aria-label", ariaLabel);
       input.addEventListener("blur", function () {
         var value = this.value.trim();
         this.value = value;
         state[stateKey] = value;
+        state.customNtpServers = true;
+        syncNtpServerUi();
         postText(postName, value);
       });
       input.addEventListener("keydown", function (e) {
         if (e.key === "Enter") this.blur();
       });
-      field.appendChild(input);
-      clockBody.appendChild(field);
+      ntpList.appendChild(input);
       return input;
     }
 
-    els.setNtpServer1 = addNtpServerField(
-      "NTP Server 1", "sp-set-ntp-server-1", "ntpServer1",
-      "Screen: NTP Server 1", "0.pool.ntp.org");
-    els.setNtpServer2 = addNtpServerField(
-      "NTP Server 2", "sp-set-ntp-server-2", "ntpServer2",
-      "Screen: NTP Server 2", "1.pool.ntp.org");
-    els.setNtpServer3 = addNtpServerField(
-      "NTP Server 3", "sp-set-ntp-server-3", "ntpServer3",
-      "Screen: NTP Server 3", "2.pool.ntp.org");
+    els.setNtpServer1 = addNtpServerInput(
+      "sp-set-ntp-server-1", "ntpServer1",
+      "Screen: NTP Server 1", NTP_SERVER_DEFAULTS[0], "NTP Server 1");
+    els.setNtpServer2 = addNtpServerInput(
+      "sp-set-ntp-server-2", "ntpServer2",
+      "Screen: NTP Server 2", NTP_SERVER_DEFAULTS[1], "NTP Server 2");
+    els.setNtpServer3 = addNtpServerInput(
+      "sp-set-ntp-server-3", "ntpServer3",
+      "Screen: NTP Server 3", NTP_SERVER_DEFAULTS[2], "NTP Server 3");
+
+    ntpField.appendChild(ntpList);
+    syncNtpServerUi();
+    clockBody.appendChild(ntpField);
+
+    var timeSettingsCard = makeCollapsibleCard("Time Settings", clockBody, true);
+
+    var clockBarBody = document.createElement("div");
+
+    var clockBar = toggleRow("Show Clock Bar", "sp-set-clock-bar", state.clockBarOn);
+    clockBarBody.appendChild(clockBar.row);
+    els.setClockBarToggle = clockBar.input;
+    clockBar.input.addEventListener("change", function () {
+      state.clockBarOn = this.checked;
+      syncClockBarUi();
+      postClockBar(state.clockBarOn);
+    });
+
+    var outdoor = createEntityToggleSection("Outdoor Temperature", "sp-set-outdoor-toggle", state._outdoorOn,
+      "Outdoor Temp Enable", "Outdoor Temp Entity", "Outdoor Temp Entity", "sensor.outdoor_temperature");
+    clockBarBody.appendChild(outdoor.toggle.row);
+    clockBarBody.appendChild(outdoor.field);
+    els.setOutdoorToggle = outdoor.toggle.input;
+    els.setOutdoorField = outdoor.field;
+    els.setOutdoorEntity = outdoor.input;
+    outdoor.toggle.input.addEventListener("change", function () {
+      state._outdoorOn = this.checked;
+      syncTemperatureUi();
+      updateTempPreview();
+    });
+
+    var indoor = createEntityToggleSection("Indoor Temperature", "sp-set-indoor-toggle", state._indoorOn,
+      "Indoor Temp Enable", "Indoor Temp Entity", "Indoor Temp Entity", "sensor.indoor_temperature");
+    clockBarBody.appendChild(indoor.toggle.row);
+    clockBarBody.appendChild(indoor.field);
+    els.setIndoorToggle = indoor.toggle.input;
+    els.setIndoorField = indoor.field;
+    els.setIndoorEntity = indoor.input;
+    indoor.toggle.input.addEventListener("change", function () {
+      state._indoorOn = this.checked;
+      syncTemperatureUi();
+      updateTempPreview();
+    });
+
+    var degreeSymbol = toggleRow("Show Degree Symbol", "sp-set-temperature-degree-symbol", state.temperatureDegreeSymbolOn);
+    clockBarBody.appendChild(degreeSymbol.row);
+    els.setTemperatureDegreeSymbolToggle = degreeSymbol.input;
+    degreeSymbol.input.addEventListener("change", function () {
+      state.temperatureDegreeSymbolOn = this.checked;
+      syncClockBarUi();
+      postTemperatureDegreeSymbol(state.temperatureDegreeSymbolOn);
+    });
 
     var clockBarBadge = document.createElement("span");
     clockBarBadge.setAttribute("aria-label", "Clock bar on");
     clockBarBadge.innerHTML = '<span class="sp-card-badge-dot"></span><span>ON</span>';
     els.setClockBarBadge = clockBarBadge;
     syncClockBarUi();
-    config.appendChild(makeCollapsibleCard("Clock", clockBody, true, clockBarBadge));
+    syncTemperatureUi();
+    config.appendChild(makeCollapsibleCard("Clock Bar", clockBarBody, true, clockBarBadge));
 
     if (CFG.features && CFG.features.screenRotation) {
       var rotationBody = document.createElement("div");
@@ -2393,38 +2639,35 @@
 
     var tempBody = document.createElement("div");
 
-    var outdoor = createEntityToggleSection("Outdoor Temperature", "sp-set-outdoor-toggle", state._outdoorOn,
-      "Outdoor Temp Enable", "Outdoor Temp Entity", "Outdoor Temp Entity", "sensor.outdoor_temperature");
-    tempBody.appendChild(outdoor.toggle.row);
-    tempBody.appendChild(outdoor.field);
-    els.setOutdoorToggle = outdoor.toggle.input;
-    els.setOutdoorField = outdoor.field;
-    els.setOutdoorEntity = outdoor.input;
-    outdoor.toggle.input.addEventListener("change", function () {
-      state._outdoorOn = this.checked;
-      syncTemperatureUi();
-      updateTempPreview();
+    var unitField = document.createElement("div");
+    unitField.className = "sp-field";
+    unitField.appendChild(fieldLabel("Temperature Unit", "sp-set-temperature-unit"));
+    var unitSelect = document.createElement("select");
+    unitSelect.className = "sp-select";
+    unitSelect.id = "sp-set-temperature-unit";
+    [
+      ["Auto", "Auto (from timezone)"],
+      ["\u00B0C", "Centigrade (\u00B0C)"],
+      ["\u00B0F", "Fahrenheit (\u00B0F)"],
+    ].forEach(function (opt) {
+      var o = document.createElement("option");
+      o.value = opt[0];
+      o.textContent = opt[1];
+      unitSelect.appendChild(o);
     });
-
-    var indoor = createEntityToggleSection("Indoor Temperature", "sp-set-indoor-toggle", state._indoorOn,
-      "Indoor Temp Enable", "Indoor Temp Entity", "Indoor Temp Entity", "sensor.indoor_temperature");
-    tempBody.appendChild(indoor.toggle.row);
-    tempBody.appendChild(indoor.field);
-    els.setIndoorToggle = indoor.toggle.input;
-    els.setIndoorField = indoor.field;
-    els.setIndoorEntity = indoor.input;
-    indoor.toggle.input.addEventListener("change", function () {
-      state._indoorOn = this.checked;
-      syncTemperatureUi();
+    unitSelect.value = normalizeTemperatureUnit(state.temperatureUnit);
+    unitSelect.addEventListener("change", function () {
+      state.temperatureUnit = normalizeTemperatureUnit(this.value);
+      postSelect("Screen: Temperature Unit", state.temperatureUnit);
       updateTempPreview();
+      renderPreview();
     });
+    unitField.appendChild(unitSelect);
+    tempBody.appendChild(unitField);
+    els.setTemperatureUnit = unitSelect;
 
-    var tempBadge = document.createElement("span");
-    tempBadge.setAttribute("aria-label", "Temperature on");
-    tempBadge.innerHTML = '<span class="sp-card-badge-dot"></span><span>ON</span>';
-    els.setTemperatureBadge = tempBadge;
     syncTemperatureUi();
-    config.appendChild(makeCollapsibleCard("Temperature", tempBody, true, tempBadge));
+    config.appendChild(makeCollapsibleCard("Temperature", tempBody, true));
 
     var ssBody = document.createElement("div");
     var ssMode = getActiveScreensaverMode();
@@ -2586,6 +2829,7 @@
     backupRow.appendChild(importBtn);
 
     backupBody.appendChild(backupRow);
+    config.appendChild(timeSettingsCard);
     config.appendChild(makeCollapsibleCard("Backup", backupBody, true));
 
     var fwBody = document.createElement("div");
@@ -2665,6 +2909,23 @@
     els.setUpdateFreq = freqSelect;
 
     config.appendChild(makeCollapsibleCard("Firmware", fwBody, true));
+
+    if (developerExperimentalUrlFlag()) {
+      var devBody = document.createElement("div");
+      var experimentalToggle = toggleRow(
+        "Developer/Experimental Features",
+        "sp-set-developer-experimental-features",
+        state.developerExperimentalFeatures
+      );
+      devBody.appendChild(experimentalToggle.row);
+      experimentalToggle.input.addEventListener("change", function () {
+        state.developerExperimentalFeatures = this.checked;
+        postSwitch("Developer: Experimental Features", state.developerExperimentalFeatures);
+        renderButtonSettings();
+      });
+      els.setDeveloperExperimentalFeatures = experimentalToggle.input;
+      config.appendChild(makeCollapsibleCard("Developer", devBody, true));
+    }
 
     page.appendChild(config);
     page.appendChild(buildApplyBar());
@@ -3004,10 +3265,15 @@
         var b = c.buttons[bIdx];
         var iconName = resolveIcon(b);
         var label = b.label || b.entity || "Configure";
-        var color = (b.type === "sensor" || b.type === "weather" || b.type === "calendar")
+        var color = (b.type === "sensor" || b.type === "weather" || b.type === "weather_forecast" || b.type === "calendar" || b.type === "timezone")
           ? state.sensorColor : state.offColor;
         var previewTypeDef = BUTTON_TYPES[b.type || ""] || null;
         if (previewTypeDef && c.isSub && !previewTypeDef.allowInSubpage) previewTypeDef = null;
+        if (previewTypeDef && previewTypeDef.experimental && !isExperimentalEnabled(previewTypeDef.experimental)) {
+          previewTypeDef = null;
+          iconName = "cog";
+          label = "Configure";
+        }
         var typePreview = previewTypeDef && previewTypeDef.renderPreview
           ? previewTypeDef.renderPreview(b, { escHtml: escHtml })
           : null;
@@ -3281,10 +3547,10 @@
       });
     }
 
-    function makeIconPicker(pickerId, inputId, currentVal, onSelect) {
+    function makeIconPicker(pickerId, inputId, currentVal, onSelect, labelText) {
       var icf = document.createElement("div");
       icf.className = "sp-field";
-      icf.appendChild(fieldLabel("Icon", inputId));
+      icf.appendChild(fieldLabel(labelText || "Icon", inputId));
       var picker = document.createElement("div");
       picker.className = "sp-icon-picker";
       if (pickerId) picker.id = pickerId;
@@ -3299,12 +3565,16 @@
     }
 
     var typeDef = BUTTON_TYPES[b.type || ""] || BUTTON_TYPES[""];
+    if (typeDef && typeDef.experimental && !isExperimentalEnabled(typeDef.experimental)) {
+      typeDef = BUTTON_TYPES[""];
+    }
     {
       var typeOpts = [];
       for (var k in BUTTON_TYPES) {
         var td = BUTTON_TYPES[k];
         if (c.isSub && !td.allowInSubpage) continue;
         if (td.isAvailable && !td.isAvailable({ isSub: c.isSub }) && (b.type || "") !== td.key) continue;
+        if (td.experimental && !isExperimentalEnabled(td.experimental)) continue;
         typeOpts.push([td.key, td.label]);
       }
       typeOpts.sort(function (a, b) {
@@ -3359,7 +3629,7 @@
     if (typeDef && typeDef.renderSettings && (!c.isSub || typeDef.allowInSubpage)) {
       typeDef.renderSettings(panel, b, slot, typeHelpers);
     } else {
-      // Toggle (home or subpage): entity, icon, when-on
+      // Toggle fallback: entity, icons, sensor data
       var ef = document.createElement("div");
       ef.className = "sp-field";
       ef.appendChild(fieldLabel("Entity ID", idPrefix + "entity"));
@@ -3371,7 +3641,7 @@
       panel.appendChild(makeIconPicker(idPrefix + "icon-picker", idPrefix + "icon", b.icon || "Auto", function (opt) {
         b.icon = opt;
         saveField("icon", opt);
-      }));
+      }, "Off Icon"));
 
       // When-on section
       var hasIconOn = b.icon_on && b.icon_on !== "Auto";
@@ -3379,7 +3649,7 @@
       var whenOnEnabled = hasIconOn || hasSensor || !!b._whenOnActive;
       var whenOnMode = b._whenOnMode || (hasSensor ? "sensor" : "icon");
 
-      var whenOnToggle = toggleRow("When Entity On", idPrefix + "whenon-toggle", whenOnEnabled);
+      var whenOnToggle = toggleRow("Show sensor data when on", idPrefix + "whenon-toggle", whenOnEnabled);
       panel.appendChild(whenOnToggle.row);
 
       var whenOnCond = condField();
@@ -3389,11 +3659,11 @@
       seg.className = "sp-segment";
       var btnIcon = document.createElement("button");
       btnIcon.type = "button";
-      btnIcon.textContent = "Replace Icon";
+      btnIcon.textContent = "On Icon";
       if (whenOnMode === "icon") btnIcon.classList.add("active");
       var btnSensor = document.createElement("button");
       btnSensor.type = "button";
-      btnSensor.textContent = "Sensor Data";
+      btnSensor.textContent = "Numeric";
       if (whenOnMode === "sensor") btnSensor.classList.add("active");
       seg.appendChild(btnIcon);
       seg.appendChild(btnSensor);
@@ -3402,7 +3672,7 @@
       // Icon-on section
       var iconOnSection = condField();
       if (whenOnMode === "icon") iconOnSection.classList.add("sp-visible");
-      var ionLabel = fieldLabel("Icon When On", idPrefix + "icon-on");
+      var ionLabel = fieldLabel("On Icon", idPrefix + "icon-on");
       iconOnSection.appendChild(ionLabel);
       var iconOnVal = hasIconOn ? b.icon_on : "Auto";
       var iconOnPicker = document.createElement("div");
@@ -3425,11 +3695,6 @@
       var sensorSection = condField();
       if (whenOnMode === "sensor") sensorSection.classList.add("sp-visible");
 
-      var sensorHint = document.createElement("div");
-      sensorHint.className = "sp-field-hint";
-      sensorHint.textContent = "Show sensor value instead of icon when on";
-      sensorSection.appendChild(sensorHint);
-
       var sf = document.createElement("div");
       sf.className = "sp-field";
       sf.appendChild(fieldLabel("Sensor Entity", idPrefix + "sensor"));
@@ -3441,33 +3706,29 @@
       uf.className = "sp-field";
       uf.appendChild(fieldLabel("Unit", idPrefix + "unit"));
       var unitInp = textInput(idPrefix + "unit", b.unit, "e.g. %");
-      unitInp.className = "sp-input sp-input--narrow";
+      unitInp.className = "sp-input";
       uf.appendChild(unitInp);
       sensorSection.appendChild(uf);
 
       var pf = document.createElement("div");
       pf.className = "sp-field";
       pf.appendChild(fieldLabel("Unit Precision", idPrefix + "precision"));
-      var precSeg = document.createElement("div");
-      precSeg.className = "sp-segment";
+      var precisionSelect = document.createElement("select");
+      precisionSelect.className = "sp-select";
+      precisionSelect.id = idPrefix + "precision";
       var precOpts = [["0", "10"], ["1", "10.2"], ["2", "10.21"]];
       for (var pi = 0; pi < precOpts.length; pi++) {
-        (function (val, label) {
-          var btn = document.createElement("button");
-          btn.type = "button";
-          btn.textContent = label;
-          if ((b.precision || "0") === val) btn.classList.add("active");
-          btn.addEventListener("click", function () {
-            b.precision = val === "0" ? "" : val;
-            saveField("precision", b.precision);
-            var btns = precSeg.querySelectorAll("button");
-            for (var j = 0; j < btns.length; j++) btns[j].classList.remove("active");
-            btn.classList.add("active");
-          });
-          precSeg.appendChild(btn);
-        })(precOpts[pi][0], precOpts[pi][1]);
+        var opt = document.createElement("option");
+        opt.value = precOpts[pi][0];
+        opt.textContent = precOpts[pi][1];
+        precisionSelect.appendChild(opt);
       }
-      pf.appendChild(precSeg);
+      precisionSelect.value = b.precision || "0";
+      precisionSelect.addEventListener("change", function () {
+        b.precision = this.value === "0" ? "" : this.value;
+        saveField("precision", b.precision);
+      });
+      pf.appendChild(precisionSelect);
       sensorSection.appendChild(pf);
       whenOnCond.appendChild(sensorSection);
 
@@ -3487,8 +3748,7 @@
         if (mode === "icon") {
           sensorInp.value = "";
           unitInp.value = "";
-          var pbs = precSeg.querySelectorAll("button");
-          for (var j = 0; j < pbs.length; j++) pbs[j].classList.toggle("active", j === 0);
+          precisionSelect.value = "0";
           b.sensor = "";
           b.unit = "";
           b.precision = "";
@@ -3518,8 +3778,7 @@
           whenOnCond.classList.remove("sp-visible");
           sensorInp.value = "";
           unitInp.value = "";
-          var pbs2 = precSeg.querySelectorAll("button");
-          for (var j2 = 0; j2 < pbs2.length; j2++) pbs2[j2].classList.toggle("active", j2 === 0);
+          precisionSelect.value = "0";
           b.sensor = "";
           b.unit = "";
           b.precision = "";
@@ -4769,7 +5028,9 @@
         outdoor_temp_enable: state._outdoorOn,
         indoor_temp_entity: state.indoorEntity,
         outdoor_temp_entity: state.outdoorEntity,
+        temperature_unit: normalizeTemperatureUnit(state.temperatureUnit),
         clock_bar: state.clockBarOn,
+        temperature_degree_symbol: state.temperatureDegreeSymbolOn,
         timezone: state.timezone,
         clock_format: state.clockFormat,
         ntp_server_1: state.ntpServer1,
@@ -4784,6 +5045,7 @@
         screensaver_timeout: state.screensaverTimeout,
         home_screen_timeout: state.homeScreenTimeout,
         screen_rotation: state.screenRotation,
+        developer_experimental_features: state.developerExperimentalFeatures,
       },
       screen: {
         brightness_day: Math.round(state.brightnessDayVal),
@@ -4997,7 +5259,9 @@
           postText("Indoor Temp Entity", s.indoor_temp_entity || "");
           postText("Outdoor Temp Entity", s.outdoor_temp_entity || "");
           postClockBar(s.clock_bar != null ? !!s.clock_bar : true);
+          postTemperatureDegreeSymbol(s.temperature_degree_symbol != null ? !!s.temperature_degree_symbol : true);
           var importedTimezone = s.timezone || state.timezone;
+          var importedTemperatureUnit = normalizeTemperatureUnit(s.temperature_unit);
           var importedClockFormat =
             state.clockFormatOptions.indexOf(s.clock_format) !== -1
               ? s.clock_format
@@ -5005,16 +5269,19 @@
           var hasNtpServer1 = Object.prototype.hasOwnProperty.call(s, "ntp_server_1");
           var hasNtpServer2 = Object.prototype.hasOwnProperty.call(s, "ntp_server_2");
           var hasNtpServer3 = Object.prototype.hasOwnProperty.call(s, "ntp_server_3");
+          var hasDeveloperExperimentalFeatures =
+            Object.prototype.hasOwnProperty.call(s, "developer_experimental_features");
           var importedNtpServer1 = hasNtpServer1
-            ? normalizeNtpServer(s.ntp_server_1, "0.pool.ntp.org")
+            ? normalizeNtpServer(s.ntp_server_1, NTP_SERVER_DEFAULTS[0])
             : state.ntpServer1;
           var importedNtpServer2 = hasNtpServer2
-            ? normalizeNtpServer(s.ntp_server_2, "1.pool.ntp.org")
+            ? normalizeNtpServer(s.ntp_server_2, NTP_SERVER_DEFAULTS[1])
             : state.ntpServer2;
           var importedNtpServer3 = hasNtpServer3
-            ? normalizeNtpServer(s.ntp_server_3, "2.pool.ntp.org")
+            ? normalizeNtpServer(s.ntp_server_3, NTP_SERVER_DEFAULTS[2])
             : state.ntpServer3;
           if (s.timezone) postSelect("Screen: Timezone", importedTimezone);
+          postSelect("Screen: Temperature Unit", importedTemperatureUnit);
           if (s.clock_format) postSelect("Screen: Clock Format", importedClockFormat);
           if (hasNtpServer1) {
             postText("Screen: NTP Server 1", importedNtpServer1);
@@ -5046,17 +5313,23 @@
           postNumber("Home Screen Timeout", s.home_screen_timeout != null ? s.home_screen_timeout : 60);
           var importedScreenRotation = normalizeScreenRotation(s.screen_rotation);
           if (CFG.features && CFG.features.screenRotation) postSelect("Screen: Rotation", importedScreenRotation);
+          if (hasDeveloperExperimentalFeatures) {
+            postSwitch("Developer: Experimental Features", !!s.developer_experimental_features);
+          }
 
           state._indoorOn = !!s.indoor_temp_enable;
           state._outdoorOn = !!s.outdoor_temp_enable;
           state.indoorEntity = s.indoor_temp_entity || "";
           state.outdoorEntity = s.outdoor_temp_entity || "";
+          state.temperatureUnit = importedTemperatureUnit;
           state.clockBarOn = s.clock_bar != null ? !!s.clock_bar : true;
+          state.temperatureDegreeSymbolOn = s.temperature_degree_symbol != null ? !!s.temperature_degree_symbol : true;
           state.timezone = importedTimezone;
           state.clockFormat = importedClockFormat;
           state.ntpServer1 = importedNtpServer1;
           state.ntpServer2 = importedNtpServer2;
           state.ntpServer3 = importedNtpServer3;
+          state.customNtpServers = hasCustomNtpServers();
           state.screensaverMode = importedScreensaverMode;
           state._screensaverModeReceived = true;
           state.presenceEntity = s.presence_sensor_entity || "";
@@ -5066,21 +5339,26 @@
           state.screensaverTimeout = s.screensaver_timeout || 300;
           state.homeScreenTimeout = s.home_screen_timeout != null ? s.home_screen_timeout : 60;
           state.screenRotation = importedScreenRotation;
+          if (hasDeveloperExperimentalFeatures) {
+            state.developerExperimentalFeatures = !!s.developer_experimental_features;
+          }
 
           syncTemperatureUi();
           syncClockBarUi();
           syncInput(els.setIndoorEntity, state.indoorEntity);
           syncInput(els.setOutdoorEntity, state.outdoorEntity);
+          if (els.setTemperatureUnit) els.setTemperatureUnit.value = state.temperatureUnit;
           syncInput(els.setPresence, state.presenceEntity);
           if (els.setTimezone) els.setTimezone.value = state.timezone;
           if (els.setClockFormat) els.setClockFormat.value = state.clockFormat;
-          syncInput(els.setNtpServer1, state.ntpServer1);
-          syncInput(els.setNtpServer2, state.ntpServer2);
-          syncInput(els.setNtpServer3, state.ntpServer3);
+          syncNtpServerUi();
           syncClockScreensaverControls();
           syncScreensaverTimeoutUi();
           syncIdleUi();
           if (els.setScreenRotation) els.setScreenRotation.value = state.screenRotation;
+          if (els.setDeveloperExperimentalFeatures) {
+            els.setDeveloperExperimentalFeatures.checked = state.developerExperimentalFeatures;
+          }
           if (els.setSsMode) els.setSsMode(getActiveScreensaverMode());
           updateTempPreview();
 
@@ -5255,6 +5533,8 @@
       });
       clearTimeout(migrationTimer);
       migrationTimer = setTimeout(scheduleMigration, 5000);
+      clearTimeout(sliderMigrationTimer);
+      pendingSliderSubpageMigrations = {};
       refreshFirmwareVersion();
     });
 
@@ -5314,6 +5594,18 @@
         state.clockBarOn = d.value === true || val === "ON";
         syncClockBarUi();
       },
+      "switch-screen__temperature_degree_symbol": function (val, d) {
+        state.temperatureDegreeSymbolOn = d.value === true || val === "ON";
+        syncClockBarUi();
+      },
+      "switch-screen_temperature_degree_symbol": function (val, d) {
+        state.temperatureDegreeSymbolOn = d.value === true || val === "ON";
+        syncClockBarUi();
+      },
+      "switch-temperature_degree_symbol_enabled": function (val, d) {
+        state.temperatureDegreeSymbolOn = d.value === true || val === "ON";
+        syncClockBarUi();
+      },
       "text-indoor_temp_entity": function (val) {
         state.indoorEntity = val;
         syncInput(els.setIndoorEntity, val);
@@ -5321,6 +5613,12 @@
       "text-outdoor_temp_entity": function (val) {
         state.outdoorEntity = val;
         syncInput(els.setOutdoorEntity, val);
+      },
+      "select-screen__temperature_unit": function (val, d) {
+        state.temperatureUnit = normalizeTemperatureUnit(d.value || val);
+        if (els.setTemperatureUnit) els.setTemperatureUnit.value = state.temperatureUnit;
+        updateTempPreview();
+        renderPreview();
       },
       "number-screensaver_timeout": function (val) {
         syncScreensaverTimeoutLimits(d);
@@ -5454,6 +5752,10 @@
           }
         }
         if (els.setTimezone) els.setTimezone.value = state.timezone;
+        if (normalizeTemperatureUnit(state.temperatureUnit) === "Auto") {
+          updateTempPreview();
+          renderPreview();
+        }
         updateClock();
       },
       "select-screen__clock_format": function (val, d) {
@@ -5474,28 +5776,34 @@
         updateClock();
       },
       "text-screen__ntp_server_1": function (val) {
-        state.ntpServer1 = normalizeNtpServer(val, "0.pool.ntp.org");
-        syncInput(els.setNtpServer1, state.ntpServer1);
+        state.ntpServer1 = normalizeNtpServer(val, NTP_SERVER_DEFAULTS[0]);
+        state.customNtpServers = state.customNtpServers || hasCustomNtpServers();
+        syncNtpServerUi();
       },
       "text-screen__ntp_server_2": function (val) {
-        state.ntpServer2 = normalizeNtpServer(val, "1.pool.ntp.org");
-        syncInput(els.setNtpServer2, state.ntpServer2);
+        state.ntpServer2 = normalizeNtpServer(val, NTP_SERVER_DEFAULTS[1]);
+        state.customNtpServers = state.customNtpServers || hasCustomNtpServers();
+        syncNtpServerUi();
       },
       "text-screen__ntp_server_3": function (val) {
-        state.ntpServer3 = normalizeNtpServer(val, "2.pool.ntp.org");
-        syncInput(els.setNtpServer3, state.ntpServer3);
+        state.ntpServer3 = normalizeNtpServer(val, NTP_SERVER_DEFAULTS[2]);
+        state.customNtpServers = state.customNtpServers || hasCustomNtpServers();
+        syncNtpServerUi();
       },
       "text-ntp_server_1": function (val) {
-        state.ntpServer1 = normalizeNtpServer(val, "0.pool.ntp.org");
-        syncInput(els.setNtpServer1, state.ntpServer1);
+        state.ntpServer1 = normalizeNtpServer(val, NTP_SERVER_DEFAULTS[0]);
+        state.customNtpServers = state.customNtpServers || hasCustomNtpServers();
+        syncNtpServerUi();
       },
       "text-ntp_server_2": function (val) {
-        state.ntpServer2 = normalizeNtpServer(val, "1.pool.ntp.org");
-        syncInput(els.setNtpServer2, state.ntpServer2);
+        state.ntpServer2 = normalizeNtpServer(val, NTP_SERVER_DEFAULTS[1]);
+        state.customNtpServers = state.customNtpServers || hasCustomNtpServers();
+        syncNtpServerUi();
       },
       "text-ntp_server_3": function (val) {
-        state.ntpServer3 = normalizeNtpServer(val, "2.pool.ntp.org");
-        syncInput(els.setNtpServer3, state.ntpServer3);
+        state.ntpServer3 = normalizeNtpServer(val, NTP_SERVER_DEFAULTS[2]);
+        state.customNtpServers = state.customNtpServers || hasCustomNtpServers();
+        syncNtpServerUi();
       },
       "select-screen__rotation": function (val, d) {
         state.screenRotation = normalizeScreenRotation(d.value || val || state.screenRotation);
@@ -5529,6 +5837,20 @@
         if (els.setAutoUpdate) els.setAutoUpdate.checked = state.autoUpdate;
         if (els.updateFreqWrap) els.updateFreqWrap.style.display = state.autoUpdate ? "" : "none";
       },
+      "switch-developer__experimental_features": function (val, d) {
+        state.developerExperimentalFeatures = d.value === true || val === "ON";
+        if (els.setDeveloperExperimentalFeatures) {
+          els.setDeveloperExperimentalFeatures.checked = state.developerExperimentalFeatures;
+        }
+        renderButtonSettings();
+      },
+      "switch-developer_experimental_features": function (val, d) {
+        state.developerExperimentalFeatures = d.value === true || val === "ON";
+        if (els.setDeveloperExperimentalFeatures) {
+          els.setDeveloperExperimentalFeatures.checked = state.developerExperimentalFeatures;
+        }
+        renderButtonSettings();
+      },
       "select-firmware__update_frequency": function (val, d) {
         state.updateFrequency = d.value || val || state.updateFrequency;
         if (els.setUpdateFreq) els.setUpdateFreq.value = state.updateFrequency;
@@ -5545,6 +5867,7 @@
           var slot = parseInt(m[1], 10);
           if (slot < 1 || slot > NUM_SLOTS) return;
           var b = state.buttons[slot - 1];
+          var migrateSliderDirection = buttonConfigHasLegacySliderDirection(val || "");
           var parsed = parseButtonConfig(val || "");
           b.entity = parsed.entity;
           b.label = parsed.label;
@@ -5554,6 +5877,7 @@
           b.unit = parsed.unit;
           b.type = parsed.type;
           b.precision = parsed.precision;
+          if (migrateSliderDirection) saveButtonConfig(slot);
           scheduleRender();
         },
       },
@@ -5679,8 +6003,9 @@
     if (!els.temp) return;
     var show = state.clockBarOn && (state._indoorOn || state._outdoorOn);
     els.temp.className = "sp-temp" + (show ? " sp-visible" : "");
-    var indoor = state._indoorVal != null ? state._indoorVal + "\u00B0" : "24\u00B0";
-    var outdoor = state._outdoorVal != null ? state._outdoorVal + "\u00B0" : "17\u00B0";
+    var unit = clockBarTemperatureUnitSymbol();
+    var indoor = state._indoorVal != null ? state._indoorVal + unit : "24" + unit;
+    var outdoor = state._outdoorVal != null ? state._outdoorVal + unit : "17" + unit;
     if (state._indoorOn && state._outdoorOn) {
       els.temp.textContent = outdoor + " / " + indoor;
     } else if (state._outdoorOn) {
@@ -5696,6 +6021,17 @@
       serializeButtonConfig: serializeButtonConfig,
       parseSubpageConfig: parseSubpageConfig,
       serializeSubpageConfig: serializeSubpageConfig,
+      normalizeTemperatureUnit: normalizeTemperatureUnit,
+      temperatureUnitSymbolFor: function (timezone, unit) {
+        var oldTimezone = state.timezone;
+        var oldUnit = state.temperatureUnit;
+        state.timezone = timezone || oldTimezone;
+        state.temperatureUnit = normalizeTemperatureUnit(unit);
+        var symbol = temperatureUnitSymbol();
+        state.timezone = oldTimezone;
+        state.temperatureUnit = oldUnit;
+        return symbol;
+      },
     };
   }
 

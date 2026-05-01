@@ -1,16 +1,16 @@
 ---
-title: Espcontrol — No-Code Smart Home Touch Controller
+title: EspControl — No-Code Smart Home Touch Controller
 titleTemplate: :title
 description: "No-code smart home controller for ESP32 touchscreens. Easy web installer, full docs, no ESPHome required. Configure cards to control your Home Assistant devices."
 ---
 
-![Espcontrol on a 7-inch touchscreen: home screen with temperature, clock, and control tiles](/images/home_screen_hero.jpg)
+![EspControl on a 7-inch touchscreen: home screen with temperature, clock, and control tiles](/images/home_screen_hero.jpg)
 
-# Espcontrol
+# EspControl
 
 **A no-code, super-easy-to-configure smart home controller.** Configure affordable touchscreens to control devices across your entire smart home — no ESPHome setup, no YAML, no code to write. Just flash, connect, and start adding cards.
 
-Espcontrol is free, open-source firmware that turns **Guition ESP32** touchscreens into beautiful control panels for [Home Assistant](https://www.home-assistant.io/). It comes with **full documentation** and an **[easy-to-use web installer](/getting-started/install)** — you can go from unboxing to a working wall panel in minutes.
+EspControl is free, open-source firmware that turns **Guition ESP32** touchscreens into beautiful control panels for [Home Assistant](https://www.home-assistant.io/). It comes with **full documentation** and an **[easy-to-use web installer](/getting-started/install)** — you can go from unboxing to a working wall panel in minutes.
 
 **Source code and issues:** [github.com/jtenniswood/espcontrol](https://github.com/jtenniswood/espcontrol).
 
@@ -19,6 +19,7 @@ Espcontrol is free, open-source firmware that turns **Guition ESP32** touchscree
 - **Grid layout** — a fixed grid sized to each screen so you can place cards exactly where you want them
 - **Subpage cards** — group related controls into folders to keep the home screen tidy
 - **Flexible card sizes** — make cards Single, Tall, Wide, or Large to suit the control
+- **Current card types** — Switch, Action, Trigger, Sensor, Slider, Cover, Garage Door, Date, World Clock, Weather, and Internal
 - **Edit controls** — drag-and-drop ordering, bulk select, and copy-paste between pages from the built-in web UI
 - **Screensaver** — dims and sleeps after a set time, or wakes automatically from a presence sensor
 
@@ -37,8 +38,8 @@ Espcontrol is free, open-source firmware that turns **Guition ESP32** touchscree
 
 If you find this project useful, consider buying me a coffee to support ongoing development!
 
-<a href="https://www.buymeacoffee.com/jtenniswood">
-  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50" />
+<a href="https://www.buymeacoffee.com/jtenniswood" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="60" style="border-radius:999px;" />
 </a>
 
 ## Next Steps

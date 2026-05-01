@@ -1,7 +1,7 @@
 ---
-title: Trigger
+title: Trigger Cards
 description:
-  How to use trigger cards on your Espcontrol panel to start Home Assistant automations.
+  How to use trigger cards on your EspControl panel to start Home Assistant automations.
 ---
 
 # Trigger
@@ -9,6 +9,10 @@ description:
 A trigger card is a momentary card with no on/off state. When tapped, it flashes the highlight colour and fires an event to Home Assistant that you can use as an automation trigger.
 
 Trigger cards are useful for things like starting scenes, sending notifications, activating scripts, or anything else you'd start with a single tap.
+
+::: tip Running an existing script directly
+If you already have a Home Assistant script and just want a card to run it, use an [Action](/card-types/actions) card with **Run Script**. Trigger cards are best when you want to build a Home Assistant automation around a custom panel event.
+:::
 
 ![Trigger card with a tap gesture icon labelled Doorbell](/images/card-button.png)
 
@@ -58,7 +62,11 @@ Because the automation triggers on the card's **label** rather than its position
 
 ### Verifying Events Are Firing
 
+Before testing, tap **Apply Configuration** on the setup page and wait for the panel to restart. The setup page preview is only a preview; the event is sent when you press the trigger card on the physical panel.
+
 If you want to confirm that events are being sent, go to **Developer Tools > Events** in Home Assistant, type `esphome.push_button_pressed` in the "Listen to events" field, and click **Start listening**. Press the trigger card on your panel. Home-screen triggers include the label and slot number; subpage triggers include the label.
+
+If nothing appears, check that the panel is connected to Home Assistant and that **Allow the device to perform Home Assistant actions** is enabled for the ESPHome device. Without that permission, Home Assistant blocks the event before it reaches the event listener.
 
 ### Example Event Data
 

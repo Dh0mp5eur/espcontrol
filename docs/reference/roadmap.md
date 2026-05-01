@@ -1,23 +1,21 @@
 ---
-title: Roadmap
+title: EspControl Roadmap
 description:
-  What's next for Espcontrol — community-driven development via GitHub issues and releases.
+  What's next for EspControl — community-driven development via GitHub issues and releases.
 ---
 
 # Roadmap
 
-Espcontrol is actively developed and improved based on user feedback. There is no fixed public roadmap — features and priorities evolve based on what users need and what Home Assistant and the hardware support.
+EspControl is actively developed and improved based on user feedback. There is no fixed public roadmap — features and priorities evolve based on what users need and what Home Assistant and the hardware support.
 
 ## Priorities
 
-The next areas of focus are richer cards and controls for common Home Assistant workflows:
+The next areas of focus are richer controls for Home Assistant workflows that are not already covered by the current card set:
 
 | Item | Description |
 | --- | --- |
-| **Climate controls** | Adjust target temperature, mode, and related climate settings from the panel |
 | **Media controls** | Control playback, volume, and common media actions |
-| **Weather forecast card** | Show upcoming weather conditions, not just the current weather state |
-| **Calendar preview card** | Preview upcoming calendar events directly on the panel |
+| **Calendar event preview** | Preview upcoming calendar events directly on the panel |
 
 These are planned directions, not commitments. The order and scope may change based on community feedback, Home Assistant support, and what works well on the screen hardware.
 
@@ -29,6 +27,7 @@ These ideas are being explored, but are not yet committed for a specific release
 | --- | --- |
 | **Independent card colour controls** | Configure colours per card instead of relying only on global colour settings |
 | **Images in cards** | Add image support for richer visual cards |
+| **Expanded weather forecasts** | Add richer forecast layouts beyond the Weather card's current Tomorrow high/low display |
 | **Notification service** | Send notifications or alerts to the panel from Home Assistant |
 
 If there's a feature you'd like to see, open a feature request on GitHub.

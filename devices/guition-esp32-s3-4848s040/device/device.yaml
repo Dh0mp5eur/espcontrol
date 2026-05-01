@@ -22,6 +22,10 @@ esp32:
       # The S3 display stack leaves little internal RAM for HTTPS OTA checks.
       # Allocate mbedTLS buffers from PSRAM so firmware downloads can connect.
       CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC: "y"
+      # Keep WiFi startup inside the internal-RAM budget after the RGB display
+      # and LVGL buffers are initialized.
+      CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM: "8"
+      CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP: "y"
 
 # ---------------------------------------------------------------------------
 # External component
@@ -118,6 +122,15 @@ ota:
 packages:
   core_infra: !include ../../../common/device/core_infra.yaml
 
+# The 4848S040 USB-C port is exposed as UART0 through a USB-UART bridge.
+# GPIO19/20 are used by the touchscreen/display path, so USB_SERIAL_JTAG
+# stops working once the application starts.
+logger:
+  hardware_uart: UART0
+
+wifi:
+  use_psram: true
+
 # ---------------------------------------------------------------------------
 # Backlight (LEDC PWM output + monochromatic light entity)
 # ---------------------------------------------------------------------------
@@ -164,7 +177,6 @@ switch:
     icon: mdi:electric-switch
     pin:
       number: GPIO40
-      inverted: true
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
       then:
@@ -179,7 +191,6 @@ switch:
     icon: mdi:electric-switch
     pin:
       number: GPIO2
-      inverted: true
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
       then:
@@ -194,7 +205,6 @@ switch:
     icon: mdi:electric-switch
     pin:
       number: GPIO1
-      inverted: true
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
       then:
@@ -261,6 +271,9 @@ display:
   - platform: mipi_rgb
     model: GUITION-4848S040
     id: my_display
+    # Start WiFi before the RGB panel allocates its frame buffers; otherwise the
+    # WiFi driver can fail to claim enough internal RX buffers on fresh boots.
+    setup_priority: 240
     pclk_frequency: 8MHz
     update_interval: never
     auto_clear_enabled: False
@@ -270,6 +283,8 @@ display:
 # ---------------------------------------------------------------------------
 lvgl:
   id: main_lvgl
+  # Keep LVGL after WiFi and after the display driver.
+  setup_priority: 230
   buffer_size: 25%
   displays: my_display
   rotation: 180

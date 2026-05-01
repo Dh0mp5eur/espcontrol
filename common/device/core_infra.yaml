@@ -9,6 +9,18 @@ api:
   reboot_timeout: 0s
   homeassistant_states: true
   homeassistant_services: true
+  on_client_connected:
+    - lambda: |-
+        refresh_weather_forecast_cards();
+    - delay: 10s
+    - lambda: |-
+        refresh_weather_forecast_cards();
+
+interval:
+  - interval: 1h
+    then:
+      - lambda: |-
+          refresh_weather_forecast_cards();
 
 logger:
   logs:
@@ -40,6 +52,9 @@ web_server:
     - id: sg_firmware
       name: "Firmware"
       sorting_weight: 40
+    - id: sg_developer
+      name: "Developer"
+      sorting_weight: 90
 
 button:
   - platform: template
@@ -55,3 +70,15 @@ button:
         - lambda: |-
             global_preferences->sync();
             App.safe_reboot();
+
+switch:
+  - platform: template
+    name: "Developer: Experimental Features"
+    internal: true
+    id: developer_experimental_features
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    entity_category: config
+    icon: "mdi:flask-outline"
+    web_server:
+      sorting_group_id: sg_developer

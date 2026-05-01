@@ -1,7 +1,7 @@
 ---
-title: Firmware Updates
+title: EspControl Firmware Updates
 description:
-  How the Espcontrol panel checks for and installs firmware updates over the air, and how to control update behaviour.
+  How the EspControl panel checks for and installs firmware updates over the air, and how to control update behaviour.
 ---
 
 # Firmware Updates
@@ -24,6 +24,10 @@ These are configured from the **Settings** tab in the [Setup](/features/setup) u
 3. The panel restarts with the new firmware. Your settings (cards, colours, temperatures, etc.) are preserved.
 
 The update usually takes a minute or two. The display may show a loading screen briefly during the restart.
+
+## When New Cards Appear
+
+Some features, especially new card types, need both the web setup page and the panel firmware. If the setup page shows a new card type but the panel does not display it correctly after you apply the configuration, check for a firmware update and install the latest version.
 
 ## Checking Updates from Home Assistant
 
