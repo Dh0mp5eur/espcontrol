@@ -237,11 +237,15 @@ const ICON_GROUPS = {
   'Monitor': 'Media & Entertainment',
   'Movie Roll': 'Media & Entertainment',
   'Music': 'Media & Entertainment',
+  'Play Pause': 'Media & Entertainment',
   'Projector': 'Media & Entertainment',
   'Projector Off': 'Media & Entertainment',
   'Speaker': 'Media & Entertainment',
+  'Skip Next': 'Media & Entertainment',
+  'Skip Previous': 'Media & Entertainment',
   'Television': 'Media & Entertainment',
   'Television Off': 'Media & Entertainment',
+  'Volume High': 'Media & Entertainment',
 
   'Fountain': 'Water & Outdoors',
   'Hot Tub': 'Water & Outdoors',
@@ -290,6 +294,7 @@ const ICON_GROUPS = {
   'Package': 'General',
   'Package Closed': 'General',
   'Plus': 'General',
+  'Progress Clock': 'General',
   'Timer': 'General',
   'Trash Can': 'General',
 }
