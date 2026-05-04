@@ -3131,11 +3131,15 @@ inline void send_media_seek_action(const std::string &entity_id, int value, floa
 
 // ── Button click dispatch ─────────────────────────────────────────────
 
+inline bool experimental_card_enabled(const ParsedCfg &p, bool developer_experimental_features);
+
 // Handle a main-grid button press: dispatch push event, subpage nav,
 // slider toggle, or entity toggle based on the config string.
 inline void handle_button_click(const std::string &cfg, int slot_num,
-                                lv_obj_t *btn_obj) {
+                                lv_obj_t *btn_obj,
+                                bool developer_experimental_features = false) {
   ParsedCfg p = parse_cfg(cfg);
+  if (!experimental_card_enabled(p, developer_experimental_features)) return;
   if (p.type == "sensor" || p.type == "text_sensor" ||
       p.type == "calendar" || p.type == "timezone" ||
       p.type == "weather_forecast") return;
@@ -4098,9 +4102,14 @@ struct GridConfig {
   bool developer_experimental_features;
 };
 
-inline bool experimental_card_enabled(const ParsedCfg &p, const GridConfig &cfg) {
-  if (p.type == "climate") return cfg.developer_experimental_features;
+inline bool experimental_card_enabled(const ParsedCfg &p, bool developer_experimental_features) {
+  if (p.type == "climate") return developer_experimental_features;
+  if (p.type == "cover" && cover_command_mode(p.sensor)) return developer_experimental_features;
   return true;
+}
+
+inline bool experimental_card_enabled(const ParsedCfg &p, const GridConfig &cfg) {
+  return experimental_card_enabled(p, cfg.developer_experimental_features);
 }
 
 // ── Phase 1: Visual setup ────────────────────────────────────────────
@@ -4594,6 +4603,7 @@ inline void grid_phase2(
       auto &sb = sp_btns[bn - 1];
       ParsedCfg sb_cfg;
       sb_cfg.type = sb.type;
+      sb_cfg.sensor = sb.sensor;
       if (!experimental_card_enabled(sb_cfg, cfg)) continue;
       int col, row;
       if (sp_ord.has_back_token) { col = gp % COLS; row = gp / COLS; }
