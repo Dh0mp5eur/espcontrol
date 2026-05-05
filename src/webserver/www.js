@@ -3227,7 +3227,7 @@
       experimentalToggle.input.addEventListener("change", function () {
         state.developerExperimentalFeatures = this.checked;
         postSwitch("Developer: Experimental Features", state.developerExperimentalFeatures);
-        renderButtonSettings();
+        scheduleRender();
       });
       els.setDeveloperExperimentalFeatures = experimentalToggle.input;
       config.appendChild(makeCollapsibleCard("Developer", devBody, true));
@@ -6287,14 +6287,14 @@
         if (els.setDeveloperExperimentalFeatures) {
           els.setDeveloperExperimentalFeatures.checked = state.developerExperimentalFeatures;
         }
-        renderButtonSettings();
+        scheduleRender();
       },
       "switch-developer_experimental_features": function (val, d) {
         state.developerExperimentalFeatures = d.value === true || val === "ON";
         if (els.setDeveloperExperimentalFeatures) {
           els.setDeveloperExperimentalFeatures.checked = state.developerExperimentalFeatures;
         }
-        renderButtonSettings();
+        scheduleRender();
       },
       "select-firmware__update_frequency": function (val, d) {
         state.updateFrequency = d.value || val || state.updateFrequency;
