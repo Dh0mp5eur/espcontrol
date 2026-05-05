@@ -228,7 +228,7 @@
     ".sp-sensor-preview{display:flex;align-items:baseline;gap:1px;color:#fff}" +
     ".sp-forecast-preview{white-space:nowrap;gap:0}" +
     ".sp-sensor-value{font-size:var(--btn-icon);line-height:1;font-weight:300}" +
-    ".sp-sensor-unit{font-size:var(--btn-label);line-height:1;opacity:.7}" +
+    ".sp-sensor-unit{font-size:var(--btn-label);line-height:1;color:#fff}" +
     ".sp-slider-preview{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;pointer-events:none}" +
     ".sp-slider-track{width:100%;height:100%;position:relative}" +
     ".sp-slider-fill{position:absolute;left:0;bottom:0;width:100%;height:80%;background:var(--accent);" +
