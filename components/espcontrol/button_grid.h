@@ -4787,6 +4787,7 @@ inline void grid_phase2(
         lv_obj_set_style_bg_opa(sc, LV_OPA_TRANSP, LV_PART_MAIN);
         lv_obj_set_style_border_width(sc, 0, LV_PART_MAIN);
         lv_obj_set_style_pad_all(sc, 0, LV_PART_MAIN);
+        lv_obj_set_style_pad_column(sc, 0, LV_PART_MAIN);
         lv_obj_set_layout(sc, LV_LAYOUT_FLEX);
         lv_obj_set_style_flex_flow(sc, LV_FLEX_FLOW_ROW, LV_PART_MAIN);
         lv_obj_set_style_flex_cross_place(sc, LV_FLEX_ALIGN_END, LV_PART_MAIN);
@@ -4825,6 +4826,7 @@ inline void grid_phase2(
         lv_obj_set_style_bg_opa(sc, LV_OPA_TRANSP, LV_PART_MAIN);
         lv_obj_set_style_border_width(sc, 0, LV_PART_MAIN);
         lv_obj_set_style_pad_all(sc, 0, LV_PART_MAIN);
+        lv_obj_set_style_pad_column(sc, 0, LV_PART_MAIN);
         lv_obj_set_layout(sc, LV_LAYOUT_FLEX);
         lv_obj_set_style_flex_flow(sc, LV_FLEX_FLOW_ROW, LV_PART_MAIN);
         lv_obj_set_style_flex_cross_place(sc, LV_FLEX_ALIGN_END, LV_PART_MAIN);
@@ -4859,6 +4861,7 @@ inline void grid_phase2(
         lv_obj_set_style_bg_opa(sc, LV_OPA_TRANSP, LV_PART_MAIN);
         lv_obj_set_style_border_width(sc, 0, LV_PART_MAIN);
         lv_obj_set_style_pad_all(sc, 0, LV_PART_MAIN);
+        lv_obj_set_style_pad_column(sc, 0, LV_PART_MAIN);
         lv_obj_set_layout(sc, LV_LAYOUT_FLEX);
         lv_obj_set_style_flex_flow(sc, LV_FLEX_FLOW_ROW, LV_PART_MAIN);
         lv_obj_set_style_flex_cross_place(sc, LV_FLEX_ALIGN_END, LV_PART_MAIN);
@@ -4903,6 +4906,7 @@ inline void grid_phase2(
         lv_obj_set_style_bg_opa(sc, LV_OPA_TRANSP, LV_PART_MAIN);
         lv_obj_set_style_border_width(sc, 0, LV_PART_MAIN);
         lv_obj_set_style_pad_all(sc, 0, LV_PART_MAIN);
+        lv_obj_set_style_pad_column(sc, 0, LV_PART_MAIN);
         lv_obj_set_layout(sc, LV_LAYOUT_FLEX);
         lv_obj_set_style_flex_flow(sc, LV_FLEX_FLOW_ROW, LV_PART_MAIN);
         lv_obj_set_style_flex_cross_place(sc, LV_FLEX_ALIGN_END, LV_PART_MAIN);
@@ -4932,6 +4936,7 @@ inline void grid_phase2(
         lv_obj_set_style_bg_opa(sc, LV_OPA_TRANSP, LV_PART_MAIN);
         lv_obj_set_style_border_width(sc, 0, LV_PART_MAIN);
         lv_obj_set_style_pad_all(sc, 0, LV_PART_MAIN);
+        lv_obj_set_style_pad_column(sc, 0, LV_PART_MAIN);
         lv_obj_set_layout(sc, LV_LAYOUT_FLEX);
         lv_obj_set_style_flex_flow(sc, LV_FLEX_FLOW_ROW, LV_PART_MAIN);
         lv_obj_set_style_flex_cross_place(sc, LV_FLEX_ALIGN_END, LV_PART_MAIN);
@@ -5324,6 +5329,7 @@ inline void grid_phase2(
           lv_obj_set_style_bg_opa(switch_sensor_ctr, LV_OPA_TRANSP, LV_PART_MAIN);
           lv_obj_set_style_border_width(switch_sensor_ctr, 0, LV_PART_MAIN);
           lv_obj_set_style_pad_all(switch_sensor_ctr, 0, LV_PART_MAIN);
+          lv_obj_set_style_pad_column(switch_sensor_ctr, 0, LV_PART_MAIN);
           lv_obj_set_layout(switch_sensor_ctr, LV_LAYOUT_FLEX);
           lv_obj_set_style_flex_flow(switch_sensor_ctr, LV_FLEX_FLOW_ROW, LV_PART_MAIN);
           lv_obj_set_style_flex_cross_place(switch_sensor_ctr, LV_FLEX_ALIGN_END, LV_PART_MAIN);
