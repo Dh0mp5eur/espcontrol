@@ -1663,7 +1663,7 @@
       if (!r.ok) return null;
       return r.json();
     }).then(function (data) {
-      if (data) callback(data);
+      if (data && callback) callback(data);
       return data;
     }).catch(function () {});
   }
@@ -1680,12 +1680,23 @@
     }
   }
 
-  function initialStateEntities() {
+  function cardStateEntities() {
     var items = [
       ["text", "Button Order"],
       ["text", "Button On Color"],
       ["text", "Button Off Color"],
       ["text", "Sensor Card Color"],
+    ];
+
+    for (var i = 1; i <= NUM_SLOTS; i++) {
+      items.push(["text", "Button " + i + " Config"]);
+    }
+
+    return items;
+  }
+
+  function settingsStateEntities() {
+    var items = [
       ["switch", "Indoor Temp Enable"],
       ["switch", "Outdoor Temp Enable"],
       ["switch", "Screen: Clock Bar"],
@@ -1730,8 +1741,12 @@
       items.push(["select", "Screen: Rotation"]);
     }
 
+    return items;
+  }
+
+  function subpageStateEntities() {
+    var items = [];
     for (var i = 1; i <= NUM_SLOTS; i++) {
-      items.push(["text", "Button " + i + " Config"]);
       items.push(["text", "Subpage " + i + " Config"]);
       items.push(["text", "Subpage " + i + " Config Ext"]);
       items.push(["text", "Subpage " + i + " Config Ext 2"]);
@@ -1741,23 +1756,42 @@
     return items;
   }
 
-  function loadInitialState(handleState) {
-    var items = initialStateEntities();
-    var chain = Promise.resolve();
+  function loadStateItems(items, handleState, concurrency) {
+    var index = 0;
+    var active = 0;
     var loadedCount = 0;
+    var limit = Math.max(1, concurrency || 1);
 
-    items.forEach(function (item) {
-      chain = chain.then(function () {
-        return getJsonQuietly(entityDetailPath(item[0], item[1]), function (data) {
-          if (data) {
-            loadedCount++;
-            handleState(data);
-          }
-        });
-      });
+    return new Promise(function (resolve) {
+      function done() {
+        active--;
+        run();
+      }
+
+      function run() {
+        if (index >= items.length && active === 0) {
+          resolve(loadedCount);
+          return;
+        }
+
+        while (active < limit && index < items.length) {
+          var item = items[index++];
+          active++;
+          getJsonQuietly(entityDetailPath(item[0], item[1])).then(function (data) {
+            if (data) {
+              loadedCount++;
+              handleState(data);
+            }
+          }).then(done, done);
+        }
+      }
+
+      run();
     });
+  }
 
-    chain.then(function () {
+  function loadInitialState(handleState) {
+    loadStateItems(cardStateEntities(), handleState, 4).then(function (loadedCount) {
       if (loadedCount === 0) {
         showBanner("Reconnecting to device\u2026", "offline");
         setTimeout(connectEvents, 5000);
@@ -1767,6 +1801,10 @@
       migrationTimer = setTimeout(scheduleMigration, 5000);
       clearTimeout(sliderMigrationTimer);
       pendingSliderSubpageMigrations = {};
+
+      loadStateItems(settingsStateEntities(), handleState, 2).then(function () {
+        loadStateItems(subpageStateEntities(), handleState, 2);
+      });
     });
   }
 
