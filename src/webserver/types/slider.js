@@ -66,13 +66,27 @@ function sliderTypeFactory(opts) {
         if (input) input.value = value;
       }
 
-      function useCoverOpenDefaultIcon() {
-        return opts.interactionMode && (!b.icon || b.icon === "Auto" || b.icon === opts.defaultIcon);
+      function coverModeDefaultIcon(mode) {
+        if (mode === "open") return opts.defaultIconOn;
+        if (mode === "stop") return "Minus";
+        return opts.defaultIcon;
       }
 
-      function applyCoverOpenDefaultIcon(mode) {
-        if (mode !== "open" || !useCoverOpenDefaultIcon()) return;
-        b.icon = opts.defaultIconOn;
+      function useCoverModeDefaultIcon() {
+        return opts.interactionMode && (
+          !b.icon ||
+          b.icon === "Auto" ||
+          b.icon === opts.defaultIcon ||
+          b.icon === opts.defaultIconOn ||
+          b.icon === "Minus"
+        );
+      }
+
+      function applyCoverModeDefaultIcon(mode) {
+        if (!useCoverModeDefaultIcon()) return;
+        var icon = coverModeDefaultIcon(mode);
+        if (b.icon === icon) return;
+        b.icon = icon;
         helpers.saveField("icon", b.icon);
         syncIconSection(singleIconSection, b.icon);
         syncIconSection(offIconSection, b.icon);
@@ -94,8 +108,8 @@ function sliderTypeFactory(opts) {
           b.icon_on = "Auto";
           helpers.saveField("icon_on", "Auto");
         }
-        if (allowCoverCommands) {
-          applyCoverOpenDefaultIcon(storedCoverMode);
+        if (allowCoverCommands && coverCommandMode(storedCoverMode)) {
+          applyCoverModeDefaultIcon(storedCoverMode);
         }
 
         var imf = document.createElement("div");
@@ -167,7 +181,7 @@ function sliderTypeFactory(opts) {
           if (coverCommandMode(coverMode)) {
             b.icon_on = "Auto";
             helpers.saveField("icon_on", "Auto");
-            applyCoverOpenDefaultIcon(coverMode);
+            applyCoverModeDefaultIcon(coverMode);
           }
           if (persist) {
             b.sensor = coverMode;
