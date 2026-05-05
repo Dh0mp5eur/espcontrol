@@ -93,7 +93,6 @@ registerButtonType("subpage", {
     var sensorInp = helpers.textInput(helpers.idPrefix + "sensor", sensorEntity, "e.g. sensor.open_windows");
     sf.appendChild(sensorInp);
     sensorField.appendChild(sf);
-    stateCond.appendChild(sensorField);
     helpers.requireField(sensorInp, "Add a sensor entity before saving.", function () {
       return showState && (mode === "numeric" || mode === "text");
     });
@@ -164,11 +163,12 @@ registerButtonType("subpage", {
     });
     pf.appendChild(precisionSelect);
     numericSection.appendChild(pf);
-    stateCond.appendChild(numericSection);
 
     var textSection = condField();
     textSection.appendChild(makeSubpageIconPicker("Icon", "text-icon"));
-    stateCond.appendChild(textSection);
+    sensorField.appendChild(numericSection);
+    sensorField.appendChild(textSection);
+    stateCond.appendChild(sensorField);
 
     panel.appendChild(stateCond);
 
