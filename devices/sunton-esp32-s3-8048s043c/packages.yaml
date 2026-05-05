@@ -17,11 +17,17 @@ substitutions:
   unit_font: label_font
   sensor_value_font: statistics_font
   setup_icon_font_id: icon_font_setup
+  setup_title_font_id: setup_title_font
+  setup_body_font_id: setup_body_font
+  setup_pad_row: "20"
+  setup_loading_pad_row: "40"
+  setup_action_button_width: "200"
+  setup_action_button_height: "56"
+  setup_action_button_radius: "12"
   padding: 14px
   radius: 8px
   main_page_pad_top: "38"
   main_page_compact_pad_top: "4"
-  setup_loading_pad_row: "40"
   clock_font_size: "160"
   clock_cx: "400"
   clock_cy: "240"
