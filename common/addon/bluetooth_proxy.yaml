@@ -2,8 +2,7 @@
 # BLUETOOTH PROXY - Optional Home Assistant Bluetooth proxy support
 # =============================================================================
 # The firmware includes BLE proxy support, but the BLE stack is disabled on boot.
-# It only starts when Developer/Experimental Features and Bluetooth Proxy are
-# both enabled.
+# It only starts when Bluetooth Proxy is enabled.
 # =============================================================================
 
 esp32_ble:
@@ -20,14 +19,11 @@ esphome:
     then:
       - if:
           condition:
-            and:
-              - switch.is_on: developer_experimental_features
-              - switch.is_on: bluetooth_proxy_enabled
+            switch.is_on: bluetooth_proxy_enabled
           then:
             - ble.enable:
           else:
             - ble.disable:
-            - switch.turn_off: bluetooth_proxy_enabled
 
 switch:
   - platform: template
@@ -41,13 +37,6 @@ switch:
     web_server:
       sorting_group_id: sg_connectivity
     on_turn_on:
-      - if:
-          condition:
-            switch.is_on: developer_experimental_features
-          then:
-            - ble.enable:
-          else:
-            - logger.log: "Bluetooth proxy requires Developer/Experimental Features."
-            - switch.turn_off: bluetooth_proxy_enabled
+      - ble.enable:
     on_turn_off:
       - ble.disable:
