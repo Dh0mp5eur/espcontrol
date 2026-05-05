@@ -2972,7 +2972,7 @@
     bluetoothBadge.innerHTML = '<span class="sp-card-badge-dot"></span><span>ON</span>';
     els.setBluetoothProxyBadge = bluetoothBadge;
     syncBluetoothProxyUi();
-    var bluetoothCard = makeCollapsibleCard("Bluetooth", bluetoothBody, true, bluetoothBadge);
+    var bluetoothCard = makeCollapsibleCard("Bluetooth Proxy", bluetoothBody, true, bluetoothBadge);
     config.appendChild(bluetoothCard);
 
     var fwBody = document.createElement("div");
