@@ -110,6 +110,7 @@ const ICON_GROUPS = {
   'Curtains Closed': 'Covers & Shading',
   'Roller Shade': 'Covers & Shading',
   'Roller Shade Closed': 'Covers & Shading',
+  'Stop': 'Covers & Shading',
   'Window Closed': 'Covers & Shading',
   'Window Open': 'Covers & Shading',
   'Window Shutter': 'Covers & Shading',
