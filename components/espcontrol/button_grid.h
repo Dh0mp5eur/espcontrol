@@ -3818,8 +3818,6 @@ inline void subscribe_media_slider_state(lv_obj_t *btn_ptr,
       [btn_ptr, ctx](esphome::StringRef state) {
         std::string state_text = string_ref_limited(state, HA_SHORT_STATE_MAX_LEN);
         ctx->media_playing = state_text == "playing";
-        if (ctx->media_playing) lv_obj_add_state(btn_ptr, LV_STATE_CHECKED);
-        else lv_obj_clear_state(btn_ptr, LV_STATE_CHECKED);
         if (ctx->media_status_lbl) {
           std::string label = media_status_text(state_text);
           lv_label_set_text(ctx->media_status_lbl, label.c_str());
