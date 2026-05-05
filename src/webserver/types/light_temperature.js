@@ -33,6 +33,7 @@ registerButtonType("light_temperature", {
   label: "Light Temperature Slider",
   experimental: "light_temperature",
   allowInSubpage: true,
+  hideLabel: true,
   labelPlaceholder: "e.g. Living Room",
   onSelect: function (b) {
     b.sensor = "";
@@ -119,13 +120,46 @@ registerButtonType("light_temperature", {
       helpers.saveField("precision", b.precision);
     });
 
-    // Show kelvin value as label when light is on
-    var kRow = helpers.toggleRow("Show kelvin value when on", helpers.idPrefix + "show-kelvin", b.sensor === "kelvin");
-    panel.appendChild(kRow.row);
-    kRow.input.addEventListener("change", function () {
-      b.sensor = this.checked ? "kelvin" : "";
+    // Label mode
+    var labelMode = b.sensor === "kelvin" ? "setting" : "label";
+    var labelModeField = document.createElement("div");
+    labelModeField.className = "sp-field";
+    labelModeField.appendChild(helpers.fieldLabel("Label"));
+    var labelModeSeg = document.createElement("div");
+    labelModeSeg.className = "sp-segment";
+    var labelBtn = document.createElement("button");
+    labelBtn.type = "button";
+    labelBtn.textContent = "Label";
+    var settingBtn = document.createElement("button");
+    settingBtn.type = "button";
+    settingBtn.textContent = "Setting";
+    labelModeSeg.appendChild(labelBtn);
+    labelModeSeg.appendChild(settingBtn);
+    labelModeField.appendChild(labelModeSeg);
+    panel.appendChild(labelModeField);
+
+    var labelSection = condField();
+    var lf = document.createElement("div");
+    lf.className = "sp-field";
+    lf.appendChild(helpers.fieldLabel("Label", helpers.idPrefix + "label"));
+    var labelInp = helpers.textInput(helpers.idPrefix + "label", b.label, "e.g. Living Room");
+    lf.appendChild(labelInp);
+    labelSection.appendChild(lf);
+    panel.appendChild(labelSection);
+    helpers.bindField(labelInp, "label", true);
+
+    function setLabelMode(mode, persist) {
+      labelMode = mode === "setting" ? "setting" : "label";
+      labelBtn.classList.toggle("active", labelMode === "label");
+      settingBtn.classList.toggle("active", labelMode === "setting");
+      labelSection.classList.toggle("sp-visible", labelMode === "label");
+      if (!persist) return;
+      b.sensor = labelMode === "setting" ? "kelvin" : "";
       helpers.saveField("sensor", b.sensor);
-    });
+    }
+    labelBtn.addEventListener("click", function () { setLabelMode("label", true); });
+    settingBtn.addEventListener("click", function () { setLabelMode("setting", true); });
+    setLabelMode(labelMode, false);
   },
   renderPreview: function (b, helpers) {
     var label = b.label || b.entity || "Light Temp";
