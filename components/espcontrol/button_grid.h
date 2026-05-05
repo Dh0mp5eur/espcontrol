@@ -4880,10 +4880,7 @@ inline void grid_phase2(
       lv_obj_set_style_text_font(sb_btn, sp_btn_fnt, LV_PART_MAIN);
       lv_obj_set_style_text_color(sb_btn, sp_txt_color, LV_PART_MAIN);
       lv_obj_set_style_shadow_width(sb_btn, 0, LV_PART_MAIN);
-      if (has_off) lv_obj_set_style_bg_color(sb_btn, lv_color_hex(off_val),
-        static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT));
-      if (has_on) lv_obj_set_style_bg_color(sb_btn, lv_color_hex(on_val),
-        static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_CHECKED));
+      apply_button_colors(sb_btn, has_on, on_val, has_off, off_val);
       int cs = sp_ord.is_wide[bn - 1] ? 2 : 1;
       lv_obj_set_grid_cell(sb_btn, LV_GRID_ALIGN_STRETCH, col, cs, LV_GRID_ALIGN_STRETCH, row, rs);
 
