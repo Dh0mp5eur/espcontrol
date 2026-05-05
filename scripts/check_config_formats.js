@@ -349,6 +349,17 @@ assertButtonRoundTrip(hooks, "media play pause card", {
   precision: "",
 }, false);
 
+assertButtonRoundTrip(hooks, "media play pause state card", {
+  entity: "media_player.office",
+  label: "Office",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "play_pause",
+  unit: "",
+  type: "media",
+  precision: "state",
+}, false);
+
 assertButtonRoundTrip(hooks, "media previous card", {
   entity: "media_player.living_room",
   label: "Previous",

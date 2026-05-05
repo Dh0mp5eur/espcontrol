@@ -8,7 +8,7 @@ registerButtonType("media", {
     b.entity = "";
     b.sensor = "play_pause";
     b.unit = "";
-    b.precision = "";
+    b.precision = b.sensor === "play_pause" && b.precision === "state" ? "state" : "";
     b.icon = "Auto";
     b.icon_on = "Auto";
   },
@@ -73,6 +73,21 @@ registerButtonType("media", {
       modeSelect.appendChild(opt);
     });
     modeSelect.value = b.sensor;
+    var displayField = document.createElement("div");
+    var displaySelect = document.createElement("select");
+
+    function syncDisplayField() {
+      if (b.sensor === "play_pause") {
+        displayField.style.display = "";
+      } else {
+        displayField.style.display = "none";
+        if (b.precision) {
+          b.precision = "";
+          helpers.saveField("precision", "");
+        }
+      }
+    }
+
     modeSelect.addEventListener("change", function () {
       var oldMode = b.sensor;
       b.sensor = validMode(this.value);
@@ -81,9 +96,32 @@ registerButtonType("media", {
         helpers.saveField("icon", b.icon);
       }
       helpers.saveField("sensor", b.sensor);
+      syncDisplayField();
     });
     mf.appendChild(modeSelect);
     panel.appendChild(mf);
+
+    displayField.className = "sp-field";
+    displayField.appendChild(helpers.fieldLabel("Display", helpers.idPrefix + "media-display"));
+    displaySelect.className = "sp-select";
+    displaySelect.id = helpers.idPrefix + "media-display";
+    [
+      ["", "Label"],
+      ["state", "State"],
+    ].forEach(function (entry) {
+      var opt = document.createElement("option");
+      opt.value = entry[0];
+      opt.textContent = entry[1];
+      displaySelect.appendChild(opt);
+    });
+    displaySelect.value = b.precision === "state" ? "state" : "";
+    displaySelect.addEventListener("change", function () {
+      b.precision = this.value === "state" ? "state" : "";
+      helpers.saveField("precision", b.precision);
+    });
+    displayField.appendChild(displaySelect);
+    panel.appendChild(displayField);
+    syncDisplayField();
 
     panel.appendChild(helpers.makeIconPicker(
       helpers.idPrefix + "icon-picker", helpers.idPrefix + "icon",
@@ -134,7 +172,8 @@ registerButtonType("media", {
       iconHtml:
         '<span class="sp-btn-icon mdi mdi-' + (b.icon && b.icon !== "Auto" ? iconSlug(b.icon) : info.icon) + '"></span>',
       labelHtml:
-        '<span class="sp-btn-label-row"><span class="sp-btn-label">' + helpers.escHtml(label) + '</span>' +
+        '<span class="sp-btn-label-row"><span class="sp-btn-label">' +
+        helpers.escHtml(mode === "play_pause" && b.precision === "state" ? "Playing" : label) + '</span>' +
         badge + '</span>',
     };
   },

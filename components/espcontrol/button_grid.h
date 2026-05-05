@@ -3572,6 +3572,10 @@ inline std::string media_action_label(const ParsedCfg &p, const std::string &mod
   return p.label.empty() ? media_default_label(mode) : p.label;
 }
 
+inline bool media_play_pause_show_state(const ParsedCfg &p) {
+  return media_card_mode(p.sensor) == "play_pause" && p.precision == "state";
+}
+
 inline void media_format_time(float seconds, char *buf, size_t size) {
   if (!buf || size == 0) return;
   if (seconds < 0.0f || !std::isfinite(seconds)) seconds = 0.0f;
@@ -3647,7 +3651,9 @@ inline void setup_media_action_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
     lv_obj_align(icon_lbl, LV_ALIGN_TOP_LEFT, 0, 0);
   }
   if (text_lbl) {
-    std::string label = media_action_label(p, mode);
+    std::string label = media_play_pause_show_state(p)
+      ? std::string("Paused")
+      : media_action_label(p, mode);
     lv_label_set_text(text_lbl, label.c_str());
     lv_obj_align(text_lbl, LV_ALIGN_BOTTOM_LEFT, 0, 0);
     configure_button_label_wrap(text_lbl);
@@ -4538,7 +4544,7 @@ inline void grid_phase2(
       if (!p.entity.empty()) {
         std::string mode = media_card_mode(p.sensor);
         if (mode == "play_pause") {
-          subscribe_media_state(s.btn, nullptr, p.entity);
+          subscribe_media_state(s.btn, media_play_pause_show_state(p) ? s.text_lbl : nullptr, p.entity);
         } else if (media_playback_button_mode(mode)) {
           // Previous/next are momentary actions and do not reflect player state.
         } else {
@@ -5180,7 +5186,7 @@ inline void grid_phase2(
               if (c) send_media_playback_action(c->entity, media_card_mode(c->sensor));
             }, LV_EVENT_CLICKED, ctx);
             if (mode == "play_pause")
-              subscribe_media_state(sb_btn, nullptr, mp.entity);
+              subscribe_media_state(sb_btn, media_play_pause_show_state(mp) ? stl : nullptr, mp.entity);
           }
         } else {
           lv_obj_t *svl = nullptr;

@@ -18,6 +18,7 @@ Media cards control Home Assistant `media_player` entities from the panel.
 2. Choose a **Media Mode**.
 3. Enter a **Media Player Entity** such as `media_player.living_room`.
 4. Set a **Label** and **Icon** if you want to override the Home Assistant name.
+5. For **Play/Pause Button**, choose whether the card displays the label, such as `Office`, or the player state, such as `Playing`.
 
 For playback controls, add one Media card for each button you want, using the same media player entity on each card.
 
@@ -25,7 +26,7 @@ For playback controls, add one Media card for each button you want, using the sa
 
 | Mode | What it does |
 | --- | --- |
-| **Play/Pause Button** | Shows one normal button that sends play/pause. |
+| **Play/Pause Button** | Shows one normal button that sends play/pause. It can display either the card label or the current player state. |
 | **Previous Button** | Shows one normal button that skips to the previous track. |
 | **Next Button** | Shows one normal button that skips to the next track. |
 | **Volume Slider** | Shows a horizontal slider and the current volume number. Dragging it updates the number before sending the new volume when you release. |
