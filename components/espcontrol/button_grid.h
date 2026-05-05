@@ -3287,12 +3287,18 @@ struct SliderCtx {
   float media_duration = 0.0f;
   float media_position_seconds = 0.0f;
   uint32_t media_position_updated_ms = 0;
+  bool media_seek_pending = false;
+  float media_seek_target_seconds = 0.0f;
+  uint32_t media_seek_pending_ms = 0;
   bool media_playing = false;
   lv_obj_t *media_slider = nullptr;
   lv_obj_t *media_value_lbl = nullptr;
   lv_obj_t *media_status_lbl = nullptr;
   lv_timer_t *media_timer = nullptr;
 };
+
+constexpr uint32_t MEDIA_SEEK_PENDING_TIMEOUT_MS = 3000;
+constexpr float MEDIA_SEEK_MATCH_TOLERANCE_SECONDS = 2.0f;
 
 inline void slider_fit_to_button(lv_obj_t *slider, lv_obj_t *btn, bool horizontal) {
   if (!slider || !btn) return;
@@ -3635,6 +3641,11 @@ inline std::string media_status_text(const std::string &state) {
   return sentence_cap_text(state);
 }
 
+inline bool media_seek_pending_active(SliderCtx *ctx) {
+  return ctx && ctx->media_seek_pending &&
+         (esphome::millis() - ctx->media_seek_pending_ms) < MEDIA_SEEK_PENDING_TIMEOUT_MS;
+}
+
 inline void media_apply_position(SliderCtx *ctx) {
   if (!ctx || !ctx->media_slider) return;
   float seconds = ctx->media_position_seconds;
@@ -3664,6 +3675,19 @@ inline void media_apply_position(SliderCtx *ctx) {
     int fill_pct = ctx->inverted ? 100 - pct : pct;
     slider_update_ctx_fill(ctx, btn, fill_pct);
   }
+}
+
+inline void media_set_pending_seek_position(SliderCtx *ctx, int value) {
+  if (!ctx || ctx->media_duration <= 0.0f) return;
+  if (value < 0) value = 0;
+  if (value > 100) value = 100;
+  float seconds = ctx->media_duration * value / 100.0f;
+  ctx->media_seek_pending = true;
+  ctx->media_seek_target_seconds = seconds;
+  ctx->media_seek_pending_ms = esphome::millis();
+  ctx->media_position_seconds = seconds;
+  ctx->media_position_updated_ms = ctx->media_seek_pending_ms;
+  media_apply_position(ctx);
 }
 
 inline void media_position_timer_cb(lv_timer_t *timer) {
@@ -3783,7 +3807,10 @@ inline lv_obj_t *setup_media_slider_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
     if (!ctx || ctx->entity_id.empty()) return;
     int val = lv_slider_get_value(sl);
     if (ctx->media_volume) send_media_volume_action(ctx->entity_id, val);
-    else if (ctx->media_position) send_media_seek_action(ctx->entity_id, val, ctx->media_duration);
+    else if (ctx->media_position) {
+      media_set_pending_seek_position(ctx, val);
+      send_media_seek_action(ctx->entity_id, val, ctx->media_duration);
+    }
   }, LV_EVENT_RELEASED, nullptr);
 
   if (position) {
@@ -3896,6 +3923,15 @@ inline void subscribe_media_slider_state(lv_obj_t *btn_ptr,
       [ctx](esphome::StringRef val) {
         float pos = 0.0f;
         if (!parse_float_ref(val, pos) || pos < 0.0f) pos = 0.0f;
+        if (media_seek_pending_active(ctx)) {
+          if (std::fabs(pos - ctx->media_seek_target_seconds) > MEDIA_SEEK_MATCH_TOLERANCE_SECONDS) {
+            media_apply_position(ctx);
+            return;
+          }
+          ctx->media_seek_pending = false;
+        } else {
+          ctx->media_seek_pending = false;
+        }
         ctx->media_position_seconds = pos;
         ctx->media_position_updated_ms = esphome::millis();
         media_apply_position(ctx);
@@ -3906,6 +3942,11 @@ inline void subscribe_media_slider_state(lv_obj_t *btn_ptr,
     entity_id, std::string("media_position_updated_at"),
     std::function<void(esphome::StringRef)>(
       [ctx](esphome::StringRef) {
+        if (media_seek_pending_active(ctx)) {
+          media_apply_position(ctx);
+          return;
+        }
+        ctx->media_seek_pending = false;
         ctx->media_position_updated_ms = esphome::millis();
         media_apply_position(ctx);
       })
