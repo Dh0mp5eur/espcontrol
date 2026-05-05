@@ -161,6 +161,19 @@ assert.strictEqual(hooks.normalizeTemperatureUnit("centigrade"), "°C", "centigr
 assert.strictEqual(hooks.temperatureUnitSymbolFor("America/New_York (GMT-5)", "Auto"), "°F", "auto unit for US timezone");
 assert.strictEqual(hooks.temperatureUnitSymbolFor("Europe/London (GMT+0)", "Auto"), "°C", "auto unit for UK timezone");
 assert.strictEqual(hooks.temperatureUnitSymbolFor("Europe/London (GMT+0)", "°F"), "°F", "manual fahrenheit override");
+const importedPlainOrder = hooks.importedButtonOrderFor("1,2,3", { 1: 2 });
+assert.deepStrictEqual({
+  grid: Array.from(importedPlainOrder.grid),
+  sizes: Object.assign({}, importedPlainOrder.sizes),
+}, {
+  grid: [1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  sizes: {},
+}, "same-size imports clear stale button sizing");
+const importedSizedOrder = hooks.importedButtonOrderFor("1d,2,3", {});
+assert.strictEqual(importedSizedOrder.sizes["1"], 2, "imported button sizing is preserved");
+assert.strictEqual(hooks.screensaverTimeoutSupportedFor(10, false, 60, 3600), true, "short timeout allowed before limits load");
+assert.strictEqual(hooks.screensaverTimeoutSupportedFor(10, true, 60, 3600), false, "short timeout blocked after old limits load");
+assert.strictEqual(hooks.screensaverTimeoutSupportedFor(10, true, 10, 3600), true, "short timeout allowed after new limits load");
 
 assertButtonRoundTrip(hooks, "normal button", {
   entity: "light.kitchen",

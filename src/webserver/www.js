@@ -585,6 +585,7 @@
     screensaverTimeout: 300,
     screensaverTimeoutMin: 60,
     screensaverTimeoutMax: 3600,
+    screensaverTimeoutLimitsLoaded: false,
     homeScreenTimeout: 60,
     brightnessDayVal: 100,
     brightnessNightVal: 75,
@@ -819,11 +820,15 @@
   function syncScreensaverTimeoutLimits(d) {
     state.screensaverTimeoutMin = readNumberMeta(d, ["min", "min_value"], state.screensaverTimeoutMin);
     state.screensaverTimeoutMax = readNumberMeta(d, ["max", "max_value"], state.screensaverTimeoutMax);
+    state.screensaverTimeoutLimitsLoaded = true;
   }
 
   function screensaverTimeoutSupported(value) {
     var n = parseFloat(value);
     if (!isFinite(n)) return false;
+    if (!state.screensaverTimeoutLimitsLoaded) {
+      return n > 0 && n <= state.screensaverTimeoutMax;
+    }
     return n >= state.screensaverTimeoutMin && n <= state.screensaverTimeoutMax;
   }
 
@@ -1306,6 +1311,11 @@
     }).join(",");
   }
 
+  function applyImportedButtonOrder(orderStr, importedSizes) {
+    state.sizes = importedSizes || {};
+    state.grid = parseOrder(orderStr);
+  }
+
   function clearSpans(grid, maxSlots) {
     for (var i = 0; i < maxSlots; i++) {
       if (grid[i] === -1) grid[i] = 0;
@@ -1646,11 +1656,12 @@
   }
 
   function getJsonQuietly(path, callback) {
-    fetch(path, { cache: "no-store" }).then(function (r) {
+    return fetch(path, { cache: "no-store" }).then(function (r) {
       if (!r.ok) return null;
       return r.json();
     }).then(function (data) {
       if (data) callback(data);
+      return data;
     }).catch(function () {});
   }
 
@@ -1664,12 +1675,12 @@
   }
 
   function refreshScreensaverTimeout() {
-    [
-      "Screensaver Timeout",
-      "screensaver_timeout",
-    ].forEach(function (id) {
-      getJsonQuietly("/number/" + encodeURIComponent(id) + "?detail=all", applyScreensaverTimeoutState);
-    });
+    getJsonQuietly("/number/" + encodeURIComponent("Screensaver Timeout") + "?detail=all", applyScreensaverTimeoutState)
+      .then(function (data) {
+        if (!data) {
+          getJsonQuietly("/number/" + encodeURIComponent("screensaver_timeout") + "?detail=all", applyScreensaverTimeoutState);
+        }
+      });
   }
 
   function waitForReboot() {
@@ -5318,18 +5329,32 @@
     input.accept = ".json";
     input.style.display = "none";
 
+    function cleanupInput() {
+      if (input.parentNode) input.parentNode.removeChild(input);
+    }
+
+    input.addEventListener("cancel", cleanupInput);
     input.addEventListener("change", function () {
-      if (!input.files || !input.files[0]) return;
+      if (!input.files || !input.files[0]) {
+        cleanupInput();
+        return;
+      }
       var reader = new FileReader();
+      reader.onerror = function () {
+        cleanupInput();
+        showBanner("Invalid file \u2014 could not read backup", "error");
+      };
       reader.onload = function () {
         var data;
         try { data = JSON.parse(reader.result); } catch (_) {
           showBanner("Invalid file \u2014 could not parse JSON", "error");
+          cleanupInput();
           return;
         }
 
         if (!data.version || !Array.isArray(data.buttons)) {
           showBanner("Invalid config file \u2014 missing required fields", "error");
+          cleanupInput();
           return;
         }
         if (data.device && data.device !== DEVICE_ID) {
@@ -5345,7 +5370,7 @@
         postText("Sensor Card Color", data.sensor_card_color || "212121");
 
         var empty = { entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "", type: "", precision: "" };
-        var buttons, orderStr, spKeyMap;
+        var buttons, orderStr, spKeyMap, importedSizes;
 
         if (importedCount !== NUM_SLOTS) {
           // Grid dimensions differ — remap used buttons into target slots
@@ -5425,6 +5450,7 @@
           }
 
           state.sizes = newSizes;
+          importedSizes = newSizes;
           orderStr = serializeGrid(newGrid);
 
           spKeyMap = {};
@@ -5439,6 +5465,7 @@
           for (var j = 0; j < NUM_SLOTS; j++) {
             buttons.push(j < importedCount ? data.buttons[j] : empty);
           }
+          importedSizes = {};
           orderStr = data.button_order || "";
           spKeyMap = {};
           if (data.subpages) {
@@ -5476,7 +5503,7 @@
         }
 
         postText("Button Order", orderStr);
-        state.grid = parseOrder(orderStr);
+        applyImportedButtonOrder(orderStr, importedSizes);
         state.onColor = data.button_on_color || "FF8C00";
         state.offColor = data.button_off_color || "313131";
         state.sensorColor = data.sensor_card_color || "212121";
@@ -5669,13 +5696,13 @@
         renderButtonSettings();
         switchTab("screen");
         showBanner("Configuration imported successfully", "success");
+        cleanupInput();
       };
       reader.readAsText(input.files[0]);
     });
 
     document.body.appendChild(input);
     input.click();
-    document.body.removeChild(input);
   }
 
   // ── Clock (minute-aligned) ─────────────────────────────────────────────
@@ -6286,6 +6313,33 @@
       serializeSubpageConfig: serializeSubpageConfig,
       subpageStateDisplayMode: subpageStateDisplayMode,
       normalizeTemperatureUnit: normalizeTemperatureUnit,
+      importedButtonOrderFor: function (orderStr, existingSizes) {
+        var oldSizes = state.sizes;
+        var oldGrid = state.grid;
+        state.sizes = existingSizes || {};
+        state.grid = [];
+        for (var i = 0; i < NUM_SLOTS; i++) state.grid.push(0);
+        applyImportedButtonOrder(orderStr, {});
+        var sizes = {};
+        for (var k in state.sizes) sizes[k] = state.sizes[k];
+        var grid = state.grid.slice();
+        state.sizes = oldSizes;
+        state.grid = oldGrid;
+        return { grid: grid, sizes: sizes };
+      },
+      screensaverTimeoutSupportedFor: function (value, limitsLoaded, min, max) {
+        var oldLoaded = state.screensaverTimeoutLimitsLoaded;
+        var oldMin = state.screensaverTimeoutMin;
+        var oldMax = state.screensaverTimeoutMax;
+        state.screensaverTimeoutLimitsLoaded = !!limitsLoaded;
+        state.screensaverTimeoutMin = min;
+        state.screensaverTimeoutMax = max;
+        var supported = screensaverTimeoutSupported(value);
+        state.screensaverTimeoutLimitsLoaded = oldLoaded;
+        state.screensaverTimeoutMin = oldMin;
+        state.screensaverTimeoutMax = oldMax;
+        return supported;
+      },
       temperatureUnitSymbolFor: function (timezone, unit) {
         var oldTimezone = state.timezone;
         var oldUnit = state.temperatureUnit;
