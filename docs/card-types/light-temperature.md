@@ -6,6 +6,10 @@ description:
 
 # Light Temperature Slider
 
+::: warning Experimental
+Light temperature slider cards are currently behind **Developer/Experimental Features**. Open the setup page with `?developer=experimental`, then enable **Developer/Experimental Features** in the Developer settings section.
+:::
+
 A light temperature slider card lets you control the colour temperature of a Home Assistant light entity by dragging a vertical fill bar. The bottom of the slider is the warmest (lowest kelvin) setting and the top is the coolest (highest kelvin).
 
 ## Setting Up a Light Temperature Slider Card

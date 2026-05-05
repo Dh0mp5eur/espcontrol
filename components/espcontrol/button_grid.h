@@ -4282,17 +4282,16 @@ inline void setup_media_now_playing_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
 
 inline void setup_media_volume_button(lv_obj_t *btn, lv_obj_t *icon_lbl,
                                       lv_obj_t *text_lbl,
-                                      const ParsedCfg &p,
-                                      lv_coord_t pad) {
+                                      const ParsedCfg &p) {
   if (icon_lbl) {
     lv_obj_clear_flag(icon_lbl, LV_OBJ_FLAG_HIDDEN);
     lv_label_set_text(icon_lbl, media_default_icon("volume", p.icon));
-    lv_obj_align(icon_lbl, LV_ALIGN_TOP_LEFT, pad, pad);
+    lv_obj_align(icon_lbl, LV_ALIGN_TOP_LEFT, 0, 0);
     lv_obj_move_foreground(icon_lbl);
   }
   if (text_lbl) {
     lv_label_set_text(text_lbl, media_label(p).c_str());
-    lv_obj_align(text_lbl, LV_ALIGN_BOTTOM_LEFT, pad, -pad);
+    lv_obj_align(text_lbl, LV_ALIGN_BOTTOM_LEFT, 0, 0);
     configure_button_label_wrap(text_lbl);
     lv_obj_move_foreground(text_lbl);
   }
@@ -4408,7 +4407,7 @@ inline void setup_media_card(BtnSlot &s, const ParsedCfg &p, uint32_t on_color,
     return;
   }
   if (mode == "volume") {
-    setup_media_volume_button(s.btn, s.icon_lbl, s.text_lbl, p, pad);
+    setup_media_volume_button(s.btn, s.icon_lbl, s.text_lbl, p);
     return;
   }
   if (mode == "now_playing") {
@@ -4974,7 +4973,7 @@ struct GridConfig {
 };
 
 inline bool experimental_card_enabled(const ParsedCfg &p, bool developer_experimental_features) {
-  if (p.type == "climate") return developer_experimental_features;
+  if (p.type == "climate" || p.type == "light_temperature") return developer_experimental_features;
   return true;
 }
 
@@ -6003,7 +6002,7 @@ inline void grid_phase2(
           if (!mp.entity.empty())
             subscribe_media_now_playing_state(svl, stl, mp.entity);
         } else if (mode == "volume") {
-          setup_media_volume_button(sb_btn, sil, stl, mp, sp_pad);
+          setup_media_volume_button(sb_btn, sil, stl, mp);
           if (!mp.entity.empty()) {
             MediaVolumeCtx *ctx = create_media_volume_context(
               sb_btn, stl, mp, has_on ? on_val : DEFAULT_SLIDER_COLOR,

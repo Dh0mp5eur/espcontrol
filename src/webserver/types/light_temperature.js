@@ -31,6 +31,7 @@ function lightTempClampMax(v, mn) {
 
 registerButtonType("light_temperature", {
   label: "Light Temperature Slider",
+  experimental: "light_temperature",
   allowInSubpage: true,
   labelPlaceholder: "e.g. Living Room",
   onSelect: function (b) {
