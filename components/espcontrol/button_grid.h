@@ -167,6 +167,7 @@ inline bool is_text_sensor_card(const ParsedCfg &p) {
 }
 
 constexpr size_t HA_STATE_TEXT_MAX_LEN = 96;
+constexpr size_t HA_TEXT_SENSOR_STATE_MAX_LEN = 256;
 constexpr size_t HA_SHORT_STATE_MAX_LEN = 32;
 constexpr size_t HA_FRIENDLY_NAME_MAX_LEN = 64;
 
@@ -174,6 +175,22 @@ inline std::string string_ref_limited(esphome::StringRef value, size_t max_len) 
   size_t len = value.size();
   if (len > max_len) len = max_len;
   return std::string(value.c_str(), len);
+}
+
+inline std::string text_sensor_display_text(esphome::StringRef value) {
+  std::string raw = string_ref_limited(value, HA_TEXT_SENSOR_STATE_MAX_LEN);
+  std::string out;
+  out.reserve(raw.size());
+  for (size_t i = 0; i < raw.size(); i++) {
+    char ch = raw[i];
+    if (ch == '\r') {
+      if (i + 1 < raw.size() && raw[i + 1] == '\n') continue;
+      out.push_back('\n');
+    } else {
+      out.push_back(ch);
+    }
+  }
+  return out;
 }
 
 inline void lv_label_set_text_limited(lv_obj_t *label, esphome::StringRef value, size_t max_len) {
@@ -2153,6 +2170,13 @@ inline void configure_button_label_wrap(lv_obj_t *label) {
   lv_obj_set_width(label, lv_pct(100));
 }
 
+inline void set_wrapped_button_label_text(lv_obj_t *label, const std::string &text) {
+  if (!label) return;
+  configure_button_label_wrap(label);
+  lv_label_set_text(label, text.c_str());
+  lv_obj_align(label, LV_ALIGN_BOTTOM_LEFT, 0, 0);
+}
+
 // Configure a button as a read-only sensor card (non-clickable, shows value + unit)
 inline void setup_sensor_card(BtnSlot &s, const ParsedCfg &p,
                               bool has_sensor_color, uint32_t sensor_val) {
@@ -2658,7 +2682,7 @@ inline void setup_text_sensor_card(BtnSlot &s, const ParsedCfg &p,
   lv_obj_clear_flag(s.icon_lbl, LV_OBJ_FLAG_HIDDEN);
   lv_obj_add_flag(s.sensor_container, LV_OBJ_FLAG_HIDDEN);
   lv_obj_clear_flag(s.btn, LV_OBJ_FLAG_CLICKABLE);
-  lv_label_set_text(s.text_lbl, "--");
+  set_wrapped_button_label_text(s.text_lbl, "--");
 }
 
 inline bool subpage_parent_sensor_state_enabled(const ParsedCfg &p) {
@@ -2684,7 +2708,7 @@ inline void setup_subpage_parent_state_card(BtnSlot &s, const ParsedCfg &p,
   if (p.precision == "text") {
     lv_obj_clear_flag(s.icon_lbl, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(s.sensor_container, LV_OBJ_FLAG_HIDDEN);
-    lv_label_set_text(s.text_lbl, "--");
+    set_wrapped_button_label_text(s.text_lbl, "--");
     return;
   }
 
@@ -2713,7 +2737,7 @@ inline std::string label_text_or_empty(lv_obj_t *label) {
 
 inline void apply_toggle_text_sensor_label(ToggleTextSensorCtx *ctx) {
   if (!ctx || !ctx->text_lbl) return;
-  lv_label_set_text(ctx->text_lbl, ctx->on ? ctx->sensor_text.c_str() : ctx->steady_text.c_str());
+  set_wrapped_button_label_text(ctx->text_lbl, ctx->on ? ctx->sensor_text : ctx->steady_text);
 }
 
 // Subscribe to a HA sensor entity and update an LVGL label with its value
@@ -2738,7 +2762,7 @@ inline void subscribe_toggle_text_sensor_value(ToggleTextSensorCtx *ctx, const s
     sensor_id, {},
     std::function<void(esphome::StringRef)>([ctx](esphome::StringRef state) {
       if (!ctx) return;
-      ctx->sensor_text = sentence_cap_text(string_ref_limited(state, HA_STATE_TEXT_MAX_LEN));
+      ctx->sensor_text = text_sensor_display_text(state);
       apply_toggle_text_sensor_label(ctx);
     })
   );
@@ -2748,8 +2772,7 @@ inline void subscribe_text_sensor_value(lv_obj_t *text_lbl, const std::string &s
   esphome::api::global_api_server->subscribe_home_assistant_state(
     sensor_id, {},
     std::function<void(esphome::StringRef)>([text_lbl](esphome::StringRef state) {
-      std::string text = sentence_cap_text(string_ref_limited(state, HA_STATE_TEXT_MAX_LEN));
-      lv_label_set_text(text_lbl, text.c_str());
+      set_wrapped_button_label_text(text_lbl, text_sensor_display_text(state));
     })
   );
 }
