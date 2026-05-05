@@ -7,27 +7,27 @@
 # =============================================================================
 
 font:
-  # Button icons (69px, scaled from the 4-inch 480x480 panel)
+  # Button icons (66px, slightly reduced for the 720x720 square panel)
   - file: 'https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf'
     id: icon_font_md_square
-    size: 69
+    size: 66
     bpp: 4
     glyphs: !include ../../../common/assets/icon_glyphs.yaml
 
-  # Button labels (33px)
+  # Button labels (31px)
   - file: "gfonts://Roboto"
     id: label_font_md_square
-    size: 33
+    size: 31
     bpp: 4
     glyphs: !include ../../../common/assets/text_glyphs.yaml
     extras:
       - file: "gfonts://Heebo"
         glyphs: !include ../../../common/assets/hebrew_glyphs.yaml
 
-  # Sensor value large number (scaled for the higher-resolution square panel)
+  # Sensor value large number (reduced from 78px so sensor cards do not dominate)
   - file: "gfonts://Roboto@Light"
     id: statistics_font_md_square
-    size: 78
+    size: 66
     bpp: 4
     glyphs:
       - "0123456789.-°/%kWhVA "
@@ -36,7 +36,7 @@ font:
   # Climate detail controls (chevron-left, dots-horizontal, minus, plus, thermometer)
   - file: 'https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf'
     id: climate_control_icon_font_md_square
-    size: 66
+    size: 63
     bpp: 4
     glyphs:
       - "\U000F0141"  # mdi-chevron-left
@@ -48,24 +48,24 @@ font:
   # Climate detail page: oversized target temperature
   - file: "gfonts://Roboto@Light"
     id: climate_target_font_md_square
-    size: 159
+    size: 150
     bpp: 4
     glyphs:
       - "0123456789.-"
 
-  # Top bar clock and temperature (30px)
+  # Top bar clock and temperature (28px)
   - file: "gfonts://Roboto"
     id: clockbar_font_md_square
-    size: 30
+    size: 28
     bpp: 4
     extras:
       - file: "gfonts://Heebo"
         glyphs: !include ../../../common/assets/hebrew_glyphs.yaml
 
-  # Setup screen icons (96px, scaled from the 480x480 setup screens)
+  # Setup screen icons (92px)
   - file: 'https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf'
     id: icon_font_setup_md_square
-    size: 96
+    size: 92
     bpp: 4
     glyphs:
       - "\U000F05A9"  # mdi-wifi
@@ -73,20 +73,20 @@ font:
       - "\U000F0493"  # mdi-cog
       - "\U000F07D0"  # mdi-home-assistant
 
-  # Setup screen titles (60px, scaled from 40px)
+  # Setup screen titles (56px)
   - file: "gfonts://Roboto@Light"
     id: setup_title_font_md_square
-    size: 60
+    size: 56
     bpp: 4
     glyphs: !include ../../../common/assets/setup_text_glyphs.yaml
     extras:
       - file: "gfonts://Heebo@Light"
         glyphs: !include ../../../common/assets/hebrew_glyphs.yaml
 
-  # Setup screen body text (36px, scaled from 24px)
+  # Setup screen body text (34px)
   - file: "gfonts://Roboto"
     id: setup_body_font_md_square
-    size: 36
+    size: 34
     bpp: 4
     glyphs: !include ../../../common/assets/setup_text_glyphs.yaml
     extras:
