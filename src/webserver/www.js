@@ -3542,6 +3542,12 @@
 
   // ── Preview rendering (unified) ────────────────────────────────────────
 
+  function previewHtmlValue(typePreview, key, fallback) {
+    return typePreview && Object.prototype.hasOwnProperty.call(typePreview, key)
+      ? typePreview[key]
+      : fallback;
+  }
+
   function renderPreview() {
     var main = els.previewMain;
     main.innerHTML = "";
@@ -3598,12 +3604,10 @@
         var sensorBadge = hasWhenOn
           ? '<span class="sp-sensor-badge mdi mdi-' + badgeIcon + '"></span>'
           : '';
-        var labelHtml = typePreview && typePreview.labelHtml
-          ? typePreview.labelHtml
-          : '<span class="sp-btn-label">' + escHtml(label) + '</span>';
-        var iconHtml = typePreview && typePreview.iconHtml
-          ? typePreview.iconHtml
-          : '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>';
+        var labelHtml = previewHtmlValue(typePreview, "labelHtml",
+          '<span class="sp-btn-label">' + escHtml(label) + '</span>');
+        var iconHtml = previewHtmlValue(typePreview, "iconHtml",
+          '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>');
         btn.innerHTML =
           sensorBadge +
           iconHtml +
@@ -6481,6 +6485,7 @@
       serializeSubpageConfig: serializeSubpageConfig,
       subpageStateDisplayMode: subpageStateDisplayMode,
       normalizeTemperatureUnit: normalizeTemperatureUnit,
+      previewHtmlValue: previewHtmlValue,
       importedButtonOrderFor: function (orderStr, existingSizes) {
         var oldSizes = state.sizes;
         var oldGrid = state.grid;
