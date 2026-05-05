@@ -3174,7 +3174,7 @@ inline void parse_kelvin_range(const std::string &unit, int &min_k, int &max_k) 
 }
 
 // Map a kelvin value to an lv_color_t by lerping between warm amber (low K) and
-// cool blue-white (high K). Used when "use light color" is enabled.
+// cool blue-white (high K). Used when "Show light colour on card" is enabled.
 //
 // The interpolation is anchored to an absolute reference range
 // (KELVIN_REF_MIN..KELVIN_REF_MAX) rather than the user's configured slider

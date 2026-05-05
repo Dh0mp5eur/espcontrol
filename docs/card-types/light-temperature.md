@@ -22,7 +22,7 @@ A light temperature slider card lets you control the colour temperature of a Hom
 
 ## Options
 
-### Use light color
+### Show light colour on card
 
 When enabled, the fill bar changes colour to reflect the current colour temperature rather than using your configured accent colour. The fill transitions from a warm amber at the low end to a cool blue-white at the high end, giving you a visual indication of the current setting at a glance.
 
