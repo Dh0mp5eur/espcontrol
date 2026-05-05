@@ -26,6 +26,51 @@ struct SunCalcResult {
   char sunset_str[16];
 };
 
+inline int fixed_decimal_scale(int precision) {
+  if (precision <= 0) return 1;
+  if (precision == 1) return 10;
+  if (precision == 2) return 100;
+  return 1000;
+}
+
+inline void format_fixed_decimal(char *buf, size_t size, float value, int precision) {
+  if (size == 0) return;
+  if (!std::isfinite(value)) {
+    snprintf(buf, size, "--");
+    return;
+  }
+
+  if (precision < 0) precision = 0;
+  if (precision > 3) precision = 3;
+
+  bool negative = value < 0.0f;
+  float abs_value = negative ? -value : value;
+  int scale = fixed_decimal_scale(precision);
+  int scaled = (int)(abs_value * scale + 0.5f);
+  if (scaled == 0) negative = false;
+
+  int whole = scaled / scale;
+  int frac = scaled % scale;
+  const char *sign = negative ? "-" : "";
+
+  if (precision == 0) {
+    snprintf(buf, size, "%s%d", sign, whole);
+  } else if (precision == 1) {
+    snprintf(buf, size, "%s%d.%01d", sign, whole, frac);
+  } else if (precision == 2) {
+    snprintf(buf, size, "%s%d.%02d", sign, whole, frac);
+  } else {
+    snprintf(buf, size, "%s%d.%03d", sign, whole, frac);
+  }
+}
+
+inline void format_fixed_decimal_unit(char *buf, size_t size, float value,
+                                      int precision, const char *unit) {
+  char value_buf[24];
+  format_fixed_decimal(value_buf, sizeof(value_buf), value, precision);
+  snprintf(buf, size, "%s%s", value_buf, unit ? unit : "");
+}
+
 inline SunCalcResult recalc_sunrise_sunset(
     int year, int month, int day,
     const std::string &tz_option, bool use_12h = true) {
@@ -164,11 +209,11 @@ inline void refresh_temp_label_values(lv_obj_t *label, lv_obj_t *main_page_obj,
   const char *unit = display_clock_bar_temperature_unit_symbol();
   if (indoor_enabled) {
     if (std::isnan(indoor)) snprintf(indoor_buf, sizeof(indoor_buf), "-%s", unit);
-    else snprintf(indoor_buf, sizeof(indoor_buf), "%.0f%s", indoor, unit);
+    else format_fixed_decimal_unit(indoor_buf, sizeof(indoor_buf), indoor, 0, unit);
   }
   if (outdoor_enabled) {
     if (std::isnan(outdoor)) snprintf(outdoor_buf, sizeof(outdoor_buf), "-%s", unit);
-    else snprintf(outdoor_buf, sizeof(outdoor_buf), "%.0f%s", outdoor, unit);
+    else format_fixed_decimal_unit(outdoor_buf, sizeof(outdoor_buf), outdoor, 0, unit);
   }
 
   char buf[40];

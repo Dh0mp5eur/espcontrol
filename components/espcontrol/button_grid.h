@@ -977,7 +977,7 @@ inline bool climate_action_is_active(const ClimateCardCtx *ctx) {
 }
 
 inline void climate_format_service_temp(char *buf, size_t size, float value) {
-  snprintf(buf, size, "%.1f", value);
+  format_fixed_decimal(buf, size, value, 1);
 }
 
 inline int climate_display_precision(const ClimateCardCtx *ctx) {
@@ -986,11 +986,12 @@ inline int climate_display_precision(const ClimateCardCtx *ctx) {
 }
 
 inline void climate_format_temp(char *buf, size_t size, const ClimateCardCtx *ctx, float value) {
-  snprintf(buf, size, "%.*f", climate_display_precision(ctx), value);
+  format_fixed_decimal(buf, size, value, climate_display_precision(ctx));
 }
 
 inline void climate_format_temp_unit(char *buf, size_t size, const ClimateCardCtx *ctx, float value) {
-  snprintf(buf, size, "%.*f%s", climate_display_precision(ctx), value, display_temperature_unit_symbol());
+  format_fixed_decimal_unit(buf, size, value, climate_display_precision(ctx),
+                            display_temperature_unit_symbol());
 }
 
 inline std::string climate_dashboard_target_value_text(const ClimateCardCtx *ctx) {
@@ -2717,10 +2718,8 @@ inline void subscribe_sensor_value(lv_obj_t *sensor_lbl, const std::string &sens
     std::function<void(esphome::StringRef)>([sensor_lbl, precision](esphome::StringRef state) {
       float val = 0.0f;
       if (parse_float_ref(state, val)) {
-        char fmt[8];
-        snprintf(fmt, sizeof(fmt), "%%.%df", precision);
         char buf[16];
-        snprintf(buf, sizeof(buf), fmt, val);
+        format_fixed_decimal(buf, sizeof(buf), val, precision);
         lv_label_set_text(sensor_lbl, buf);
       } else {
         lv_label_set_text_limited(sensor_lbl, state, HA_SHORT_STATE_MAX_LEN);
@@ -3149,7 +3148,7 @@ inline void send_media_volume_action(const std::string &entity_id, int value) {
   if (value < 0) value = 0;
   if (value > 100) value = 100;
   char buf[12];
-  snprintf(buf, sizeof(buf), "%.2f", value / 100.0f);
+  snprintf(buf, sizeof(buf), "%d.%02d", value / 100, value % 100);
   send_media_player_action(entity_id, "media_player.volume_set", "volume_level", buf);
 }
 
@@ -5394,11 +5393,16 @@ inline void grid_phase3(
             float outdoor = *outdoor_temp_ptr;
             char buf[40];
             if (std::isnan(outdoor)) {
-              snprintf(buf, sizeof(buf), "%.0f%s", val, display_clock_bar_temperature_unit_symbol());
+              format_fixed_decimal_unit(buf, sizeof(buf), val, 0,
+                                        display_clock_bar_temperature_unit_symbol());
             } else {
-              snprintf(buf, sizeof(buf), "%.0f%s / %.0f%s",
-                       outdoor, display_clock_bar_temperature_unit_symbol(),
-                       val, display_clock_bar_temperature_unit_symbol());
+              char outdoor_buf[16];
+              char indoor_buf[16];
+              format_fixed_decimal_unit(outdoor_buf, sizeof(outdoor_buf), outdoor, 0,
+                                        display_clock_bar_temperature_unit_symbol());
+              format_fixed_decimal_unit(indoor_buf, sizeof(indoor_buf), val, 0,
+                                        display_clock_bar_temperature_unit_symbol());
+              snprintf(buf, sizeof(buf), "%s / %s", outdoor_buf, indoor_buf);
             }
             lv_label_set_text(temp_label, buf);
           }
@@ -5417,11 +5421,16 @@ inline void grid_phase3(
             float indoor = *indoor_temp_ptr;
             char buf[40];
             if (std::isnan(indoor)) {
-              snprintf(buf, sizeof(buf), "%.0f%s", val, display_clock_bar_temperature_unit_symbol());
+              format_fixed_decimal_unit(buf, sizeof(buf), val, 0,
+                                        display_clock_bar_temperature_unit_symbol());
             } else {
-              snprintf(buf, sizeof(buf), "%.0f%s / %.0f%s",
-                       val, display_clock_bar_temperature_unit_symbol(),
-                       indoor, display_clock_bar_temperature_unit_symbol());
+              char outdoor_buf[16];
+              char indoor_buf[16];
+              format_fixed_decimal_unit(outdoor_buf, sizeof(outdoor_buf), val, 0,
+                                        display_clock_bar_temperature_unit_symbol());
+              format_fixed_decimal_unit(indoor_buf, sizeof(indoor_buf), indoor, 0,
+                                        display_clock_bar_temperature_unit_symbol());
+              snprintf(buf, sizeof(buf), "%s / %s", outdoor_buf, indoor_buf);
             }
             lv_label_set_text(temp_label, buf);
           }
