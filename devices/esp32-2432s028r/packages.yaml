@@ -16,10 +16,12 @@ substitutions:
   label_font: label_font_xs
   unit_font: label_font_xs
   sensor_value_font: statistics_font_xs
+  setup_icon_font_id: icon_font_setup
   padding: 8px
   radius: 6px
   main_page_pad_top: "26"
   main_page_compact_pad_top: "2"
+  setup_loading_pad_row: "20"
   clock_font_size: "80"
   clock_cx: "160"
   clock_cy: "120"
