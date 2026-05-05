@@ -3558,6 +3558,13 @@ inline void media_format_time(float seconds, char *buf, size_t size) {
   else snprintf(buf, size, "%d:%02d", m, s);
 }
 
+inline void media_format_percent(int percent, char *buf, size_t size) {
+  if (!buf || size == 0) return;
+  if (percent < 0) percent = 0;
+  if (percent > 100) percent = 100;
+  snprintf(buf, size, "%d", percent);
+}
+
 inline std::string media_status_text(const std::string &state) {
   if (state == "playing") return "Playing";
   if (state == "paused") return "Paused";
@@ -3630,6 +3637,7 @@ inline lv_obj_t *setup_media_slider_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
                                            lv_coord_t pad) {
   std::string mode = media_card_mode(p.sensor);
   bool position = mode == "position";
+  bool volume = mode == "volume";
   bool horizontal = !position;
 
   if (position) {
@@ -3641,6 +3649,18 @@ inline lv_obj_t *setup_media_slider_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
     if (text_lbl) {
       lv_label_set_text(text_lbl, "Paused");
       lv_obj_align(text_lbl, LV_ALIGN_BOTTOM_LEFT, pad, -pad);
+      lv_obj_move_foreground(text_lbl);
+    }
+  } else if (volume) {
+    if (icon_lbl) lv_obj_add_flag(icon_lbl, LV_OBJ_FLAG_HIDDEN);
+    if (value_lbl) {
+      lv_label_set_text(value_lbl, "--");
+      lv_obj_move_foreground(value_lbl);
+    }
+    if (text_lbl) {
+      lv_label_set_text(text_lbl, media_label(p).c_str());
+      lv_obj_align(text_lbl, LV_ALIGN_BOTTOM_LEFT, pad, -pad);
+      configure_button_label_wrap(text_lbl);
       lv_obj_move_foreground(text_lbl);
     }
   } else {
@@ -3683,6 +3703,11 @@ inline lv_obj_t *setup_media_slider_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
     int val = lv_slider_get_value(sl);
     int fill_val = ctx->inverted ? 100 - val : val;
     slider_update_fill(ctx->fill, lv_obj_get_parent(sl), fill_val, ctx->horizontal, ctx->inverted, ctx->radius);
+    if (ctx->media_volume && ctx->media_value_lbl) {
+      char pct_buf[8];
+      media_format_percent(val, pct_buf, sizeof(pct_buf));
+      lv_label_set_text(ctx->media_value_lbl, pct_buf);
+    }
     if (ctx->media_position && ctx->media_duration > 0.0f && ctx->media_value_lbl) {
       char time_buf[16];
       media_format_time(ctx->media_duration * val / 100.0f, time_buf, sizeof(time_buf));
@@ -3714,13 +3739,14 @@ inline void setup_media_card(BtnSlot &s, const ParsedCfg &p, uint32_t on_color) 
     setup_media_action_layout(s.btn, s.icon_lbl, s.text_lbl, p);
     return;
   }
-  if (mode == "position") {
+  if (mode == "position" || mode == "volume") {
     lv_obj_clear_flag(s.sensor_container, LV_OBJ_FLAG_HIDDEN);
     lv_label_set_text(s.unit_lbl, "");
+    lv_label_set_text(s.sensor_lbl, mode == "volume" ? "--" : "0:00");
     lv_obj_move_foreground(s.sensor_container);
   }
   lv_obj_t *slider = setup_media_slider_layout(s.btn, s.icon_lbl, s.text_lbl,
-    mode == "position" ? s.sensor_lbl : nullptr, p, on_color, pad);
+    (mode == "position" || mode == "volume") ? s.sensor_lbl : nullptr, p, on_color, pad);
   lv_obj_set_user_data(s.sensor_container, (void *)slider);
 }
 
@@ -3779,6 +3805,11 @@ inline void subscribe_media_slider_state(lv_obj_t *btn_ptr,
           if (pct < 0) pct = 0;
           if (pct > 100) pct = 100;
           lv_slider_set_value(slider, pct, LV_ANIM_OFF);
+          if (ctx->media_value_lbl) {
+            char pct_buf[8];
+            media_format_percent(pct, pct_buf, sizeof(pct_buf));
+            lv_label_set_text(ctx->media_value_lbl, pct_buf);
+          }
           if (ctx->fill)
             slider_update_fill(ctx->fill, btn_ptr, pct, ctx->horizontal, ctx->inverted, ctx->radius);
         })
@@ -5106,11 +5137,11 @@ inline void grid_phase2(
           }
         } else {
           lv_obj_t *svl = nullptr;
-          if (mode == "position") {
+          if (mode == "position" || mode == "volume") {
             svl = lv_label_create(sb_btn);
             lv_obj_set_style_text_font(svl, cfg.sp_sensor_font, LV_PART_MAIN);
             lv_obj_set_style_text_color(svl, sp_txt_color, LV_PART_MAIN);
-            lv_label_set_text(svl, "0:00");
+            lv_label_set_text(svl, mode == "volume" ? "--" : "0:00");
             lv_obj_align(svl, LV_ALIGN_TOP_LEFT, sp_pad, sp_pad);
           }
           lv_obj_t *media_slider = setup_media_slider_layout(

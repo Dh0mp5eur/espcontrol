@@ -28,7 +28,7 @@ For playback controls, add one Media card for each button you want, using the sa
 | **Play/Pause Button** | Shows one normal button that sends play/pause. |
 | **Previous Button** | Shows one normal button that skips to the previous track. |
 | **Next Button** | Shows one normal button that skips to the next track. |
-| **Volume Slider** | Shows a horizontal slider for volume. Dragging it sets the media player's volume from 0 to 100 percent. |
+| **Volume Slider** | Shows a horizontal slider and the current volume number. Dragging it updates the number before sending the new volume when you release. |
 | **Track Position** | Shows a vertical progress slider, the current time position, and the playing or paused state. Dragging it seeks within the current track when Home Assistant reports a duration. |
 
 ## Home Assistant Actions
