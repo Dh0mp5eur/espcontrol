@@ -1668,6 +1668,108 @@
     }).catch(function () {});
   }
 
+  function entityDetailPath(domain, name) {
+    return "/" + encodeURIComponent(domain) + "/" + encodeURIComponent(name) + "?detail=all";
+  }
+
+  function eventStreamEnabled() {
+    try {
+      return new URLSearchParams(window.location.search).get("events") === "1";
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function initialStateEntities() {
+    var items = [
+      ["text", "Button Order"],
+      ["text", "Button On Color"],
+      ["text", "Button Off Color"],
+      ["text", "Sensor Card Color"],
+      ["switch", "Indoor Temp Enable"],
+      ["switch", "Outdoor Temp Enable"],
+      ["switch", "Screen: Clock Bar"],
+      ["switch", "Screen: Temperature Degree Symbol"],
+      ["select", "Screen: Temperature Unit"],
+      ["text", "Indoor Temp Entity"],
+      ["text", "Outdoor Temp Entity"],
+      ["text", "Screensaver Mode"],
+      ["text", "Presence Sensor Entity"],
+      ["number", "Screen Saver: Daytime Clock Brightness"],
+      ["number", "Screen Saver: Nighttime Clock Brightness"],
+      ["number", "Screen Saver: Clock Brightness"],
+      ["number", "Screensaver Timeout"],
+      ["number", "Home Screen Timeout"],
+      ["switch", "Screen Saver: Clock"],
+      ["select", "Screen: Timezone"],
+      ["select", "Screen: Clock Format"],
+      ["text", "Screen: NTP Server 1"],
+      ["text", "Screen: NTP Server 2"],
+      ["text", "Screen: NTP Server 3"],
+      ["text_sensor", "Screen: Sunrise"],
+      ["text_sensor", "Screen: Sunset"],
+      ["switch", "Screen: Schedule Enabled"],
+      ["select", "Screen: Schedule Mode"],
+      ["number", "Screen: Schedule On Hour"],
+      ["number", "Screen: Schedule Off Hour"],
+      ["number", "Screen: Schedule Wake Timeout"],
+      ["number", "Screen: Schedule Wake Brightness"],
+      ["number", "Screen: Schedule Dimmed Brightness"],
+      ["number", "Screen: Schedule Clock Brightness"],
+      ["number", "Screen: Daytime Brightness"],
+      ["number", "Screen: Nighttime Brightness"],
+      ["text_sensor", "Firmware: Version"],
+      ["update", "Firmware: Update"],
+      ["switch", "Firmware: Auto Update"],
+      ["select", "Firmware: Update Frequency"],
+      ["switch", "Developer: Experimental Features"],
+      ["switch", "Bluetooth Proxy"],
+    ];
+
+    if (CFG.features && CFG.features.screenRotation) {
+      items.push(["select", "Screen: Rotation"]);
+    }
+
+    for (var i = 1; i <= NUM_SLOTS; i++) {
+      items.push(["text", "Button " + i + " Config"]);
+      items.push(["text", "Subpage " + i + " Config"]);
+      items.push(["text", "Subpage " + i + " Config Ext"]);
+      items.push(["text", "Subpage " + i + " Config Ext 2"]);
+      items.push(["text", "Subpage " + i + " Config Ext 3"]);
+    }
+
+    return items;
+  }
+
+  function loadInitialState(handleState) {
+    var items = initialStateEntities();
+    var chain = Promise.resolve();
+    var loadedCount = 0;
+
+    items.forEach(function (item) {
+      chain = chain.then(function () {
+        return getJsonQuietly(entityDetailPath(item[0], item[1]), function (data) {
+          if (data) {
+            loadedCount++;
+            handleState(data);
+          }
+        });
+      });
+    });
+
+    chain.then(function () {
+      if (loadedCount === 0) {
+        showBanner("Reconnecting to device\u2026", "offline");
+        setTimeout(connectEvents, 5000);
+        return;
+      }
+      clearTimeout(migrationTimer);
+      migrationTimer = setTimeout(scheduleMigration, 5000);
+      clearTimeout(sliderMigrationTimer);
+      pendingSliderSubpageMigrations = {};
+    });
+  }
+
   function refreshFirmwareVersion() {
     getJsonQuietly("/text_sensor/" + encodeURIComponent("Firmware: Version") + "?detail=all", function (d) {
       setFirmwareVersion(d.state || d.value);
@@ -5800,10 +5902,8 @@
 
   function connectEvents() {
     if (_eventSource) { _eventSource.close(); _eventSource = null; }
-    var source = new EventSource("/events");
-    _eventSource = source;
 
-    source.addEventListener("open", function () {
+    function markConnected() {
       state.selectedSlots = [];
       state.lastClickedSlot = -1;
       state.editingSubpage = null;
@@ -5821,16 +5921,16 @@
       pendingSliderSubpageMigrations = {};
       refreshFirmwareVersion();
       refreshScreensaverTimeout();
-    });
+    }
 
-    source.addEventListener("error", function () {
+    function handleDisconnected(source) {
       showBanner("Reconnecting to device\u2026", "offline");
       if (source.readyState === 2) {
         source.close();
         _eventSource = null;
         setTimeout(connectEvents, 5000);
       }
-    });
+    }
 
     var sseHandlers = {
       "text-button_order": function (val) {
@@ -6220,9 +6320,7 @@
       },
     ];
 
-    source.addEventListener("state", function (e) {
-      var d;
-      try { d = JSON.parse(e.data); } catch (_) { return; }
+    function handleState(d) {
       rememberEntityPostPath(d);
       var keys = entityStateKeys(d);
       var id = keys[0] || d.id;
@@ -6247,7 +6345,26 @@
         }
       }
 
-      console.log("[SSE] unhandled:", id, val);
+      console.log("[state] unhandled:", id, val);
+    }
+
+    markConnected();
+    if (!eventStreamEnabled()) {
+      loadInitialState(handleState);
+      return;
+    }
+
+    var source = new EventSource("/events");
+    _eventSource = source;
+
+    source.addEventListener("open", markConnected);
+    source.addEventListener("error", function () {
+      handleDisconnected(source);
+    });
+    source.addEventListener("state", function (e) {
+      var d;
+      try { d = JSON.parse(e.data); } catch (_) { return; }
+      handleState(d);
     });
 
   }
