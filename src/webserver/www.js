@@ -234,7 +234,7 @@
     ".sp-slider-track{width:100%;height:100%;position:relative}" +
     ".sp-slider-fill{position:absolute;left:0;bottom:0;width:100%;height:80%;background:var(--accent);" +
     "border-radius:var(--r)}" +
-    ".sp-media-h-slider{position:absolute;left:8%;right:8%;bottom:8%;height:5%;border-radius:999px;" +
+    ".sp-media-h-slider{position:absolute;left:8%;right:8%;bottom:10%;height:7.5%;border-radius:999px;" +
     "background:#212121;overflow:hidden;pointer-events:none}" +
     ".sp-media-h-slider span{display:block;width:62%;height:100%;background:var(--accent);border-radius:999px}" +
     ".sp-media-position-time{z-index:1}" +

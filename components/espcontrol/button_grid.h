@@ -3407,13 +3407,13 @@ inline void slider_horizontal_track_geometry(lv_obj_t *btn, lv_coord_t &x,
   if (bw <= 0 || bh <= 0) return;
 
   w = (lv_coord_t)((int32_t)bw * 84 / 100);
-  h = (lv_coord_t)((int32_t)bh * 5 / 100);
+  h = (lv_coord_t)(((int32_t)bh * 15 + 100) / 200);
   if (w < 1) w = 1;
-  if (h < 3) h = 3;
-  if (h > 8) h = 8;
+  if (h < 4) h = 4;
+  if (h > 12) h = 12;
   x = (bw - w) / 2;
-  lv_coord_t bottom_pad = (lv_coord_t)((int32_t)bh * 8 / 100);
-  if (bottom_pad < 6) bottom_pad = 6;
+  lv_coord_t bottom_pad = (lv_coord_t)((int32_t)bh * 10 / 100);
+  if (bottom_pad < 8) bottom_pad = 8;
   y = -bottom_pad;
 }
 
