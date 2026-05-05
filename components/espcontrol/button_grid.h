@@ -199,6 +199,7 @@ inline std::string text_sensor_display_text(esphome::StringRef value) {
         out.push_back(' ');
         last_space = true;
       }
+      cap_next = true;
       continue;
     }
     if (std::isalpha(c)) {
