@@ -207,7 +207,7 @@ registerButtonType("media", {
           '</span></span>' +
           '<span class="sp-media-position-time">1:31</span>',
         labelHtml:
-          '<span class="sp-btn-label-row"><span class="sp-media-position-status">Playing</span>' +
+          '<span class="sp-btn-label-row"><span class="sp-btn-label sp-media-position-status">Playing</span>' +
           badge + '</span>',
       };
     }
