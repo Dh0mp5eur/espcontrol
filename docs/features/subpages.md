@@ -22,17 +22,19 @@ A subpage has one fewer usable slot than the home screen because it includes a *
 
 You can also right-click an empty space on the home screen and choose **Create Subpage**.
 
-Subpages can contain Switch, Action, Trigger, Sensor, Slider, Cover, Garage Door, Date, World Clock, Weather, and Internal cards. They cannot contain another Subpage card.
+Subpages can contain Switch, Action, Trigger, Sensor, Slider, Cover, Garage Door, Date, World Clock, Weather, and Internal cards. Media cards can also be used when **Developer/Experimental Features** is enabled. Subpages cannot contain another Subpage card.
 
-## Display State
+## Show State
 
-Turn on **Display State** if you want the Subpage card on the home screen to show when something inside the subpage is active.
+Turn on **Show State** if you want the Subpage card on the home screen to show state.
 
-When **Display State** is on:
+Subpage cards can show state in three ways:
 
-- The Subpage card lights up if any active-capable card inside it is on, open, playing, unlocked, or otherwise active.
-- You can also enable **Change Icon When On** to use a different icon while anything inside the subpage is active.
-- Read-only cards such as Sensor, Date, World Clock, and Weather do not affect the Subpage card state.
+- **Icon** shows separate Off Icon and On Icon choices. Enter a State Entity to track a specific Home Assistant entity, or leave it blank to keep the existing automatic behavior where the Subpage card lights up if any active-capable card inside it is on, open, playing, unlocked, or otherwise active.
+- **Numeric** shows a Home Assistant sensor value in the large number style used by Sensor cards.
+- **Text** shows a Home Assistant sensor state where the card label normally appears.
+
+Read-only cards such as Sensor, Date, World Clock, and Weather do not affect Icon mode. Numeric and Text modes use the sensor entity you enter on the Subpage card. They do not automatically count the cards inside the subpage; use a Home Assistant helper or template sensor for that.
 
 ## Moving Cards Between Pages
 

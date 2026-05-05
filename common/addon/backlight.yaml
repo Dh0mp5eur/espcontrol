@@ -125,6 +125,55 @@ script:
       - script.stop: screensaver_idle_check
       - script.execute: screensaver_sleep_timer
 
+  # Presence sensor mode is lower priority than the screen schedule. This keeps
+  # motion/presence from waking the panel during scheduled off or clock hours.
+  - id: screensaver_presence_wake
+    mode: restart
+    then:
+      - if:
+          condition:
+            lambda: 'return id(screensaver_mode).state == "sensor";'
+          then:
+            - if:
+                condition:
+                  lambda: |-
+                    if (!id(schedule_enabled).state) return true;
+                    auto now = panel_time_or_fallback(id(panel_time).now(), id(homeassistant_time).now());
+                    if (!now.is_valid()) return false;
+                    if (screen_schedule_in_window(
+                        now.hour,
+                        (int) id(schedule_on_hour).state,
+                        (int) id(schedule_off_hour).state)) {
+                      return true;
+                    }
+                    return screen_schedule_always_on_mode(id(schedule_mode).current_option());
+                then:
+                  - script.execute: screensaver_wake
+                else:
+                  - script.execute: screen_schedule_check
+
+  - id: screensaver_presence_sleep
+    mode: restart
+    then:
+      - if:
+          condition:
+            lambda: 'return id(screensaver_mode).state == "sensor";'
+          then:
+            - if:
+                condition:
+                  lambda: |-
+                    if (!id(schedule_enabled).state) return false;
+                    auto now = panel_time_or_fallback(id(panel_time).now(), id(homeassistant_time).now());
+                    if (!now.is_valid()) return true;
+                    return !screen_schedule_in_window(
+                      now.hour,
+                      (int) id(schedule_on_hour).state,
+                      (int) id(schedule_off_hour).state);
+                then:
+                  - script.execute: screen_schedule_check
+                else:
+                  - script.execute: screensaver_sleep_sensor
+
   - id: screensaver_sleep_display_off
     mode: restart
     then:

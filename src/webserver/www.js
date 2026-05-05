@@ -7,7 +7,7 @@
 //
 // Per-device config (grid size, styling) is injected between __DEVICE_CONFIG__
 // markers by scripts/build.py. Button type plugins (switch, sensor, weather,
-// action, calendar, timezone, slider, cover, garage, push, subpage) are injected between __BUTTON_TYPES__ markers.
+// action, calendar, timezone, slider, cover, garage, lock, media, push, subpage) are injected between __BUTTON_TYPES__ markers.
 // Icon data is generated between GENERATED:ICONS / GENERATED:DOMAIN_ICONS.
 // =============================================================================
 
@@ -15,7 +15,7 @@
 (function () {
   // __DEVICE_CONFIG_START__
   var DEVICE_ID = "guition-esp32-p4-jc1060p470";
-  var CFG = {"slots":20,"cols":5,"rows":4,"dragMode":"swap","dragAnimation":true,"screen":{"width":"67%","aspect":"1024/600"},"topbar":{"height":3.2,"padding":"0.39cqw","fontSize":1.95},"grid":{"top":4.4,"left":0.49,"right":0.49,"bottom":0.49,"gap":0.98,"fr":"1fr"},"btn":{"radius":0.78,"padding":1.37,"iconSize":4.69,"labelSize":1.8},"emptyCell":{"radius":0.78},"sensorBadge":{"top":1,"right":1,"fontSize":1.6},"subpageBadge":{"bottom":1,"right":1,"fontSize":2},"backBtn":{"radius":0.78,"padding":1.37,"iconSize":4.69,"labelSize":1.8}};
+  var CFG = {"slots":20,"cols":5,"rows":4,"dragMode":"swap","dragAnimation":true,"screen":{"width":"67%","aspect":"1024/600"},"topbar":{"height":3.2,"padding":"0.39cqw","fontSize":1.95},"grid":{"top":4.4,"left":0.49,"right":0.49,"bottom":0.49,"gap":0.98,"fr":"1fr"},"btn":{"radius":0.78,"padding":1.37,"iconSize":4.69,"labelSize":1.8},"emptyCell":{"radius":0.78},"sensorBadge":{"top":1,"right":1,"fontSize":1.6},"subpageBadge":{"bottom":1,"right":1,"fontSize":2}};
   // __DEVICE_CONFIG_END__
   var NUM_SLOTS = CFG.slots;
   var GRID_COLS = CFG.cols;
@@ -80,15 +80,16 @@
     "Mailbox", "Message Video", "Medication", "Medication Outline", "Meter Electric", "Meter Gas",
     "Microsoft Xbox", "Microwave", "Minus", "Monitor", "Motion Sensor", "Movie Roll",
     "Music", "Outdoor Lamp", "Oven", "Package", "Package Closed", "Pill",
-    "Pill Multiple", "Plus", "Pool", "Power", "Power Plug", "Printer",
-    "Printer 3D", "Projector", "Projector Off", "Robot Vacuum", "Roller Shade", "Roller Shade Closed",
-    "Router", "Router Network", "Security", "Shower", "Smoke Detector", "Snowflake",
-    "Snowflake Alert", "Snowflake Thermometer", "Sofa", "Solar Panel", "Solar Panel Large", "Solar Power",
-    "Solar Power Variant", "Speaker", "Spotlight", "Sprinkler", "String Lights", "String Lights Off",
-    "Power Socket UK", "Power Socket EU", "Power Socket US", "Sun", "Table", "Television",
-    "Television Off", "Thermometer", "Thermometer Alert", "Thermometer High", "Thermometer Low", "Thermostat",
-    "Home-Thermostat", "Thermostat Auto", "Thermometer Water", "Timer", "Toilet", "Transmission Tower",
-    "Trash Can", "Wall Outlet", "Wall Sconce", "Washer", "Water", "Water Heater",
+    "Pill Multiple", "Plus", "Play Pause", "Pool", "Power", "Power Plug",
+    "Progress Clock", "Printer", "Printer 3D", "Projector", "Projector Off", "Robot Vacuum",
+    "Roller Shade", "Roller Shade Closed", "Router", "Router Network", "Security", "Shower",
+    "Skip Next", "Skip Previous", "Smoke Detector", "Snowflake", "Snowflake Alert", "Snowflake Thermometer",
+    "Sofa", "Solar Panel", "Solar Panel Large", "Solar Power", "Solar Power Variant", "Speaker",
+    "Spotlight", "Sprinkler", "Stop", "String Lights", "String Lights Off", "Power Socket UK",
+    "Power Socket EU", "Power Socket US", "Sun", "Table", "Television", "Television Off",
+    "Thermometer", "Thermometer Alert", "Thermometer High", "Thermometer Low", "Thermostat", "Home-Thermostat",
+    "Thermostat Auto", "Thermometer Water", "Timer", "Toilet", "Transmission Tower", "Trash Can",
+    "Volume High", "Wall Outlet", "Wall Sconce", "Washer", "Water", "Water Heater",
     "Water Percent", "Water Alert", "Weather Cloudy", "Weather Cloudy Alert", "Weather Dust", "Weather Fog",
     "Weather Hail", "Weather Hazy", "Weather Hurricane", "Weather Lightning", "Weather Lightning Rainy", "Weather Night",
     "Weather Night Cloudy", "Weather Partly Cloudy", "Weather Partly Lightning", "Weather Partly Rainy", "Weather Partly Snowy", "Weather Partly Snowy Rainy",
@@ -134,6 +135,7 @@
       labelPlaceholder: null,
       isAvailable: null,
       onSelect: null,
+      renderSettingsBeforeLabel: null,
       renderSettings: null,
       renderPreview: null,
       contextMenuItems: null,
@@ -150,6 +152,12 @@
 
   function isExperimentalEnabled(key) {
     return !!state.developerExperimentalFeatures;
+  }
+
+  function subpageStateDisplayMode(b) {
+    if (!b || !b.sensor) return "off";
+    if (b.sensor === "indicator") return "icon";
+    return b.precision === "text" ? "text" : "numeric";
   }
   // __BUTTON_TYPES_START__
   // __BUTTON_TYPES_END__
@@ -218,14 +226,21 @@
     "display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--btn-lines);" +
     "overflow:hidden;word-break:break-word;min-height:0}" +
     ".sp-sensor-badge{position:absolute;top:var(--sensor-top);right:var(--sensor-right);font-size:var(--sensor-fs);opacity:.5}" +
-    ".sp-sensor-preview{display:flex;align-items:baseline;gap:1px;color:#fff}" +
+    ".sp-sensor-preview{display:flex;align-items:baseline;gap:0;color:#fff}" +
+    ".sp-forecast-preview{white-space:nowrap;gap:0}" +
     ".sp-sensor-value{font-size:var(--btn-icon);line-height:1;font-weight:300}" +
-    ".sp-forecast-value{font-size:calc(var(--btn-icon)*.72)}" +
-    ".sp-sensor-unit{font-size:var(--btn-label);line-height:1;opacity:.7}" +
+    ".sp-sensor-unit{font-size:var(--btn-label);line-height:1;color:#fff}" +
     ".sp-slider-preview{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;pointer-events:none}" +
     ".sp-slider-track{width:100%;height:100%;position:relative}" +
     ".sp-slider-fill{position:absolute;left:0;bottom:0;width:100%;height:80%;background:var(--accent);" +
     "border-radius:var(--r)}" +
+    ".sp-media-h-slider{position:absolute;left:8%;right:8%;bottom:10%;height:7.5%;border-radius:999px;" +
+    "background:#212121;overflow:hidden;pointer-events:none}" +
+    ".sp-media-h-slider span{display:block;width:62%;height:100%;background:#fff;border-radius:999px}" +
+    ".sp-media-position-time{z-index:1}" +
+    ".sp-media-now-title{font-size:var(--btn-icon);line-height:1;color:#fff;font-weight:300;z-index:1;" +
+    "display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;word-break:break-word}" +
+    ".sp-media-now-artist{font-size:var(--btn-label);line-height:1.2;color:#fff}" +
     ".sp-btn-double{grid-row:span 2}" +
     ".sp-btn-double .sp-btn-label{-webkit-line-clamp:var(--btn-lines-dbl)}" +
     ".sp-btn-double .sp-btn-label-row .sp-btn-label{-webkit-line-clamp:var(--btn-lines-dbl)}" +
@@ -324,11 +339,14 @@
     "transition:border-color .25s,box-shadow .25s}" +
     ".sp-input:focus,.sp-select:focus{border-color:var(--accent);" +
     "box-shadow:0 0 0 3px var(--accent-soft)}" +
+    ".sp-input.sp-input-error,.sp-select.sp-input-error{border-color:var(--danger);" +
+    "box-shadow:0 0 0 3px rgba(241,65,88,.16)}" +
     ".sp-input--narrow{width:80px}" +
     ".sp-select{appearance:none;-webkit-appearance:none;" +
     "background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2398989f' d='M6 8L1 3h10z'/%3E%3C/svg%3E\");" +
     "background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}" +
     "select option{background:var(--surface);color:var(--text)}" +
+    ".sp-field-error{font-size:.75rem;color:#f66f81;margin-top:6px;line-height:1.35}" +
 
     ".sp-icon-picker{position:relative}" +
     ".sp-icon-picker-input{width:100%;padding:10px 12px;padding-left:36px;background:var(--surface2);" +
@@ -475,7 +493,7 @@
 
     ".sp-fw-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px;margin-bottom:12px}" +
     ".sp-fw-version{font-size:.875rem;color:var(--text)}" +
-    ".sp-fw-label{font-size:.8rem;color:var(--text2)}" +
+    ".sp-fw-label{font-size:inherit;color:var(--text2)}" +
     ".sp-fw-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-left:auto}" +
     ".sp-fw-inline-status{display:none;font-size:.8rem;color:#3dd68c;white-space:nowrap}" +
     ".sp-fw-inline-status.sp-visible{display:inline}" +
@@ -491,19 +509,6 @@
     ".sp-fw-btn.sp-fw-btn-busy{background:rgba(35,37,43,.5);color:#8a8d94;" +
     "border-color:rgba(74,77,84,.45);border-radius:999px;padding:8px 28px;opacity:1}" +
     ".sp-fw-btn.sp-fw-btn-busy:hover{background:rgba(35,37,43,.5);border-color:rgba(74,77,84,.45)}" +
-
-    ".sp-back-btn{border-radius:var(--back-r);padding:var(--back-pad);display:flex;flex-direction:column;" +
-    "justify-content:space-between;box-sizing:border-box;border:2px solid transparent;" +
-    "position:relative;overflow:hidden;min-width:0}" +
-    ".sp-back-btn .sp-btn-icon{font-size:var(--back-icon);line-height:1;color:#fff}" +
-    ".sp-back-btn .sp-btn-label{font-size:var(--back-label);line-height:1.2;color:#fff;" +
-    "display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--back-lines);" +
-    "overflow:hidden;word-break:break-word;min-height:0}" +
-    ".sp-back-btn.sp-btn-double{grid-row:span 2}" +
-    ".sp-back-btn.sp-btn-double .sp-btn-label{-webkit-line-clamp:var(--back-lines-dbl)}" +
-    ".sp-back-btn.sp-btn-wide{grid-column:span 2}" +
-    ".sp-back-btn.sp-btn-big{grid-row:span 2;grid-column:span 2}" +
-    ".sp-back-btn.sp-btn-big .sp-btn-label{-webkit-line-clamp:var(--back-lines-dbl)}" +
 
     ".sp-btn-label-row{display:flex;align-items:flex-end;width:100%;overflow:hidden}" +
     ".sp-btn-label-row .sp-btn-label{flex:1;min-width:0}" +
@@ -557,7 +562,7 @@
     indoorEntity: "",
     outdoorEntity: "",
     temperatureUnit: "Auto",
-    clockBarOn: true,
+    clockBarOn: false,
     temperatureDegreeSymbolOn: true,
     presenceEntity: "",
     screensaverMode: "disabled",
@@ -569,6 +574,7 @@
     screensaverTimeout: 300,
     screensaverTimeoutMin: 60,
     screensaverTimeoutMax: 3600,
+    screensaverTimeoutLimitsLoaded: false,
     homeScreenTimeout: 60,
     brightnessDayVal: 100,
     brightnessNightVal: 75,
@@ -597,10 +603,12 @@
     firmwareUpdateState: "",
     firmwareReleaseUrl: "",
     firmwareChecking: false,
+    firmwareInstallTargetVersion: "",
     autoUpdate: true,
     updateFrequency: "Daily",
     updateFreqOptions: ["Hourly", "Daily", "Weekly", "Monthly"],
     developerExperimentalFeatures: false,
+    bluetoothProxyEnabled: false,
     subpages: {},
     subpageRaw: {},
     subpageSavePending: {},
@@ -674,8 +682,7 @@
   }
 
   function clockBarTemperatureUnitSymbol() {
-    var unit = temperatureUnitSymbol();
-    return state.temperatureDegreeSymbolOn ? unit : "";
+    return state.temperatureDegreeSymbolOn ? "\u00B0" : "";
   }
 
   function appendScreenRotationOption(select, opt) {
@@ -801,11 +808,15 @@
   function syncScreensaverTimeoutLimits(d) {
     state.screensaverTimeoutMin = readNumberMeta(d, ["min", "min_value"], state.screensaverTimeoutMin);
     state.screensaverTimeoutMax = readNumberMeta(d, ["max", "max_value"], state.screensaverTimeoutMax);
+    state.screensaverTimeoutLimitsLoaded = true;
   }
 
   function screensaverTimeoutSupported(value) {
     var n = parseFloat(value);
     if (!isFinite(n)) return false;
+    if (!state.screensaverTimeoutLimitsLoaded) {
+      return n > 0 && n <= state.screensaverTimeoutMax;
+    }
     return n >= state.screensaverTimeoutMin && n <= state.screensaverTimeoutMax;
   }
 
@@ -825,6 +836,15 @@
       setSelectValue(select, state.screensaverTimeout, formatDuration(state.screensaverTimeout));
       select.value = current;
     }
+  }
+
+  function applyScreensaverTimeoutState(d) {
+    if (!d) return;
+    syncScreensaverTimeoutLimits(d);
+    var n = parseFloat(d.value != null ? d.value : d.state);
+    if (!isFinite(n)) return;
+    state.screensaverTimeout = n;
+    syncScreensaverTimeoutUi();
   }
 
   function setSelectValue(select, value, label) {
@@ -949,6 +969,14 @@
     }
   }
 
+  function syncBluetoothProxyUi() {
+    if (els.setBluetoothProxy) els.setBluetoothProxy.checked = !!state.bluetoothProxyEnabled;
+    if (els.setBluetoothProxyBadge) {
+      els.setBluetoothProxyBadge.className =
+        "sp-card-badge" + (state.bluetoothProxyEnabled ? "" : " sp-hidden");
+    }
+  }
+
   var els = {};
   var dragSrcPos = -1;
   var didDrag = false;
@@ -963,6 +991,8 @@
   var sliderMigrationTimer = null;
   var pendingSliderSubpageMigrations = {};
   var _eventSource = null;
+  var firmwareInstallRefreshTimer = null;
+  var firmwareInstallRefreshUntil = 0;
 
   // ── Utilities ──────────────────────────────────────────────────────────
 
@@ -989,6 +1019,7 @@
     state.firmwareVersion = isSpecificFirmwareVersion(version) ? version : "Dev";
     renderFirmwareVersion();
     renderFirmwareUpdateStatus();
+    stopFirmwareInstallRefreshIfComplete();
   }
 
   function displayFirmwareVersion(version) {
@@ -1043,12 +1074,65 @@
 
   function setFirmwareUpdateInfo(d) {
     var latest = d.latest_version || d.value || "";
+    var updateState = String(d.state || state.firmwareUpdateState || "").trim().toUpperCase();
     if (d.current_version) setFirmwareVersion(d.current_version);
     if (latest) state.firmwareLatestVersion = String(latest).trim();
-    state.firmwareUpdateState = String(d.state || state.firmwareUpdateState || "").trim().toUpperCase();
+    if (state.firmwareInstallTargetVersion &&
+        updateState === "UPDATE AVAILABLE" &&
+        Date.now() < firmwareInstallRefreshUntil) {
+      updateState = "INSTALLING";
+    }
+    state.firmwareUpdateState = updateState;
     state.firmwareReleaseUrl = d.release_url || state.firmwareReleaseUrl || "";
     if (state.firmwareUpdateState) state.firmwareChecking = false;
+    if (state.firmwareUpdateState === "INSTALLING") {
+      startFirmwareInstallRefresh();
+    } else {
+      stopFirmwareInstallRefreshIfComplete();
+    }
     renderFirmwareUpdateStatus();
+  }
+
+  function firmwareVersionMatches(version, expected) {
+    return String(version == null ? "" : version).trim() ===
+      String(expected == null ? "" : expected).trim();
+  }
+
+  function stopFirmwareInstallRefresh() {
+    if (firmwareInstallRefreshTimer) clearTimeout(firmwareInstallRefreshTimer);
+    firmwareInstallRefreshTimer = null;
+    firmwareInstallRefreshUntil = 0;
+    state.firmwareInstallTargetVersion = "";
+  }
+
+  function stopFirmwareInstallRefreshIfComplete() {
+    var target = state.firmwareInstallTargetVersion;
+    if (!target || state.firmwareUpdateState !== "NO UPDATE") return false;
+    if (isSpecificFirmwareVersion(target) && !firmwareVersionMatches(state.firmwareVersion, target)) {
+      setFirmwareVersion(target);
+    }
+    stopFirmwareInstallRefresh();
+    return true;
+  }
+
+  function pollFirmwareInstallRefresh() {
+    firmwareInstallRefreshTimer = null;
+    refreshFirmwareVersion();
+    if (stopFirmwareInstallRefreshIfComplete()) return;
+    if (Date.now() >= firmwareInstallRefreshUntil) {
+      stopFirmwareInstallRefresh();
+      return;
+    }
+    firmwareInstallRefreshTimer = setTimeout(pollFirmwareInstallRefresh, 5000);
+  }
+
+  function startFirmwareInstallRefresh() {
+    if (!state.firmwareInstallTargetVersion && isSpecificFirmwareVersion(state.firmwareLatestVersion)) {
+      state.firmwareInstallTargetVersion = state.firmwareLatestVersion;
+    }
+    firmwareInstallRefreshUntil = Date.now() + 180000;
+    if (firmwareInstallRefreshTimer) clearTimeout(firmwareInstallRefreshTimer);
+    firmwareInstallRefreshTimer = setTimeout(pollFirmwareInstallRefresh, 5000);
   }
 
   function isFirmwareVersionEvent(id, d) {
@@ -1213,6 +1297,11 @@
       var sz = state.sizes[slot];
       return slot + (sz === 4 ? "b" : sz === 2 ? "d" : sz === 3 ? "w" : "");
     }).join(",");
+  }
+
+  function applyImportedButtonOrder(orderStr, importedSizes) {
+    state.sizes = importedSizes || {};
+    state.grid = parseOrder(orderStr);
   }
 
   function clearSpans(grid, maxSlots) {
@@ -1544,13 +1633,164 @@
     ], value, SCREEN_SCHEDULE_CLOCK_BRIGHTNESS_UNAVAILABLE);
   }
 
+  var BLUETOOTH_PROXY_UNAVAILABLE =
+    "Bluetooth proxy is not available on this firmware. Update the device firmware, then reload this page.";
+
+  function postBluetoothProxy(on) {
+    postSwitchWithObjectIds("Bluetooth Proxy", [
+      "bluetooth_proxy",
+      "bluetooth_proxy_enabled",
+    ], on, BLUETOOTH_PROXY_UNAVAILABLE);
+  }
+
   function getJsonQuietly(path, callback) {
-    fetch(path, { cache: "no-store" }).then(function (r) {
+    return fetch(path, { cache: "no-store" }).then(function (r) {
       if (!r.ok) return null;
       return r.json();
     }).then(function (data) {
-      if (data) callback(data);
+      if (data && callback) callback(data);
+      return data;
     }).catch(function () {});
+  }
+
+  function entityDetailPath(domain, name) {
+    return "/" + encodeURIComponent(domain) + "/" + encodeURIComponent(name) + "?detail=all";
+  }
+
+  function eventStreamEnabled() {
+    try {
+      return new URLSearchParams(window.location.search).get("events") === "1";
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function cardStateEntities() {
+    var items = [
+      ["text", "Button Order"],
+      ["text", "Button On Color"],
+      ["text", "Button Off Color"],
+      ["text", "Sensor Card Color"],
+    ];
+
+    for (var i = 1; i <= NUM_SLOTS; i++) {
+      items.push(["text", "Button " + i + " Config"]);
+    }
+
+    return items;
+  }
+
+  function settingsStateEntities() {
+    var items = [
+      ["switch", "Indoor Temp Enable"],
+      ["switch", "Outdoor Temp Enable"],
+      ["switch", "Screen: Clock Bar"],
+      ["switch", "Screen: Temperature Degree Symbol"],
+      ["select", "Screen: Temperature Unit"],
+      ["text", "Indoor Temp Entity"],
+      ["text", "Outdoor Temp Entity"],
+      ["text", "Screensaver Mode"],
+      ["text", "Presence Sensor Entity"],
+      ["number", "Screen Saver: Daytime Clock Brightness"],
+      ["number", "Screen Saver: Nighttime Clock Brightness"],
+      ["number", "Screen Saver: Clock Brightness"],
+      ["number", "Screensaver Timeout"],
+      ["number", "Home Screen Timeout"],
+      ["switch", "Screen Saver: Clock"],
+      ["select", "Screen: Timezone"],
+      ["select", "Screen: Clock Format"],
+      ["text", "Screen: NTP Server 1"],
+      ["text", "Screen: NTP Server 2"],
+      ["text", "Screen: NTP Server 3"],
+      ["text_sensor", "Screen: Sunrise"],
+      ["text_sensor", "Screen: Sunset"],
+      ["switch", "Screen: Schedule Enabled"],
+      ["select", "Screen: Schedule Mode"],
+      ["number", "Screen: Schedule On Hour"],
+      ["number", "Screen: Schedule Off Hour"],
+      ["number", "Screen: Schedule Wake Timeout"],
+      ["number", "Screen: Schedule Wake Brightness"],
+      ["number", "Screen: Schedule Dimmed Brightness"],
+      ["number", "Screen: Schedule Clock Brightness"],
+      ["number", "Screen: Daytime Brightness"],
+      ["number", "Screen: Nighttime Brightness"],
+      ["text_sensor", "Firmware: Version"],
+      ["update", "Firmware: Update"],
+      ["switch", "Firmware: Auto Update"],
+      ["select", "Firmware: Update Frequency"],
+      ["switch", "Developer: Experimental Features"],
+      ["switch", "Bluetooth Proxy"],
+    ];
+
+    if (CFG.features && CFG.features.screenRotation) {
+      items.push(["select", "Screen: Rotation"]);
+    }
+
+    return items;
+  }
+
+  function subpageStateEntities() {
+    var items = [];
+    for (var i = 1; i <= NUM_SLOTS; i++) {
+      items.push(["text", "Subpage " + i + " Config"]);
+      items.push(["text", "Subpage " + i + " Config Ext"]);
+      items.push(["text", "Subpage " + i + " Config Ext 2"]);
+      items.push(["text", "Subpage " + i + " Config Ext 3"]);
+    }
+
+    return items;
+  }
+
+  function loadStateItems(items, handleState, concurrency) {
+    var index = 0;
+    var active = 0;
+    var loadedCount = 0;
+    var limit = Math.max(1, concurrency || 1);
+
+    return new Promise(function (resolve) {
+      function done() {
+        active--;
+        run();
+      }
+
+      function run() {
+        if (index >= items.length && active === 0) {
+          resolve(loadedCount);
+          return;
+        }
+
+        while (active < limit && index < items.length) {
+          var item = items[index++];
+          active++;
+          getJsonQuietly(entityDetailPath(item[0], item[1])).then(function (data) {
+            if (data) {
+              loadedCount++;
+              handleState(data);
+            }
+          }).then(done, done);
+        }
+      }
+
+      run();
+    });
+  }
+
+  function loadInitialState(handleState) {
+    loadStateItems(cardStateEntities(), handleState, 4).then(function (loadedCount) {
+      if (loadedCount === 0) {
+        showBanner("Reconnecting to device\u2026", "offline");
+        setTimeout(connectEvents, 5000);
+        return;
+      }
+      clearTimeout(migrationTimer);
+      migrationTimer = setTimeout(scheduleMigration, 5000);
+      clearTimeout(sliderMigrationTimer);
+      pendingSliderSubpageMigrations = {};
+
+      loadStateItems(settingsStateEntities(), handleState, 2).then(function () {
+        loadStateItems(subpageStateEntities(), handleState, 2);
+      });
+    });
   }
 
   function refreshFirmwareVersion() {
@@ -1560,6 +1800,15 @@
     getJsonQuietly("/update/" + encodeURIComponent("Firmware: Update") + "?detail=all", function (d) {
       setFirmwareUpdateInfo(d);
     });
+  }
+
+  function refreshScreensaverTimeout() {
+    getJsonQuietly("/number/" + encodeURIComponent("Screensaver Timeout") + "?detail=all", applyScreensaverTimeoutState)
+      .then(function (data) {
+        if (!data) {
+          getJsonQuietly("/number/" + encodeURIComponent("screensaver_timeout") + "?detail=all", applyScreensaverTimeoutState);
+        }
+      });
   }
 
   function waitForReboot() {
@@ -1593,6 +1842,23 @@
       b.unit = "";
       b.icon_on = "Auto";
       if (!b.icon) b.icon = "Auto";
+    }
+    if (b && b.type === "media") {
+      if (b.sensor === "controls") {
+        if (!b.icon || b.icon === "Speaker") b.icon = "Auto";
+        b.sensor = "play_pause";
+      } else if (!b.sensor) {
+        b.sensor = "play_pause";
+      }
+      if (["play_pause", "previous", "next", "volume", "position", "now_playing"].indexOf(b.sensor) < 0) {
+        b.sensor = "play_pause";
+      }
+      if (b.sensor === "previous" && b.label === "Skip Previous") b.label = "Previous";
+      if (b.sensor === "next" && b.label === "Skip Next") b.label = "Next";
+      if (b.sensor === "volume") {
+        if (!b.label || b.label === "Media") b.label = "Volume";
+        b.icon = "Auto";
+      }
     }
     return b;
   }
@@ -1719,7 +1985,10 @@
       weather_forecast: "F",
       slider: "L",
       cover: "C",
+      light_temperature: "N",
       garage: "R",
+      lock: "K",
+      media: "M",
       push: "P",
       internal: "I",
       subpage: "G",
@@ -1738,7 +2007,10 @@
       F: "weather_forecast",
       L: "slider",
       C: "cover",
+      N: "light_temperature",
       R: "garage",
+      K: "lock",
+      M: "media",
       P: "push",
       I: "internal",
       G: "subpage",
@@ -2071,12 +2343,6 @@
     r.setProperty("--sensor-right", CFG.sensorBadge.right + "cqw");
     r.setProperty("--sensor-fs", CFG.sensorBadge.fontSize + "cqw");
     r.setProperty("--empty-r", CFG.emptyCell.radius + "cqw");
-    r.setProperty("--back-r", CFG.backBtn.radius + "cqw");
-    r.setProperty("--back-pad", CFG.backBtn.padding + "cqw");
-    r.setProperty("--back-icon", CFG.backBtn.iconSize + "cqw");
-    r.setProperty("--back-label", CFG.backBtn.labelSize + "cqw");
-    r.setProperty("--back-lines", String(CFG.backBtn.labelLines || 1));
-    r.setProperty("--back-lines-dbl", String(CFG.backBtn.labelLinesDouble || CFG.backBtn.labelLines || 1));
     r.setProperty("--subpage-bottom", CFG.subpageBadge.bottom + "cqw");
     r.setProperty("--subpage-right", CFG.subpageBadge.right + "cqw");
     r.setProperty("--subpage-fs", CFG.subpageBadge.fontSize + "cqw");
@@ -2698,6 +2964,8 @@
     timeoutSelect.className = "sp-select";
     timeoutSelect.id = "sp-set-ss-timeout";
     timeoutSelect.addEventListener("change", function () {
+      var n = parseFloat(this.value);
+      if (isFinite(n)) state.screensaverTimeout = n;
       postScreensaverTimeout(this.value);
     });
     timeoutField.appendChild(timeoutSelect);
@@ -2832,6 +3100,23 @@
     config.appendChild(timeSettingsCard);
     config.appendChild(makeCollapsibleCard("Backup", backupBody, true));
 
+    var bluetoothBody = document.createElement("div");
+    var bluetoothToggle = toggleRow("Bluetooth Proxy", "sp-set-bluetooth-proxy", state.bluetoothProxyEnabled);
+    bluetoothBody.appendChild(bluetoothToggle.row);
+    bluetoothToggle.input.addEventListener("change", function () {
+      state.bluetoothProxyEnabled = this.checked;
+      syncBluetoothProxyUi();
+      postBluetoothProxy(state.bluetoothProxyEnabled);
+    });
+    els.setBluetoothProxy = bluetoothToggle.input;
+    var bluetoothBadge = document.createElement("span");
+    bluetoothBadge.setAttribute("aria-label", "Bluetooth proxy on");
+    bluetoothBadge.innerHTML = '<span class="sp-card-badge-dot"></span><span>ON</span>';
+    els.setBluetoothProxyBadge = bluetoothBadge;
+    syncBluetoothProxyUi();
+    var bluetoothCard = makeCollapsibleCard("Bluetooth Proxy", bluetoothBody, true, bluetoothBadge);
+    config.appendChild(bluetoothCard);
+
     var fwBody = document.createElement("div");
 
     var fwVersionRow = document.createElement("div");
@@ -2855,9 +3140,11 @@
     fwCheckBtn.textContent = "Check for Update";
     fwCheckBtn.addEventListener("click", function () {
       if (firmwareUpdateAvailable()) {
+        state.firmwareInstallTargetVersion = state.firmwareLatestVersion;
         state.firmwareUpdateState = "INSTALLING";
         renderFirmwareUpdateStatus();
         postUpdateInstall("Firmware: Update");
+        startFirmwareInstallRefresh();
         return;
       }
       state.firmwareChecking = true;
@@ -2921,7 +3208,7 @@
       experimentalToggle.input.addEventListener("change", function () {
         state.developerExperimentalFeatures = this.checked;
         postSwitch("Developer: Experimental Features", state.developerExperimentalFeatures);
-        renderButtonSettings();
+        scheduleRender();
       });
       els.setDeveloperExperimentalFeatures = experimentalToggle.input;
       config.appendChild(makeCollapsibleCard("Developer", devBody, true));
@@ -3236,6 +3523,12 @@
 
   // ── Preview rendering (unified) ────────────────────────────────────────
 
+  function previewHtmlValue(typePreview, key, fallback) {
+    return typePreview && Object.prototype.hasOwnProperty.call(typePreview, key)
+      ? typePreview[key]
+      : fallback;
+  }
+
   function renderPreview() {
     var main = els.previewMain;
     main.innerHTML = "";
@@ -3250,7 +3543,7 @@
       if (slot === -2) {
         var backBtn = document.createElement("div");
         var bkSz = c.sizes[-2];
-        backBtn.className = "sp-back-btn" + (bkSz === 4 ? " sp-btn-big" : bkSz === 2 ? " sp-btn-double" : bkSz === 3 ? " sp-btn-wide" : "");
+        backBtn.className = "sp-btn sp-back-btn" + (bkSz === 4 ? " sp-btn-big" : bkSz === 2 ? " sp-btn-double" : bkSz === 3 ? " sp-btn-wide" : "");
         backBtn.innerHTML =
           '<span class="sp-btn-icon mdi mdi-chevron-left"></span>' +
           '<span class="sp-btn-label">Back</span>';
@@ -3292,12 +3585,10 @@
         var sensorBadge = hasWhenOn
           ? '<span class="sp-sensor-badge mdi mdi-' + badgeIcon + '"></span>'
           : '';
-        var labelHtml = typePreview && typePreview.labelHtml
-          ? typePreview.labelHtml
-          : '<span class="sp-btn-label">' + escHtml(label) + '</span>';
-        var iconHtml = typePreview && typePreview.iconHtml
-          ? typePreview.iconHtml
-          : '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>';
+        var labelHtml = previewHtmlValue(typePreview, "labelHtml",
+          '<span class="sp-btn-label">' + escHtml(label) + '</span>');
+        var iconHtml = previewHtmlValue(typePreview, "iconHtml",
+          '<span class="sp-btn-icon mdi mdi-' + iconName + '"></span>');
         btn.innerHTML =
           sensorBadge +
           iconHtml +
@@ -3505,6 +3796,7 @@
     panel.className = "sp-panel";
 
     var idPrefix = c.isSub ? "sp-sp-inp-" : "sp-inp-";
+    var requiredFields = [];
 
     function markDraftDirty() {
       if (state.settingsDraft && state.settingsDraft.key === draftKey) {
@@ -3514,6 +3806,78 @@
 
     function saveField(field, val) {
       markDraftDirty();
+    }
+
+    function fieldContainer(input) {
+      return input && input.closest ? input.closest(".sp-field") : null;
+    }
+
+    function clearFieldError(input) {
+      if (!input) return;
+      input.classList.remove("sp-input-error");
+      input.removeAttribute("aria-invalid");
+      input.removeAttribute("aria-describedby");
+      var field = fieldContainer(input);
+      if (field) field.classList.remove("sp-field-invalid");
+      var existing = field ? field.querySelector(".sp-field-error") : null;
+      if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+    }
+
+    function showFieldError(input, message) {
+      if (!input) return;
+      var field = fieldContainer(input);
+      input.classList.add("sp-input-error");
+      input.setAttribute("aria-invalid", "true");
+      if (field) field.classList.add("sp-field-invalid");
+      var existing = field ? field.querySelector(".sp-field-error") : null;
+      if (!existing && field) {
+        existing = document.createElement("div");
+        existing.className = "sp-field-error";
+        existing.id = (input.id || "sp-field") + "-error";
+        field.appendChild(existing);
+      }
+      if (existing) {
+        existing.textContent = message || "Add an entity before saving.";
+        input.setAttribute("aria-describedby", existing.id);
+      }
+    }
+
+    function requireField(input, message, isActive) {
+      if (!input) return;
+      requiredFields.push({
+        input: input,
+        message: message || "Add an entity before saving.",
+        isActive: isActive || function () { return true; },
+      });
+      function maybeClearError() {
+        if (!isActive || isActive()) {
+          if (String(input.value || "").trim()) clearFieldError(input);
+        } else {
+          clearFieldError(input);
+        }
+      }
+      input.addEventListener("input", maybeClearError);
+      input.addEventListener("change", maybeClearError);
+    }
+
+    function validateSettingsDraft() {
+      var firstInvalid = null;
+      for (var i = 0; i < requiredFields.length; i++) {
+        var rule = requiredFields[i];
+        if (rule.isActive && !rule.isActive()) {
+          clearFieldError(rule.input);
+          continue;
+        }
+        if (String(rule.input.value || "").trim()) {
+          clearFieldError(rule.input);
+          continue;
+        }
+        if (!firstInvalid) firstInvalid = rule.input;
+        showFieldError(rule.input, rule.message);
+      }
+      if (!firstInvalid) return true;
+      firstInvalid.focus();
+      return false;
     }
 
     function applySettingsDraft() {
@@ -3605,6 +3969,22 @@
       panel.appendChild(tf);
     }
 
+    var typeHelpers = {
+      makeIconPicker: makeIconPicker,
+      fieldLabel: fieldLabel,
+      textInput: textInput,
+      bindField: bindField,
+      saveField: saveField,
+      requireField: requireField,
+      clearFieldError: clearFieldError,
+      toggleRow: toggleRow,
+      idPrefix: idPrefix,
+    };
+
+    if (typeDef && typeDef.renderSettingsBeforeLabel && (!c.isSub || typeDef.allowInSubpage)) {
+      typeDef.renderSettingsBeforeLabel(panel, b, slot, typeHelpers);
+    }
+
     if (!typeDef || !typeDef.hideLabel) {
       var lf = document.createElement("div");
       lf.className = "sp-field";
@@ -3615,16 +3995,6 @@
       panel.appendChild(lf);
       bindField(labelInp, "label", true);
     }
-
-    var typeHelpers = {
-      makeIconPicker: makeIconPicker,
-      fieldLabel: fieldLabel,
-      textInput: textInput,
-      bindField: bindField,
-      saveField: saveField,
-      toggleRow: toggleRow,
-      idPrefix: idPrefix,
-    };
 
     if (typeDef && typeDef.renderSettings && (!c.isSub || typeDef.allowInSubpage)) {
       typeDef.renderSettings(panel, b, slot, typeHelpers);
@@ -3637,6 +4007,7 @@
       ef.appendChild(entityInp);
       panel.appendChild(ef);
       bindField(entityInp, "entity", true);
+      requireField(entityInp, "Add an entity before saving.");
 
       panel.appendChild(makeIconPicker(idPrefix + "icon-picker", idPrefix + "icon", b.icon || "Auto", function (opt) {
         b.icon = opt;
@@ -3812,6 +4183,7 @@
     saveBtn.className = "sp-action-btn sp-save-btn";
     saveBtn.textContent = "Save";
     saveBtn.addEventListener("click", function () {
+      if (!validateSettingsDraft()) return;
       applySettingsDraft();
       closeSettings();
     });
@@ -3910,13 +4282,23 @@
       emptyEl.style.display = hasMatch ? "none" : "";
     }
 
-    function selectOpt(opt) {
+    function setPickerIcon(opt) {
       currentIcon = opt;
       input.value = opt;
       preview.className = "sp-icon-picker-preview mdi mdi-" + iconSlug(opt);
+      if (optionEls) {
+        for (var i = 0; i < optionEls.length; i++) {
+          optionEls[i].classList.toggle("sp-active", optionEls[i]._optName === opt);
+        }
+      }
+    }
+
+    function selectOpt(opt) {
+      setPickerIcon(opt);
       closePicker();
       onSelect(opt);
     }
+    picker._setIcon = setPickerIcon;
 
     function openPicker() {
       if (currentIcon === "Auto") {
@@ -5046,6 +5428,7 @@
         home_screen_timeout: state.homeScreenTimeout,
         screen_rotation: state.screenRotation,
         developer_experimental_features: state.developerExperimentalFeatures,
+        bluetooth_proxy: state.bluetoothProxyEnabled,
       },
       screen: {
         brightness_day: Math.round(state.brightnessDayVal),
@@ -5084,18 +5467,32 @@
     input.accept = ".json";
     input.style.display = "none";
 
+    function cleanupInput() {
+      if (input.parentNode) input.parentNode.removeChild(input);
+    }
+
+    input.addEventListener("cancel", cleanupInput);
     input.addEventListener("change", function () {
-      if (!input.files || !input.files[0]) return;
+      if (!input.files || !input.files[0]) {
+        cleanupInput();
+        return;
+      }
       var reader = new FileReader();
+      reader.onerror = function () {
+        cleanupInput();
+        showBanner("Invalid file \u2014 could not read backup", "error");
+      };
       reader.onload = function () {
         var data;
         try { data = JSON.parse(reader.result); } catch (_) {
           showBanner("Invalid file \u2014 could not parse JSON", "error");
+          cleanupInput();
           return;
         }
 
         if (!data.version || !Array.isArray(data.buttons)) {
           showBanner("Invalid config file \u2014 missing required fields", "error");
+          cleanupInput();
           return;
         }
         if (data.device && data.device !== DEVICE_ID) {
@@ -5111,7 +5508,7 @@
         postText("Sensor Card Color", data.sensor_card_color || "212121");
 
         var empty = { entity: "", label: "", icon: "Auto", icon_on: "Auto", sensor: "", unit: "", type: "", precision: "" };
-        var buttons, orderStr, spKeyMap;
+        var buttons, orderStr, spKeyMap, importedSizes;
 
         if (importedCount !== NUM_SLOTS) {
           // Grid dimensions differ — remap used buttons into target slots
@@ -5191,6 +5588,7 @@
           }
 
           state.sizes = newSizes;
+          importedSizes = newSizes;
           orderStr = serializeGrid(newGrid);
 
           spKeyMap = {};
@@ -5205,6 +5603,7 @@
           for (var j = 0; j < NUM_SLOTS; j++) {
             buttons.push(j < importedCount ? data.buttons[j] : empty);
           }
+          importedSizes = {};
           orderStr = data.button_order || "";
           spKeyMap = {};
           if (data.subpages) {
@@ -5242,7 +5641,7 @@
         }
 
         postText("Button Order", orderStr);
-        state.grid = parseOrder(orderStr);
+        applyImportedButtonOrder(orderStr, importedSizes);
         state.onColor = data.button_on_color || "FF8C00";
         state.offColor = data.button_off_color || "313131";
         state.sensorColor = data.sensor_card_color || "212121";
@@ -5258,7 +5657,7 @@
           postSwitch("Outdoor Temp Enable", !!s.outdoor_temp_enable);
           postText("Indoor Temp Entity", s.indoor_temp_entity || "");
           postText("Outdoor Temp Entity", s.outdoor_temp_entity || "");
-          postClockBar(s.clock_bar != null ? !!s.clock_bar : true);
+          postClockBar(s.clock_bar != null ? !!s.clock_bar : false);
           postTemperatureDegreeSymbol(s.temperature_degree_symbol != null ? !!s.temperature_degree_symbol : true);
           var importedTimezone = s.timezone || state.timezone;
           var importedTemperatureUnit = normalizeTemperatureUnit(s.temperature_unit);
@@ -5271,6 +5670,14 @@
           var hasNtpServer3 = Object.prototype.hasOwnProperty.call(s, "ntp_server_3");
           var hasDeveloperExperimentalFeatures =
             Object.prototype.hasOwnProperty.call(s, "developer_experimental_features");
+          var hasBluetoothProxy =
+            Object.prototype.hasOwnProperty.call(s, "bluetooth_proxy");
+          var importedDeveloperExperimentalFeatures = hasDeveloperExperimentalFeatures
+            ? !!s.developer_experimental_features
+            : state.developerExperimentalFeatures;
+          var importedBluetoothProxy = hasBluetoothProxy
+            ? !!s.bluetooth_proxy
+            : false;
           var importedNtpServer1 = hasNtpServer1
             ? normalizeNtpServer(s.ntp_server_1, NTP_SERVER_DEFAULTS[0])
             : state.ntpServer1;
@@ -5314,7 +5721,10 @@
           var importedScreenRotation = normalizeScreenRotation(s.screen_rotation);
           if (CFG.features && CFG.features.screenRotation) postSelect("Screen: Rotation", importedScreenRotation);
           if (hasDeveloperExperimentalFeatures) {
-            postSwitch("Developer: Experimental Features", !!s.developer_experimental_features);
+            postSwitch("Developer: Experimental Features", importedDeveloperExperimentalFeatures);
+          }
+          if (hasBluetoothProxy || state.bluetoothProxyEnabled) {
+            postBluetoothProxy(importedBluetoothProxy);
           }
 
           state._indoorOn = !!s.indoor_temp_enable;
@@ -5322,7 +5732,7 @@
           state.indoorEntity = s.indoor_temp_entity || "";
           state.outdoorEntity = s.outdoor_temp_entity || "";
           state.temperatureUnit = importedTemperatureUnit;
-          state.clockBarOn = s.clock_bar != null ? !!s.clock_bar : true;
+          state.clockBarOn = s.clock_bar != null ? !!s.clock_bar : false;
           state.temperatureDegreeSymbolOn = s.temperature_degree_symbol != null ? !!s.temperature_degree_symbol : true;
           state.timezone = importedTimezone;
           state.clockFormat = importedClockFormat;
@@ -5340,11 +5750,13 @@
           state.homeScreenTimeout = s.home_screen_timeout != null ? s.home_screen_timeout : 60;
           state.screenRotation = importedScreenRotation;
           if (hasDeveloperExperimentalFeatures) {
-            state.developerExperimentalFeatures = !!s.developer_experimental_features;
+            state.developerExperimentalFeatures = importedDeveloperExperimentalFeatures;
           }
+          state.bluetoothProxyEnabled = importedBluetoothProxy;
 
           syncTemperatureUi();
           syncClockBarUi();
+          syncBluetoothProxyUi();
           syncInput(els.setIndoorEntity, state.indoorEntity);
           syncInput(els.setOutdoorEntity, state.outdoorEntity);
           if (els.setTemperatureUnit) els.setTemperatureUnit.value = state.temperatureUnit;
@@ -5358,6 +5770,9 @@
           if (els.setScreenRotation) els.setScreenRotation.value = state.screenRotation;
           if (els.setDeveloperExperimentalFeatures) {
             els.setDeveloperExperimentalFeatures.checked = state.developerExperimentalFeatures;
+          }
+          if (els.setBluetoothProxy) {
+            els.setBluetoothProxy.checked = state.bluetoothProxyEnabled;
           }
           if (els.setSsMode) els.setSsMode(getActiveScreensaverMode());
           updateTempPreview();
@@ -5419,13 +5834,13 @@
         renderButtonSettings();
         switchTab("screen");
         showBanner("Configuration imported successfully", "success");
+        cleanupInput();
       };
       reader.readAsText(input.files[0]);
     });
 
     document.body.appendChild(input);
     input.click();
-    document.body.removeChild(input);
   }
 
   // ── Clock (minute-aligned) ─────────────────────────────────────────────
@@ -5516,10 +5931,8 @@
 
   function connectEvents() {
     if (_eventSource) { _eventSource.close(); _eventSource = null; }
-    var source = new EventSource("/events");
-    _eventSource = source;
 
-    source.addEventListener("open", function () {
+    function markConnected() {
       state.selectedSlots = [];
       state.lastClickedSlot = -1;
       state.editingSubpage = null;
@@ -5536,16 +5949,17 @@
       clearTimeout(sliderMigrationTimer);
       pendingSliderSubpageMigrations = {};
       refreshFirmwareVersion();
-    });
+      refreshScreensaverTimeout();
+    }
 
-    source.addEventListener("error", function () {
+    function handleDisconnected(source) {
       showBanner("Reconnecting to device\u2026", "offline");
       if (source.readyState === 2) {
         source.close();
         _eventSource = null;
         setTimeout(connectEvents, 5000);
       }
-    });
+    }
 
     var sseHandlers = {
       "text-button_order": function (val) {
@@ -5620,10 +6034,14 @@
         updateTempPreview();
         renderPreview();
       },
-      "number-screensaver_timeout": function (val) {
-        syncScreensaverTimeoutLimits(d);
-        state.screensaverTimeout = parseFloat(val) || 300;
-        syncScreensaverTimeoutUi();
+      "number-screensaver_timeout": function (val, d) {
+        applyScreensaverTimeoutState(d);
+      },
+      "number-screen_saver__timeout": function (val, d) {
+        applyScreensaverTimeoutState(d);
+      },
+      "number-screen_saver_timeout": function (val, d) {
+        applyScreensaverTimeoutState(d);
       },
       "number-home_screen_timeout": function (val) {
         state.homeScreenTimeout = parseFloat(val) || 0;
@@ -5837,19 +6255,27 @@
         if (els.setAutoUpdate) els.setAutoUpdate.checked = state.autoUpdate;
         if (els.updateFreqWrap) els.updateFreqWrap.style.display = state.autoUpdate ? "" : "none";
       },
+      "switch-bluetooth_proxy": function (val, d) {
+        state.bluetoothProxyEnabled = d.value === true || val === "ON";
+        syncBluetoothProxyUi();
+      },
+      "switch-bluetooth_proxy_enabled": function (val, d) {
+        state.bluetoothProxyEnabled = d.value === true || val === "ON";
+        syncBluetoothProxyUi();
+      },
       "switch-developer__experimental_features": function (val, d) {
         state.developerExperimentalFeatures = d.value === true || val === "ON";
         if (els.setDeveloperExperimentalFeatures) {
           els.setDeveloperExperimentalFeatures.checked = state.developerExperimentalFeatures;
         }
-        renderButtonSettings();
+        scheduleRender();
       },
       "switch-developer_experimental_features": function (val, d) {
         state.developerExperimentalFeatures = d.value === true || val === "ON";
         if (els.setDeveloperExperimentalFeatures) {
           els.setDeveloperExperimentalFeatures.checked = state.developerExperimentalFeatures;
         }
-        renderButtonSettings();
+        scheduleRender();
       },
       "select-firmware__update_frequency": function (val, d) {
         state.updateFrequency = d.value || val || state.updateFrequency;
@@ -5923,9 +6349,7 @@
       },
     ];
 
-    source.addEventListener("state", function (e) {
-      var d;
-      try { d = JSON.parse(e.data); } catch (_) { return; }
+    function handleState(d) {
       rememberEntityPostPath(d);
       var keys = entityStateKeys(d);
       var id = keys[0] || d.id;
@@ -5950,7 +6374,26 @@
         }
       }
 
-      console.log("[SSE] unhandled:", id, val);
+      console.log("[state] unhandled:", id, val);
+    }
+
+    markConnected();
+    if (!eventStreamEnabled()) {
+      loadInitialState(handleState);
+      return;
+    }
+
+    var source = new EventSource("/events");
+    _eventSource = source;
+
+    source.addEventListener("open", markConnected);
+    source.addEventListener("error", function () {
+      handleDisconnected(source);
+    });
+    source.addEventListener("state", function (e) {
+      var d;
+      try { d = JSON.parse(e.data); } catch (_) { return; }
+      handleState(d);
     });
 
   }
@@ -6004,14 +6447,14 @@
     var show = state.clockBarOn && (state._indoorOn || state._outdoorOn);
     els.temp.className = "sp-temp" + (show ? " sp-visible" : "");
     var unit = clockBarTemperatureUnitSymbol();
-    var indoor = state._indoorVal != null ? state._indoorVal + unit : "24" + unit;
-    var outdoor = state._outdoorVal != null ? state._outdoorVal + unit : "17" + unit;
+    var indoor = state._indoorVal != null ? state._indoorVal : "24";
+    var outdoor = state._outdoorVal != null ? state._outdoorVal : "17";
     if (state._indoorOn && state._outdoorOn) {
-      els.temp.textContent = outdoor + " / " + indoor;
+      els.temp.textContent = outdoor + unit + " / " + indoor + unit;
     } else if (state._outdoorOn) {
-      els.temp.textContent = outdoor;
+      els.temp.textContent = outdoor + unit;
     } else if (state._indoorOn) {
-      els.temp.textContent = indoor;
+      els.temp.textContent = indoor + unit;
     }
   }
 
@@ -6021,7 +6464,36 @@
       serializeButtonConfig: serializeButtonConfig,
       parseSubpageConfig: parseSubpageConfig,
       serializeSubpageConfig: serializeSubpageConfig,
+      subpageStateDisplayMode: subpageStateDisplayMode,
       normalizeTemperatureUnit: normalizeTemperatureUnit,
+      previewHtmlValue: previewHtmlValue,
+      importedButtonOrderFor: function (orderStr, existingSizes) {
+        var oldSizes = state.sizes;
+        var oldGrid = state.grid;
+        state.sizes = existingSizes || {};
+        state.grid = [];
+        for (var i = 0; i < NUM_SLOTS; i++) state.grid.push(0);
+        applyImportedButtonOrder(orderStr, {});
+        var sizes = {};
+        for (var k in state.sizes) sizes[k] = state.sizes[k];
+        var grid = state.grid.slice();
+        state.sizes = oldSizes;
+        state.grid = oldGrid;
+        return { grid: grid, sizes: sizes };
+      },
+      screensaverTimeoutSupportedFor: function (value, limitsLoaded, min, max) {
+        var oldLoaded = state.screensaverTimeoutLimitsLoaded;
+        var oldMin = state.screensaverTimeoutMin;
+        var oldMax = state.screensaverTimeoutMax;
+        state.screensaverTimeoutLimitsLoaded = !!limitsLoaded;
+        state.screensaverTimeoutMin = min;
+        state.screensaverTimeoutMax = max;
+        var supported = screensaverTimeoutSupported(value);
+        state.screensaverTimeoutLimitsLoaded = oldLoaded;
+        state.screensaverTimeoutMin = oldMin;
+        state.screensaverTimeoutMax = oldMax;
+        return supported;
+      },
       temperatureUnitSymbolFor: function (timezone, unit) {
         var oldTimezone = state.timezone;
         var oldUnit = state.temperatureUnit;

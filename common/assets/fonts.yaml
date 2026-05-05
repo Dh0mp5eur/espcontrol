@@ -20,49 +20,41 @@ font:
     glyphs:
       - "0123456789.-"
 
-  # Main page: forecast high / low values
-  - file: "gfonts://Roboto@Light"
-    id: forecast_font
-    size: 42
-    bpp: 4
-    glyphs:
-      - "0123456789.- /"
-
-  # Main page: compact weather temperature unit symbols
-  - file: "gfonts://Noto Sans"
-    id: forecast_unit_font
-    size: 22
-    bpp: 4
-    glyphs:
-      - "°CF"
-
   # Main page: button labels
   - file: "gfonts://Roboto"
     id: label_font
     size: 22
     bpp: 4
     glyphs: !include text_glyphs.yaml
+    extras:
+      - file: "gfonts://Heebo"
+        glyphs: !include hebrew_glyphs.yaml
 
   # Top bar: clock and temperature
   - file: "gfonts://Roboto"
     id: clockbar_font
     size: 20
     bpp: 4
+    extras:
+      - file: "gfonts://Heebo"
+        glyphs: !include hebrew_glyphs.yaml
 
   # Setup screens: titles (40px light)
   - file: "gfonts://Roboto@Light"
     id: setup_title_font
     size: 40
     bpp: 4
-    glyphs: >-
-      !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
-      ¡¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ—–…·°•€£¥¢
+    glyphs: !include setup_text_glyphs.yaml
+    extras:
+      - file: "gfonts://Heebo@Light"
+        glyphs: !include hebrew_glyphs.yaml
 
   # Setup screens: body text (24px)
   - file: "gfonts://Roboto"
     id: setup_body_font
     size: 24
     bpp: 4
-    glyphs: >-
-      !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
-      ¡¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ—–…·°•€£¥¢
+    glyphs: !include setup_text_glyphs.yaml
+    extras:
+      - file: "gfonts://Heebo"
+        glyphs: !include hebrew_glyphs.yaml

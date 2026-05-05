@@ -26,6 +26,66 @@ struct SunCalcResult {
   char sunset_str[16];
 };
 
+inline int fixed_decimal_scale(int precision) {
+  if (precision <= 0) return 1;
+  if (precision == 1) return 10;
+  if (precision == 2) return 100;
+  return 1000;
+}
+
+inline void format_fixed_decimal(char *buf, size_t size, float value, int precision) {
+  if (size == 0) return;
+  if (!std::isfinite(value)) {
+    snprintf(buf, size, "--");
+    return;
+  }
+
+  if (precision < 0) precision = 0;
+  if (precision > 3) precision = 3;
+
+  bool negative = value < 0.0f;
+  float abs_value = negative ? -value : value;
+  int scale = fixed_decimal_scale(precision);
+  int scaled = (int)(abs_value * scale + 0.5f);
+  if (scaled == 0) negative = false;
+
+  int whole = scaled / scale;
+  int frac = scaled % scale;
+  const char *sign = negative ? "-" : "";
+
+  if (precision == 0) {
+    snprintf(buf, size, "%s%d", sign, whole);
+  } else if (precision == 1) {
+    snprintf(buf, size, "%s%d.%01d", sign, whole, frac);
+  } else if (precision == 2) {
+    snprintf(buf, size, "%s%d.%02d", sign, whole, frac);
+  } else {
+    snprintf(buf, size, "%s%d.%03d", sign, whole, frac);
+  }
+}
+
+inline void format_fixed_decimal_unit(char *buf, size_t size, float value,
+                                      int precision, const char *unit) {
+  char value_buf[24];
+  format_fixed_decimal(value_buf, sizeof(value_buf), value, precision);
+  snprintf(buf, size, "%s%s", value_buf, unit ? unit : "");
+}
+
+inline void format_clock_bar_temperature_single(char *buf, size_t size,
+                                                const char *value_text) {
+  snprintf(buf, size, "%s%s", value_text ? value_text : "-",
+           display_clock_bar_temperature_suffix());
+}
+
+inline void format_clock_bar_temperature_pair(char *buf, size_t size,
+                                              const char *outdoor_text,
+                                              const char *indoor_text) {
+  const char *suffix = display_clock_bar_temperature_suffix();
+  snprintf(buf, size, "%s%s / %s%s", outdoor_text ? outdoor_text : "-", suffix,
+           indoor_text ? indoor_text : "-",
+           suffix);
+}
+
 inline SunCalcResult recalc_sunrise_sunset(
     int year, int month, int day,
     const std::string &tz_option, bool use_12h = true) {
@@ -134,9 +194,8 @@ inline void update_temp_label(lv_obj_t *label, lv_obj_t *main_page_obj,
                               bool this_enabled, bool other_enabled) {
   char one[12];
   char both[24];
-  snprintf(one, sizeof(one), "-%s", display_clock_bar_temperature_unit_symbol());
-  snprintf(both, sizeof(both), "-%s / -%s",
-           display_clock_bar_temperature_unit_symbol(), display_clock_bar_temperature_unit_symbol());
+  format_clock_bar_temperature_single(one, sizeof(one), "-");
+  format_clock_bar_temperature_pair(both, sizeof(both), "-", "-");
   if (this_enabled) {
     if (lv_scr_act() == main_page_obj)
       lv_obj_clear_flag(label, LV_OBJ_FLAG_HIDDEN);
@@ -161,23 +220,22 @@ inline void refresh_temp_label_values(lv_obj_t *label, lv_obj_t *main_page_obj,
 
   char indoor_buf[16];
   char outdoor_buf[16];
-  const char *unit = display_clock_bar_temperature_unit_symbol();
   if (indoor_enabled) {
-    if (std::isnan(indoor)) snprintf(indoor_buf, sizeof(indoor_buf), "-%s", unit);
-    else snprintf(indoor_buf, sizeof(indoor_buf), "%.0f%s", indoor, unit);
+    if (std::isnan(indoor)) snprintf(indoor_buf, sizeof(indoor_buf), "-");
+    else format_fixed_decimal(indoor_buf, sizeof(indoor_buf), indoor, 0);
   }
   if (outdoor_enabled) {
-    if (std::isnan(outdoor)) snprintf(outdoor_buf, sizeof(outdoor_buf), "-%s", unit);
-    else snprintf(outdoor_buf, sizeof(outdoor_buf), "%.0f%s", outdoor, unit);
+    if (std::isnan(outdoor)) snprintf(outdoor_buf, sizeof(outdoor_buf), "-");
+    else format_fixed_decimal(outdoor_buf, sizeof(outdoor_buf), outdoor, 0);
   }
 
   char buf[40];
   if (indoor_enabled && outdoor_enabled) {
-    snprintf(buf, sizeof(buf), "%s / %s", outdoor_buf, indoor_buf);
+    format_clock_bar_temperature_pair(buf, sizeof(buf), outdoor_buf, indoor_buf);
   } else if (outdoor_enabled) {
-    snprintf(buf, sizeof(buf), "%s", outdoor_buf);
+    format_clock_bar_temperature_single(buf, sizeof(buf), outdoor_buf);
   } else {
-    snprintf(buf, sizeof(buf), "%s", indoor_buf);
+    format_clock_bar_temperature_single(buf, sizeof(buf), indoor_buf);
   }
   lv_label_set_text(label, buf);
 }

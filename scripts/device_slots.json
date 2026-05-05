@@ -9,8 +9,6 @@
       "climate_control_icon_font": "climate_control_icon_font",
       "sensor_font": "statistics_font",
       "climate_target_font": "climate_target_font",
-      "forecast_font": "forecast_font",
-      "forecast_unit_font": "forecast_unit_font",
       "color_correction": false,
       "wrap_tall_labels": true
     },
@@ -23,8 +21,6 @@
       "climate_control_icon_font": "climate_control_icon_font",
       "sensor_font": "statistics_font_lg",
       "climate_target_font": "climate_target_font_lg",
-      "forecast_font": "forecast_font_lg",
-      "forecast_unit_font": "forecast_unit_font_lg",
       "color_correction": true,
       "wrap_tall_labels": false
     },
@@ -37,10 +33,20 @@
       "climate_control_icon_font": "climate_control_icon_font",
       "sensor_font": "statistics_font_lt",
       "climate_target_font": "climate_target_font_lt",
-      "forecast_font": "forecast_font_lt",
-      "forecast_unit_font": "forecast_unit_font_lt",
       "color_correction": true,
       "wrap_tall_labels": true
+    },
+    {
+      "slug": "esp32-p4-86",
+      "slots": 9,
+      "cols": 3,
+      "grid": "3x3",
+      "icon_font": "icon_font_md_square",
+      "climate_control_icon_font": "climate_control_icon_font_md_square",
+      "sensor_font": "statistics_font_md_square",
+      "climate_target_font": "climate_target_font_md_square",
+      "color_correction": true,
+      "wrap_tall_labels": false
     },
     {
       "slug": "guition-esp32-s3-4848s040",
@@ -51,8 +57,6 @@
       "climate_control_icon_font": "climate_control_icon_font",
       "sensor_font": "statistics_font",
       "climate_target_font": "climate_target_font_sm",
-      "forecast_font": "forecast_font_sm",
-      "forecast_unit_font": "forecast_unit_font",
       "color_correction": false,
       "wrap_tall_labels": false
     },

@@ -57,7 +57,10 @@ function subpageTypeFromCode(code) {
     F: "weather_forecast",
     L: "slider",
     C: "cover",
+    N: "light_temperature",
     R: "garage",
+    K: "lock",
+    M: "media",
     P: "push",
     I: "internal",
     G: "subpage",
@@ -154,11 +157,26 @@ function assertSubpageRoundTrip(hooks, name, subpage, expectCompact) {
 
 const hooks = loadHooks();
 assert(hooks, "web config helpers were not exported");
+assert.strictEqual(hooks.previewHtmlValue({ labelHtml: "" }, "labelHtml", "fallback"), "", "empty preview label suppresses fallback");
+assert.strictEqual(hooks.previewHtmlValue({}, "labelHtml", "fallback"), "fallback", "missing preview label uses fallback");
 assert.strictEqual(hooks.normalizeTemperatureUnit("fahrenheit"), "°F", "fahrenheit unit normalization");
 assert.strictEqual(hooks.normalizeTemperatureUnit("centigrade"), "°C", "centigrade unit normalization");
 assert.strictEqual(hooks.temperatureUnitSymbolFor("America/New_York (GMT-5)", "Auto"), "°F", "auto unit for US timezone");
 assert.strictEqual(hooks.temperatureUnitSymbolFor("Europe/London (GMT+0)", "Auto"), "°C", "auto unit for UK timezone");
 assert.strictEqual(hooks.temperatureUnitSymbolFor("Europe/London (GMT+0)", "°F"), "°F", "manual fahrenheit override");
+const importedPlainOrder = hooks.importedButtonOrderFor("1,2,3", { 1: 2 });
+assert.deepStrictEqual({
+  grid: Array.from(importedPlainOrder.grid),
+  sizes: Object.assign({}, importedPlainOrder.sizes),
+}, {
+  grid: [1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  sizes: {},
+}, "same-size imports clear stale button sizing");
+const importedSizedOrder = hooks.importedButtonOrderFor("1d,2,3", {});
+assert.strictEqual(importedSizedOrder.sizes["1"], 2, "imported button sizing is preserved");
+assert.strictEqual(hooks.screensaverTimeoutSupportedFor(10, false, 60, 3600), true, "short timeout allowed before limits load");
+assert.strictEqual(hooks.screensaverTimeoutSupportedFor(10, true, 60, 3600), false, "short timeout blocked after old limits load");
+assert.strictEqual(hooks.screensaverTimeoutSupportedFor(10, true, 10, 3600), true, "short timeout allowed after new limits load");
 
 assertButtonRoundTrip(hooks, "normal button", {
   entity: "light.kitchen",
@@ -215,6 +233,17 @@ assertButtonRoundTrip(hooks, "garage label button", {
   precision: "",
 }, false);
 
+assertButtonRoundTrip(hooks, "lock button", {
+  entity: "lock.front_door",
+  label: "Front Door",
+  icon: "Lock",
+  icon_on: "Lock Open",
+  sensor: "",
+  unit: "",
+  type: "lock",
+  precision: "",
+}, false);
+
 assertButtonRoundTrip(hooks, "climate button", {
   entity: "climate.living_room",
   label: "Living Room",
@@ -259,6 +288,50 @@ assertButtonRoundTrip(hooks, "cover tilt button", {
   precision: "",
 }, false);
 
+assertButtonRoundTrip(hooks, "cover open command button", {
+  entity: "cover.office_blind",
+  label: "Open Blind",
+  icon: "Blinds Open",
+  icon_on: "Auto",
+  sensor: "open",
+  unit: "",
+  type: "cover",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "cover close command button", {
+  entity: "cover.office_blind",
+  label: "Close Blind",
+  icon: "Blinds",
+  icon_on: "Auto",
+  sensor: "close",
+  unit: "",
+  type: "cover",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "cover stop command button", {
+  entity: "cover.office_blind",
+  label: "Stop Blind",
+  icon: "Stop",
+  icon_on: "Auto",
+  sensor: "stop",
+  unit: "",
+  type: "cover",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "cover set position command button", {
+  entity: "cover.office_blind",
+  label: "Half Blind",
+  icon: "Blinds",
+  icon_on: "Auto",
+  sensor: "set_position",
+  unit: "50",
+  type: "cover",
+  precision: "",
+}, false);
+
 assertButtonRoundTrip(hooks, "timezone card", {
   entity: "America/New_York (GMT-5)",
   label: "",
@@ -280,6 +353,183 @@ assertButtonRoundTrip(hooks, "weather tomorrow card", {
   type: "weather",
   precision: "tomorrow",
 }, false);
+
+assertButtonRoundTrip(hooks, "media play pause card", {
+  entity: "media_player.living_room",
+  label: "Play/Pause",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "play_pause",
+  unit: "",
+  type: "media",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "media play pause state card", {
+  entity: "media_player.office",
+  label: "Office",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "play_pause",
+  unit: "",
+  type: "media",
+  precision: "state",
+}, false);
+
+assertButtonRoundTrip(hooks, "media previous card", {
+  entity: "media_player.living_room",
+  label: "Previous",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "previous",
+  unit: "",
+  type: "media",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "media next card", {
+  entity: "media_player.living_room",
+  label: "Next",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "next",
+  unit: "",
+  type: "media",
+  precision: "",
+}, false);
+
+assert.deepStrictEqual(buttonShape(hooks.parseButtonConfig(
+  "media_player.living_room;Skip Previous;Auto;Auto;previous;;media"
+)), buttonShape({
+  entity: "media_player.living_room",
+  label: "Previous",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "previous",
+  type: "media",
+}), "legacy media previous label drops Skip");
+
+assert.deepStrictEqual(buttonShape(hooks.parseButtonConfig(
+  "media_player.living_room;Skip Next;Auto;Auto;next;;media"
+)), buttonShape({
+  entity: "media_player.living_room",
+  label: "Next",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "next",
+  type: "media",
+}), "legacy media next label drops Skip");
+
+assertButtonRoundTrip(hooks, "media volume card", {
+  entity: "media_player.kitchen",
+  label: "Kitchen",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "volume",
+  unit: "",
+  type: "media",
+  precision: "",
+}, false);
+
+assert.deepStrictEqual(buttonShape(hooks.parseButtonConfig(
+  "media_player.kitchen;;Volume High;Auto;volume;;media"
+)), buttonShape({
+  entity: "media_player.kitchen",
+  label: "Volume",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "volume",
+  type: "media",
+}), "media volume defaults to Volume label and fixed icon");
+
+assertButtonRoundTrip(hooks, "media position card", {
+  entity: "media_player.office",
+  label: "Office",
+  icon: "Progress Clock",
+  icon_on: "Auto",
+  sensor: "position",
+  unit: "",
+  type: "media",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "media now playing card", {
+  entity: "media_player.office",
+  label: "",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "now_playing",
+  unit: "",
+  type: "media",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "light temperature card", {
+  entity: "light.living_room",
+  label: "Living Room",
+  icon: "Auto",
+  icon_on: "Auto",
+  sensor: "kelvin",
+  unit: "2000-6500",
+  type: "light_temperature",
+  precision: "color",
+}, false);
+
+const subpageStateOff = buttonShape({
+  label: "Windows",
+  icon: "Window Closed",
+  type: "subpage",
+});
+const subpageStateIcon = buttonShape({
+  label: "Lighting",
+  icon: "Lightbulb",
+  icon_on: "Lightbulb Group",
+  sensor: "indicator",
+  type: "subpage",
+});
+const subpageStateIconEntity = buttonShape({
+  entity: "cover.office_blind",
+  label: "Blind",
+  icon: "Blinds",
+  icon_on: "Blinds Open",
+  sensor: "indicator",
+  type: "subpage",
+});
+const subpageStateNumeric = buttonShape({
+  label: "Open Windows",
+  icon: "Window Closed",
+  sensor: "sensor.open_windows",
+  unit: "",
+  type: "subpage",
+});
+const subpageStateNumericPrecision = buttonShape({
+  label: "Average Temp",
+  icon: "Thermometer",
+  sensor: "sensor.average_temperature",
+  unit: "°C",
+  type: "subpage",
+  precision: "1",
+});
+const subpageStateText = buttonShape({
+  label: "Washer",
+  icon: "Washer",
+  sensor: "sensor.washer_state",
+  type: "subpage",
+  precision: "text",
+});
+
+assertButtonRoundTrip(hooks, "subpage state off", subpageStateOff, false);
+assertButtonRoundTrip(hooks, "subpage state icon", subpageStateIcon, false);
+assertButtonRoundTrip(hooks, "subpage state icon entity", subpageStateIconEntity, false);
+assertButtonRoundTrip(hooks, "subpage state numeric", subpageStateNumeric, false);
+assertButtonRoundTrip(hooks, "subpage state numeric precision", subpageStateNumericPrecision, false);
+assertButtonRoundTrip(hooks, "subpage state text", subpageStateText, false);
+
+assert.strictEqual(hooks.subpageStateDisplayMode(subpageStateOff), "off", "subpage state off");
+assert.strictEqual(hooks.subpageStateDisplayMode(subpageStateIcon), "icon", "subpage icon state");
+assert.strictEqual(hooks.subpageStateDisplayMode(subpageStateIconEntity), "icon", "subpage icon entity state");
+assert.strictEqual(hooks.subpageStateDisplayMode(subpageStateNumeric), "numeric", "subpage numeric state");
+assert.strictEqual(hooks.subpageStateDisplayMode(subpageStateText), "text", "subpage text state");
 
 assert.deepStrictEqual(buttonShape(hooks.parseButtonConfig("weather.forecast_home;Weather;Auto;Auto;;;weather_forecast")), {
   entity: "weather.forecast_home",
@@ -309,6 +559,17 @@ assertButtonRoundTrip(hooks, "script action card", {
   icon: "Flash",
   icon_on: "Auto",
   sensor: "script.turn_on",
+  unit: "",
+  type: "action",
+  precision: "",
+}, false);
+
+assertButtonRoundTrip(hooks, "automation action card", {
+  entity: "automation.goodnight",
+  label: "Goodnight Automation",
+  icon: "Flash",
+  icon_on: "Auto",
+  sensor: "automation.trigger",
   unit: "",
   type: "action",
   precision: "",
@@ -447,6 +708,15 @@ assertSubpageRoundTrip(hooks, "cover tilt subpage", {
   ],
 }, true);
 
+assertSubpageRoundTrip(hooks, "cover command subpage", {
+  order: ["1", "B", "2", "3"],
+  buttons: [
+    buttonShape({ entity: "cover.office_blind", label: "Open", icon: "Blinds Open", icon_on: "Auto", sensor: "open", type: "cover" }),
+    buttonShape({ entity: "cover.office_blind", label: "Stop", icon: "Stop", icon_on: "Auto", sensor: "stop", type: "cover" }),
+    buttonShape({ entity: "cover.office_blind", label: "50%", icon: "Blinds", icon_on: "Auto", sensor: "set_position", unit: "50", type: "cover" }),
+  ],
+}, true);
+
 assertSubpageRoundTrip(hooks, "climate subpage", {
   order: ["1", "B"],
   buttons: [
@@ -459,6 +729,32 @@ assertSubpageRoundTrip(hooks, "action subpage", {
   buttons: [
     buttonShape({ entity: "scene.movie_mode", label: "Movie Mode", icon: "Flash", sensor: "scene.turn_on", type: "action" }),
     buttonShape({ entity: "input_select.house_mode", label: "House Mode", icon: "Flash", sensor: "input_select.select_option", unit: "Away: overnight | 50%, main", type: "action" }),
+  ],
+}, true);
+
+assertSubpageRoundTrip(hooks, "lock subpage", {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "lock.front_door", label: "Front Door", icon: "Lock", icon_on: "Lock Open", type: "lock" }),
+  ],
+}, true);
+
+assertSubpageRoundTrip(hooks, "media subpage", {
+  order: ["1", "B", "2", "3", "4", "5", "6"],
+  buttons: [
+    buttonShape({ entity: "media_player.living_room", label: "Play/Pause", icon: "Auto", sensor: "play_pause", type: "media" }),
+    buttonShape({ entity: "media_player.living_room", label: "Previous", icon: "Auto", sensor: "previous", type: "media" }),
+    buttonShape({ entity: "media_player.living_room", label: "Next", icon: "Auto", sensor: "next", type: "media" }),
+    buttonShape({ entity: "media_player.kitchen", label: "Kitchen", icon: "Auto", sensor: "volume", type: "media" }),
+    buttonShape({ entity: "media_player.office", label: "Office", icon: "Progress Clock", sensor: "position", type: "media" }),
+    buttonShape({ entity: "media_player.office", label: "", icon: "Auto", sensor: "now_playing", type: "media" }),
+  ],
+}, true);
+
+assertSubpageRoundTrip(hooks, "light temperature subpage", {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "light.living_room", label: "Living Room", icon: "Auto", sensor: "kelvin", unit: "2000-6500", type: "light_temperature", precision: "color" }),
   ],
 }, true);
 
@@ -534,6 +830,13 @@ assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|C,cover.offic
   ],
 }, "compact cover tilt subpage parse");
 
+assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|C,cover.office_blind,Office%20Blind,Blinds,,set_position,35")), {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "cover.office_blind", label: "Office Blind", icon: "Blinds", icon_on: "Auto", sensor: "set_position", unit: "35", type: "cover" }),
+  ],
+}, "compact cover set position subpage parse");
+
 assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|I,relay_2,Gate,Power%20Plug,Power,push")), {
   order: ["1", "B"],
   buttons: [
@@ -547,6 +850,34 @@ assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|A,scene.movie
     buttonShape({ entity: "scene.movie_mode", label: "Movie Mode", icon: "Flash", icon_on: "Auto", sensor: "scene.turn_on", type: "action" }),
   ],
 }, "compact action subpage parse");
+
+assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|K,lock.front_door,Front%20Door,Lock,Lock%20Open")), {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "lock.front_door", label: "Front Door", icon: "Lock", icon_on: "Lock Open", type: "lock" }),
+  ],
+}, "compact lock subpage parse");
+
+assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|M,media_player.living_room,Play%2FPause,,,play_pause")), {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "media_player.living_room", label: "Play/Pause", icon: "Auto", icon_on: "Auto", sensor: "play_pause", type: "media" }),
+  ],
+}, "compact media subpage parse");
+
+assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|M,media_player.living_room,Living%20Room,Speaker,,controls")), {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "media_player.living_room", label: "Living Room", icon: "Auto", icon_on: "Auto", sensor: "play_pause", type: "media" }),
+  ],
+}, "legacy media controls subpage parse");
+
+assert.deepStrictEqual(subpageShape(hooks.parseSubpageConfig("~1,B|N,light.living_room,Living%20Room,,,kelvin,2000-6500,color")), {
+  order: ["1", "B"],
+  buttons: [
+    buttonShape({ entity: "light.living_room", label: "Living Room", icon: "Auto", icon_on: "Auto", sensor: "kelvin", unit: "2000-6500", type: "light_temperature", precision: "color" }),
+  ],
+}, "compact light temperature subpage parse");
 
 const largeSubpage = {
   order: Array.from({ length: 25 }, (_, i) => (i === 4 ? "B" : String(i + 1))),

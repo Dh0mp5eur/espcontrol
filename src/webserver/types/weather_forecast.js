@@ -22,12 +22,13 @@ registerButtonType("weather_forecast", {
     ef.appendChild(entityInp);
     panel.appendChild(ef);
     helpers.bindField(entityInp, "entity", true);
+    helpers.requireField(entityInp, "Add an entity before saving.");
   },
   renderPreview: function (b, helpers) {
     return {
       iconHtml:
-        '<span class="sp-sensor-preview">' +
-          '<span class="sp-sensor-value sp-forecast-value">18 / 10</span>' +
+        '<span class="sp-sensor-preview sp-forecast-preview">' +
+          '<span class="sp-sensor-value sp-forecast-value">18/10</span>' +
           '<span class="sp-sensor-unit">' + temperatureUnitSymbol() + '</span>' +
         '</span>',
       labelHtml:
