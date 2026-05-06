@@ -19,12 +19,15 @@ esp32:
   framework:
     type: esp-idf
     sdkconfig_options:
+      # Allocate mbedTLS buffers from PSRAM so firmware downloads can connect.
       CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC: "y"
       CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240: "y"
       CONFIG_ESP32S3_DATA_CACHE_64KB: "y"
       CONFIG_ESP32S3_DATA_CACHE_LINE_64B: "y"
-      CONFIG_SPIRAM_FETCH_INSTRUCTIONS: y
-      CONFIG_SPIRAM_RODATA: y
+      # Keep WiFi startup inside the internal-RAM budget after the RGB display
+      # and LVGL buffers are initialized.
+      CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM: "8"
+      CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP: "y"
 
 # ---------------------------------------------------------------------------
 # External component
@@ -96,6 +99,9 @@ ota:
 packages:
   core_infra: !include ../../../common/device/core_infra.yaml
 
+wifi:
+  use_psram: true
+
 # ---------------------------------------------------------------------------
 # Backlight (LEDC PWM output + monochromatic light entity)
 # ---------------------------------------------------------------------------
@@ -152,12 +158,15 @@ touchscreen:
 # Display (4.3" 800x480 DPI RGB panel)
 # ---------------------------------------------------------------------------
 display:
-  - platform: rpi_dpi_rgb
+  - platform: mipi_rgb
     id: my_display
     dimensions:
       width: 800
       height: 480
     color_order: RGB
+    # Start WiFi before the RGB panel allocates its frame buffers; otherwise the
+    # WiFi driver can fail to claim enough internal RX buffers on fresh boots.
+    setup_priority: 240
     de_pin: 40
     hsync_pin: 39
     vsync_pin: 41
@@ -182,6 +191,8 @@ display:
 # ---------------------------------------------------------------------------
 lvgl:
   id: main_lvgl
+  # Keep LVGL after WiFi and after the display driver.
+  setup_priority: 230
   buffer_size: 25%
   displays: my_display
   touchscreens:

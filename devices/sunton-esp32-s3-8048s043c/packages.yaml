@@ -71,6 +71,8 @@ packages:
   bl_schedule:     !include ../../common/addon/backlight_schedule.yaml
   network:         !include ../../common/addon/network.yaml
   fw_update:       !include ../../common/addon/firmware_update.yaml
+  improv_serial:   !include ../../common/addon/improv_serial.yaml
+  bluetooth:       !include ../../common/addon/bluetooth_proxy.yaml
 
   # ---------------------------------------------------------------------------
   # Screens (loading must be first page for LVGL startup)
