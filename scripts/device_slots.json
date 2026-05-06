@@ -9,6 +9,7 @@
       "climate_control_icon_font": "climate_control_icon_font",
       "sensor_font": "statistics_font",
       "climate_target_font": "climate_target_font",
+      "width_compensation_percent": 95,
       "color_correction": false,
       "wrap_tall_labels": true
     },

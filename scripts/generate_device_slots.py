@@ -81,6 +81,8 @@ def cfg_lines(device: dict) -> list[str]:
         lines.append("            cfg.color_correction = true;")
     if device["wrap_tall_labels"]:
         lines.append("            cfg.wrap_tall_labels = true;")
+    if device.get("width_compensation_percent", 100) != 100:
+        lines.append(f"            cfg.width_compensation_percent = {device['width_compensation_percent']};")
     lines.append(f"            cfg.icon_font = id({device['icon_font']})->get_lv_font();")
     lines.append(
         f"            cfg.climate_control_icon_font = id({device['climate_control_icon_font']})->get_lv_font();"
