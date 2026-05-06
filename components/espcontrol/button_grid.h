@@ -4053,7 +4053,7 @@ inline lv_obj_t *media_volume_create_round_button(lv_obj_t *parent, lv_coord_t s
                                                   uint32_t bg_color,
                                                   int width_compensation_percent = 100) {
   lv_obj_t *btn = lv_btn_create(parent);
-  lv_obj_set_size(btn, size, size);
+  lv_obj_set_size(btn, compensated_width(size, width_compensation_percent), size);
   lv_obj_set_style_radius(btn, size / 2, LV_PART_MAIN);
   lv_obj_set_style_bg_color(btn, lv_color_hex(bg_color), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(btn, LV_OPA_COVER, LV_PART_MAIN);
@@ -4093,7 +4093,8 @@ inline void media_volume_layout_modal(MediaVolumeCtx *ctx) {
   lv_obj_set_size(ui.overlay, lv_pct(100), lv_pct(100));
   lv_obj_set_size(ui.panel, panel_w, panel_h);
   lv_obj_align(ui.panel, LV_ALIGN_CENTER, 0, 0);
-  lv_obj_set_size(ui.arc, compensated_width(arc_size, ctx->width_compensation_percent), arc_size);
+  lv_obj_set_size(ui.arc, arc_size, arc_size);
+  apply_width_compensation(ui.arc, ctx->width_compensation_percent);
   lv_obj_align(ui.arc, LV_ALIGN_CENTER, 0, 10);
   lv_obj_set_style_arc_width(ui.arc, short_side < 520 ? 18 : 28, LV_PART_MAIN);
   lv_obj_set_style_arc_width(ui.arc, short_side < 520 ? 18 : 28, LV_PART_INDICATOR);
