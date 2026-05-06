@@ -35,7 +35,7 @@ substitutions:
   disable_updates: "false"
   network_package_suffix: ${ "_ethernet" if network_transport == "ethernet" else "" }
   firmware_update_package_suffix: ${ "_disabled" if disable_updates == "true" else "" }
-  bluetooth_proxy_package_suffix: ${ "_disabled" if network_transport == "ethernet" else "" }
+  bluetooth_proxy_package_suffix: "_disabled"
   backlight_pwm_frequency: ${ "20000Hz" if network_transport == "ethernet" else "1000Hz" }
 
 packages:
