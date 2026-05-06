@@ -164,12 +164,31 @@ touchscreen:
 # Display (4.3" 800x480 DPI RGB panel)
 # ---------------------------------------------------------------------------
 display:
-  - platform: mipi_rgb
-    model: ESP32-8048S050
+  - platform: rpi_dpi_rgb
     id: my_display
+    dimensions:
+      width: 800
+      height: 480
+    color_order: RGB
     # Start WiFi before the RGB panel allocates its frame buffers; otherwise the
     # WiFi driver can fail to claim enough internal RX buffers on fresh boots.
     setup_priority: 240
+    de_pin: 40
+    hsync_pin: 39
+    vsync_pin: 41
+    pclk_pin: 42
+    pclk_inverted: true
+    pclk_frequency: 16MHz
+    hsync_front_porch: 8
+    hsync_pulse_width: 4
+    hsync_back_porch: 8
+    vsync_front_porch: 8
+    vsync_pulse_width: 4
+    vsync_back_porch: 8
+    data_pins:
+      red: [45, 48, 47, 21, 14]
+      green: [5, 6, 7, 15, 16, 4]
+      blue: [8, 3, 46, 9, 1]
     update_interval: never
     auto_clear_enabled: false
 
