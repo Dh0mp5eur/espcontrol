@@ -972,6 +972,7 @@ struct ClimateCardCtx {
   const lv_font_t *climate_control_icon_font = nullptr;
   uint32_t on_color = DEFAULT_SLIDER_COLOR;
   uint32_t off_color = CLIMATE_NEUTRAL_COLOR;
+  int width_compensation_percent = 100;
   int precision = 0;
   lv_timer_t *send_timer = nullptr;
 };
@@ -2044,7 +2045,8 @@ inline ClimateCardCtx *create_climate_context(lv_obj_t *card_btn,
                                               const lv_font_t *value_font,
                                               const lv_font_t *target_font,
                                               const lv_font_t *icon_font,
-                                              const lv_font_t *climate_control_icon_font) {
+                                              const lv_font_t *climate_control_icon_font,
+                                              int width_compensation_percent = 100) {
   ClimateCardCtx *ctx = new ClimateCardCtx();
   ctx->entity_id = p.entity;
   ctx->label = p.label;
@@ -2061,6 +2063,7 @@ inline ClimateCardCtx *create_climate_context(lv_obj_t *card_btn,
   ctx->climate_control_icon_font = climate_control_icon_font ? climate_control_icon_font : ctx->icon_font;
   ctx->on_color = on_color;
   ctx->off_color = off_color;
+  ctx->width_compensation_percent = normalize_width_compensation_percent(width_compensation_percent);
   ctx->precision = parse_precision(p.precision);
   ctx->send_timer = lv_timer_create(climate_send_timer_cb, 450, ctx);
   lv_timer_pause(ctx->send_timer);
@@ -5405,7 +5408,8 @@ inline void grid_phase2(
           cfg.sp_sensor_font,
           cfg.climate_target_font ? cfg.climate_target_font : cfg.sp_sensor_font,
           cfg.icon_font,
-          cfg.climate_control_icon_font ? cfg.climate_control_icon_font : cfg.icon_font);
+          cfg.climate_control_icon_font ? cfg.climate_control_icon_font : cfg.icon_font,
+          cfg.width_compensation_percent);
         subscribe_climate_card(climate_ctx);
       }
       continue;
@@ -5784,7 +5788,8 @@ inline void grid_phase2(
             cfg.sp_sensor_font,
             cfg.climate_target_font ? cfg.climate_target_font : cfg.sp_sensor_font,
             cfg.icon_font,
-            cfg.climate_control_icon_font ? cfg.climate_control_icon_font : cfg.icon_font);
+            cfg.climate_control_icon_font ? cfg.climate_control_icon_font : cfg.icon_font,
+            cfg.width_compensation_percent);
           subscribe_climate_card(climate_ctx);
           add_parent_indicator(sb_cfg.entity, true);
           lv_obj_add_event_cb(sb_btn, [](lv_event_t *e) {
