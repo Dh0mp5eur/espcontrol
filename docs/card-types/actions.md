@@ -70,8 +70,6 @@ Use the dedicated card types for richer controls:
 - Use [Cover](/card-types/covers) for blinds, shutters, and covers.
 - Use [Lock](/card-types/locks) for locking and unlocking doors.
 - Use [Switch](/card-types/switches) or [Slider](/card-types/sliders) for lights.
-- Thermostat and climate controls are experimental. They are included in release firmware, but must be enabled from the hidden Developer/Experimental Features setting first.
-- Use [Media](/card-types/media) for media playback, volume popups, and track position. Media cards are currently behind **Developer/Experimental Features**.
 
 ::: info Requires Home Assistant actions
 Action cards send Home Assistant actions from the panel. If tapping a card does nothing, check [Home Assistant Actions](/getting-started/home-assistant-actions).
