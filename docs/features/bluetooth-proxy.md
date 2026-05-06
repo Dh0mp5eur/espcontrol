@@ -6,7 +6,7 @@ description:
 
 # Bluetooth Proxy
 
-EspControl can act as a Home Assistant Bluetooth proxy for nearby Bluetooth Low Energy devices, such as many battery sensors, buttons, locks, and trackers.
+EspControl panels with Bluetooth-capable ESP32 chips can act as a Home Assistant Bluetooth proxy for nearby Bluetooth Low Energy devices, such as many battery sensors, buttons, locks, and trackers.
 
 The setting is off by default. Open the setup page, go to **Settings > Bluetooth Proxy**, and turn on **Bluetooth Proxy**. The panel starts Bluetooth after the setting is enabled and keeps it enabled after restarts.
 
@@ -20,4 +20,4 @@ Bluetooth support uses extra memory and shares radio time with WiFi on WiFi pane
 
 - Only Bluetooth Low Energy devices are supported.
 - Home Assistant must be connected through the ESPHome integration.
-- The advanced Ethernet-only firmware for the 7-inch JC1060P470 keeps the ESP32-C6 wireless co-processor off, so Bluetooth proxy is not available in that firmware variant.
+- ESP32-P4 panels do not expose Bluetooth through ESPHome, so Bluetooth proxy is not available on those firmwares.

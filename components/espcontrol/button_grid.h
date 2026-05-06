@@ -165,6 +165,20 @@ inline int parse_precision(const std::string &s) {
   return (v < 0) ? 0 : (v > 3) ? 3 : v;
 }
 
+inline std::string trim_display_unit(const std::string &unit) {
+  size_t start = 0;
+  while (start < unit.size() &&
+         std::isspace(static_cast<unsigned char>(unit[start]))) {
+    start++;
+  }
+  size_t end = unit.size();
+  while (end > start &&
+         std::isspace(static_cast<unsigned char>(unit[end - 1]))) {
+    end--;
+  }
+  return unit.substr(start, end - start);
+}
+
 inline bool is_text_sensor_card(const std::string &type, const std::string &precision) {
   return (type == "sensor" && precision == "text") || type == "text_sensor";
 }
@@ -851,6 +865,34 @@ inline uint32_t correct_color(uint32_t rgb) {
   return ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;
 }
 
+inline int normalize_width_compensation_percent(int percent) {
+  if (percent <= 0) return 100;
+  if (percent < 50) return 50;
+  if (percent > 150) return 150;
+  return percent;
+}
+
+inline int width_compensation_scale(int percent) {
+  percent = normalize_width_compensation_percent(percent);
+  return 256 * percent / 100;
+}
+
+inline lv_coord_t compensated_width(lv_coord_t width, int percent) {
+  percent = normalize_width_compensation_percent(percent);
+  return width * percent / 100;
+}
+
+inline void apply_width_compensation(lv_obj_t *obj, int percent) {
+  if (!obj) return;
+  lv_obj_set_style_transform_scale_x(obj, width_compensation_scale(percent), LV_PART_MAIN);
+  lv_obj_set_style_transform_scale_y(obj, 256, LV_PART_MAIN);
+}
+
+inline void apply_slot_text_width_compensation(const BtnSlot &s, int percent) {
+  apply_width_compensation(s.text_lbl, percent);
+  apply_width_compensation(s.sensor_container, percent);
+}
+
 // ── Climate card helpers ──────────────────────────────────────────────
 
 constexpr uint32_t CLIMATE_HEAT_COLOR = 0xA44A1C;
@@ -930,6 +972,7 @@ struct ClimateCardCtx {
   const lv_font_t *climate_control_icon_font = nullptr;
   uint32_t on_color = DEFAULT_SLIDER_COLOR;
   uint32_t off_color = CLIMATE_NEUTRAL_COLOR;
+  int width_compensation_percent = 100;
   int precision = 0;
   lv_timer_t *send_timer = nullptr;
 };
@@ -1401,6 +1444,7 @@ inline void climate_render_mode_tabs(ClimateCardCtx *ctx) {
       lv_label_set_text(label, climate_mode_label(value).c_str());
       lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
       if (ctx->label_font) lv_obj_set_style_text_font(label, ctx->label_font, LV_PART_MAIN);
+      apply_width_compensation(label, ctx->width_compensation_percent);
       lv_obj_center(label);
       ClimateOptionCtx *opt = new ClimateOptionCtx();
       opt->ctx = ctx;
@@ -1535,6 +1579,12 @@ inline void climate_set_button_label_font(lv_obj_t *btn, const lv_font_t *font) 
   if (!btn || !font) return;
   lv_obj_t *label = lv_obj_get_child(btn, 0);
   if (label) lv_obj_set_style_text_font(label, font, LV_PART_MAIN);
+}
+
+inline void climate_apply_button_label_width_compensation(lv_obj_t *btn, int percent) {
+  if (!btn) return;
+  lv_obj_t *label = lv_obj_get_child(btn, 0);
+  apply_width_compensation(label, percent);
 }
 
 inline void climate_center_button_label(lv_obj_t *btn) {
@@ -1678,6 +1728,16 @@ inline void climate_layout_detail_ui(ClimateCardCtx *ctx) {
   lv_obj_align(ui.high_btn, LV_ALIGN_CENTER, frame_cx + 44, arc_cy + arc_size / 3 + 32);
   if (ctx && ctx->target_font) {
     lv_obj_set_style_text_font(ui.target_value, ctx->target_font, LV_PART_MAIN);
+  }
+  if (ctx) {
+    apply_width_compensation(ui.target_value, ctx->width_compensation_percent);
+    apply_width_compensation(ui.target_unit, ctx->width_compensation_percent);
+    apply_width_compensation(ui.state_label, ctx->width_compensation_percent);
+    apply_width_compensation(ui.target_hint, ctx->width_compensation_percent);
+    climate_apply_button_label_width_compensation(ui.low_btn, ctx->width_compensation_percent);
+    climate_apply_button_label_width_compensation(ui.high_btn, ctx->width_compensation_percent);
+    climate_apply_button_label_width_compensation(ui.fan_chip, ctx->width_compensation_percent);
+    climate_apply_button_label_width_compensation(ui.swing_chip, ctx->width_compensation_percent);
   }
   if (ctx && ctx->label_font) {
     lv_obj_set_style_text_font(ui.state_label, ctx->label_font, LV_PART_MAIN);
@@ -1985,7 +2045,8 @@ inline ClimateCardCtx *create_climate_context(lv_obj_t *card_btn,
                                               const lv_font_t *value_font,
                                               const lv_font_t *target_font,
                                               const lv_font_t *icon_font,
-                                              const lv_font_t *climate_control_icon_font) {
+                                              const lv_font_t *climate_control_icon_font,
+                                              int width_compensation_percent = 100) {
   ClimateCardCtx *ctx = new ClimateCardCtx();
   ctx->entity_id = p.entity;
   ctx->label = p.label;
@@ -2002,6 +2063,7 @@ inline ClimateCardCtx *create_climate_context(lv_obj_t *card_btn,
   ctx->climate_control_icon_font = climate_control_icon_font ? climate_control_icon_font : ctx->icon_font;
   ctx->on_color = on_color;
   ctx->off_color = off_color;
+  ctx->width_compensation_percent = normalize_width_compensation_percent(width_compensation_percent);
   ctx->precision = parse_precision(p.precision);
   ctx->send_timer = lv_timer_create(climate_send_timer_cb, 450, ctx);
   lv_timer_pause(ctx->send_timer);
@@ -2211,7 +2273,8 @@ inline void setup_sensor_card(BtnSlot &s, const ParsedCfg &p,
   lv_obj_add_flag(s.icon_lbl, LV_OBJ_FLAG_HIDDEN);
   lv_obj_clear_flag(s.sensor_container, LV_OBJ_FLAG_HIDDEN);
   if (!p.unit.empty()) {
-    lv_label_set_text(s.unit_lbl, p.unit.c_str());
+    std::string unit = trim_display_unit(p.unit);
+    lv_label_set_text(s.unit_lbl, unit.c_str());
   }
   if (!p.label.empty()) {
     lv_label_set_text(s.text_lbl, p.label.c_str());
@@ -2595,7 +2658,8 @@ inline bool weather_card_shows_tomorrow(const ParsedCfg &p) {
 }
 
 inline void setup_weather_forecast_card(BtnSlot &s, const ParsedCfg &p,
-                                        bool has_sensor_color, uint32_t sensor_val) {
+                                        bool has_sensor_color, uint32_t sensor_val,
+                                        int width_compensation_percent = 100) {
   if (has_sensor_color) {
     lv_obj_set_style_bg_color(s.btn, lv_color_hex(sensor_val),
       static_cast<lv_style_selector_t>(LV_PART_MAIN) | static_cast<lv_style_selector_t>(LV_STATE_DEFAULT));
@@ -2606,6 +2670,8 @@ inline void setup_weather_forecast_card(BtnSlot &s, const ParsedCfg &p,
   lv_label_set_text(s.sensor_lbl, "--/--");
   lv_label_set_text(s.unit_lbl, "");
   lv_label_set_text(s.text_lbl, "Tomorrow");
+  apply_width_compensation(s.sensor_container, width_compensation_percent);
+  apply_width_compensation(s.text_lbl, width_compensation_percent);
   register_weather_forecast_card(s.sensor_lbl, s.unit_lbl, s.text_lbl, p.entity);
 }
 
@@ -2664,7 +2730,8 @@ inline void setup_toggle_visual(BtnSlot &s, const ParsedCfg &p) {
 
     if (!p.sensor.empty()) {
       if (!p.unit.empty()) {
-        lv_label_set_text(s.unit_lbl, p.unit.c_str());
+        std::string unit = trim_display_unit(p.unit);
+        lv_label_set_text(s.unit_lbl, unit.c_str());
       }
     }
   } else {
@@ -2734,7 +2801,8 @@ inline void setup_subpage_parent_state_card(BtnSlot &s, const ParsedCfg &p,
   lv_obj_clear_flag(s.sensor_container, LV_OBJ_FLAG_HIDDEN);
   if (value_font) lv_obj_set_style_text_font(s.sensor_lbl, value_font, LV_PART_MAIN);
   lv_label_set_text(s.sensor_lbl, "--");
-  lv_label_set_text(s.unit_lbl, p.unit.c_str());
+  std::string unit = trim_display_unit(p.unit);
+  lv_label_set_text(s.unit_lbl, unit.c_str());
   lv_label_set_text(s.text_lbl, p.label.empty() ? "Subpage" : p.label.c_str());
 }
 
@@ -3415,9 +3483,16 @@ struct MediaVolumeCtx {
   uint32_t accent_color = DEFAULT_SLIDER_COLOR;
   lv_obj_t *btn = nullptr;
   lv_obj_t *label_lbl = nullptr;
+  lv_obj_t *pct_lbl = nullptr;
+  lv_obj_t *unit_lbl = nullptr;
+  int width_compensation_percent = 100;
   const lv_font_t *value_font = nullptr;
+  const lv_font_t *number_font = nullptr;
+  const lv_font_t *unit_font = nullptr;
   const lv_font_t *label_font = nullptr;
   const lv_font_t *icon_font = nullptr;
+  std::function<void()> pause_home_idle;
+  std::function<void()> resume_home_idle;
 };
 
 struct MediaVolumeModalUi {
@@ -3425,7 +3500,9 @@ struct MediaVolumeModalUi {
   lv_obj_t *panel = nullptr;
   lv_obj_t *arc = nullptr;
   lv_obj_t *title_lbl = nullptr;
+  lv_obj_t *pct_row = nullptr;
   lv_obj_t *pct_lbl = nullptr;
+  lv_obj_t *pct_unit_lbl = nullptr;
   lv_obj_t *minus_btn = nullptr;
   lv_obj_t *plus_btn = nullptr;
   MediaVolumeCtx *active = nullptr;
@@ -3995,6 +4072,15 @@ inline bool media_volume_pending_active(MediaVolumeCtx *ctx) {
 
 inline void media_volume_set_modal_value(MediaVolumeCtx *ctx, int pct);
 
+inline void media_volume_set_card_value(MediaVolumeCtx *ctx, int pct) {
+  if (!ctx || !ctx->pct_lbl) return;
+  pct = media_clamp_percent(pct);
+  char buf[8];
+  snprintf(buf, sizeof(buf), "%d", pct);
+  lv_label_set_text(ctx->pct_lbl, buf);
+  if (ctx->unit_lbl) lv_label_set_text(ctx->unit_lbl, " %");
+}
+
 inline void media_volume_apply_percent(MediaVolumeCtx *ctx, int pct,
                                        bool from_user, bool send_action) {
   if (!ctx) return;
@@ -4004,31 +4090,39 @@ inline void media_volume_apply_percent(MediaVolumeCtx *ctx, int pct,
     ctx->pending_pct = pct;
     ctx->pending_until_ms = esphome::millis() + 1500;
   }
+  media_volume_set_card_value(ctx, pct);
   media_volume_set_modal_value(ctx, pct);
   if (send_action) send_media_volume_action(ctx->entity_id, pct);
 }
 
 inline void media_volume_hide_modal() {
   MediaVolumeModalUi &ui = media_volume_modal_ui();
+  std::function<void()> resume_home_idle;
+  if (ui.active) resume_home_idle = ui.active->resume_home_idle;
   if (ui.overlay) lv_obj_del(ui.overlay);
   ui.overlay = nullptr;
   ui.panel = nullptr;
   ui.arc = nullptr;
   ui.title_lbl = nullptr;
+  ui.pct_row = nullptr;
   ui.pct_lbl = nullptr;
+  ui.pct_unit_lbl = nullptr;
   ui.minus_btn = nullptr;
   ui.plus_btn = nullptr;
   ui.active = nullptr;
   ui.updating_arc = false;
+  if (resume_home_idle) resume_home_idle();
 }
 
 inline lv_obj_t *media_volume_create_round_button(lv_obj_t *parent, lv_coord_t size,
                                                   const char *text,
                                                   const lv_font_t *font,
                                                   uint32_t border_color,
-                                                  uint32_t bg_color) {
+                                                  uint32_t bg_color,
+                                                  int width_compensation_percent = 100) {
   lv_obj_t *btn = lv_btn_create(parent);
   lv_obj_set_size(btn, size, size);
+  apply_width_compensation(btn, width_compensation_percent);
   lv_obj_set_style_radius(btn, size / 2, LV_PART_MAIN);
   lv_obj_set_style_bg_color(btn, lv_color_hex(bg_color), LV_PART_MAIN);
   lv_obj_set_style_bg_opa(btn, LV_OPA_COVER, LV_PART_MAIN);
@@ -4051,35 +4145,59 @@ inline void media_volume_layout_modal(MediaVolumeCtx *ctx) {
   lv_coord_t sw = disp ? lv_disp_get_hor_res(disp) : 480;
   lv_coord_t sh = disp ? lv_disp_get_ver_res(disp) : 480;
   lv_coord_t short_side = sw < sh ? sw : sh;
-  lv_coord_t panel_w = sw * 78 / 100;
-  lv_coord_t panel_h = sh * 78 / 100;
-  if (panel_w > 620) panel_w = 620;
-  if (panel_h > 620) panel_h = 620;
-  if (panel_w < short_side * 78 / 100) panel_w = short_side * 78 / 100;
-  if (panel_h < short_side * 78 / 100) panel_h = short_side * 78 / 100;
-  lv_coord_t arc_size = panel_w < panel_h ? panel_w : panel_h;
-  arc_size = arc_size * 78 / 100;
-  if (arc_size < 220) arc_size = short_side * 62 / 100;
+  lv_coord_t panel_side = short_side * 88 / 100;
+  if (panel_side > 680) panel_side = 680;
+  if (panel_side < short_side * 78 / 100) panel_side = short_side * 78 / 100;
   lv_coord_t btn_size = short_side * 15 / 100;
   if (btn_size < 54) btn_size = 54;
   if (btn_size > 108) btn_size = 108;
+  lv_coord_t arc_stroke = short_side < 520 ? 12 : 18;
+  lv_coord_t controls_gap = btn_size / 4;
+  if (controls_gap < 12) controls_gap = 12;
+  lv_coord_t bottom_pad = short_side * 5 / 100;
+  if (bottom_pad < 18) bottom_pad = 18;
+  lv_coord_t top_pad = short_side * 4 / 100;
+  if (top_pad < 16) top_pad = 16;
+  lv_coord_t max_arc_h = panel_side - top_pad - bottom_pad - btn_size - controls_gap;
+  lv_coord_t max_arc_w = panel_side - 24;
+  lv_coord_t arc_size = panel_side * 90 / 100;
+  if (arc_size > max_arc_h) arc_size = max_arc_h;
+  if (arc_size > max_arc_w) arc_size = max_arc_w;
+  if (arc_size < 180) arc_size = 180;
+  lv_coord_t visible_arc_w = compensated_width(arc_size, ctx->width_compensation_percent);
+  lv_coord_t panel_side_pad = short_side * 10 / 100;
+  if (panel_side_pad < 42) panel_side_pad = 42;
+  if (panel_side_pad > 70) panel_side_pad = 70;
+  lv_coord_t min_panel_side = visible_arc_w + panel_side_pad * 2;
+  lv_coord_t min_button_w = (btn_size + 18) + compensated_width(btn_size, ctx->width_compensation_percent) + panel_side_pad;
+  if (min_panel_side < min_button_w) min_panel_side = min_button_w;
+  if (min_panel_side < short_side * 72 / 100) min_panel_side = short_side * 72 / 100;
+  if (panel_side < min_panel_side) panel_side = min_panel_side;
+  if (panel_side > short_side) panel_side = short_side;
 
   lv_obj_set_size(ui.overlay, lv_pct(100), lv_pct(100));
-  lv_obj_set_size(ui.panel, panel_w, panel_h);
+  lv_obj_set_size(ui.panel, panel_side, panel_side);
   lv_obj_align(ui.panel, LV_ALIGN_CENTER, 0, 0);
+  lv_coord_t arc_center_x = (arc_size - visible_arc_w) / 2;
+  lv_coord_t vertical_nudge = short_side * 4 / 100;
+  if (vertical_nudge < 14) vertical_nudge = 14;
+  lv_coord_t arc_center_y = (top_pad + arc_size / 2) - panel_side / 2 + vertical_nudge;
+  lv_coord_t controls_center_y = panel_side / 2 - bottom_pad - btn_size / 2 - vertical_nudge;
+
   lv_obj_set_size(ui.arc, arc_size, arc_size);
-  lv_obj_align(ui.arc, LV_ALIGN_CENTER, 0, 10);
-  lv_obj_set_style_arc_width(ui.arc, short_side < 520 ? 18 : 28, LV_PART_MAIN);
-  lv_obj_set_style_arc_width(ui.arc, short_side < 520 ? 18 : 28, LV_PART_INDICATOR);
-  lv_obj_set_style_pad_all(ui.arc, short_side < 520 ? 8 : 12, LV_PART_KNOB);
+  apply_width_compensation(ui.arc, ctx->width_compensation_percent);
+  lv_obj_align(ui.arc, LV_ALIGN_CENTER, arc_center_x, arc_center_y);
+  lv_obj_set_style_arc_width(ui.arc, arc_stroke, LV_PART_MAIN);
+  lv_obj_set_style_arc_width(ui.arc, arc_stroke, LV_PART_INDICATOR);
+  lv_obj_set_style_pad_all(ui.arc, short_side < 520 ? 4 : 6, LV_PART_KNOB);
   lv_obj_set_size(ui.minus_btn, btn_size, btn_size);
   lv_obj_set_style_radius(ui.minus_btn, btn_size / 2, LV_PART_MAIN);
   lv_obj_set_size(ui.plus_btn, btn_size, btn_size);
   lv_obj_set_style_radius(ui.plus_btn, btn_size / 2, LV_PART_MAIN);
-  lv_obj_align(ui.title_lbl, LV_ALIGN_CENTER, 0, -arc_size / 7);
-  lv_obj_align(ui.pct_lbl, LV_ALIGN_CENTER, 0, 18);
-  lv_obj_align(ui.minus_btn, LV_ALIGN_CENTER, -(btn_size + 18) / 2, arc_size / 2 - btn_size / 3);
-  lv_obj_align(ui.plus_btn, LV_ALIGN_CENTER, (btn_size + 18) / 2, arc_size / 2 - btn_size / 3);
+  lv_obj_align(ui.title_lbl, LV_ALIGN_CENTER, 0, arc_center_y - arc_size / 7);
+  lv_obj_align(ui.pct_row, LV_ALIGN_CENTER, 0, arc_center_y + arc_stroke);
+  lv_obj_align(ui.minus_btn, LV_ALIGN_CENTER, -(btn_size + 18) / 2, controls_center_y);
+  lv_obj_align(ui.plus_btn, LV_ALIGN_CENTER, (btn_size + 18) / 2, controls_center_y);
 }
 
 inline void media_volume_set_modal_value(MediaVolumeCtx *ctx, int pct) {
@@ -4092,15 +4210,17 @@ inline void media_volume_set_modal_value(MediaVolumeCtx *ctx, int pct) {
     ui.updating_arc = false;
   }
   if (ui.pct_lbl) {
-    char buf[12];
-    media_format_percent(pct, buf, sizeof(buf));
+    char buf[8];
+    snprintf(buf, sizeof(buf), "%d", pct);
     lv_label_set_text(ui.pct_lbl, buf);
   }
+  if (ui.pct_unit_lbl) lv_label_set_text(ui.pct_unit_lbl, "%");
 }
 
 inline void media_volume_open_modal(MediaVolumeCtx *ctx) {
   if (!ctx) return;
   media_volume_hide_modal();
+  if (ctx->pause_home_idle) ctx->pause_home_idle();
   MediaVolumeModalUi &ui = media_volume_modal_ui();
   ui.active = ctx;
 
@@ -4108,7 +4228,7 @@ inline void media_volume_open_modal(MediaVolumeCtx *ctx) {
   ui.overlay = lv_obj_create(parent);
   lv_obj_set_size(ui.overlay, lv_pct(100), lv_pct(100));
   lv_obj_set_style_bg_color(ui.overlay, lv_color_hex(0x000000), LV_PART_MAIN);
-  lv_obj_set_style_bg_opa(ui.overlay, LV_OPA_60, LV_PART_MAIN);
+  lv_obj_set_style_bg_opa(ui.overlay, LV_OPA_40, LV_PART_MAIN);
   lv_obj_set_style_border_width(ui.overlay, 0, LV_PART_MAIN);
   lv_obj_clear_flag(ui.overlay, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_add_event_cb(ui.overlay, [](lv_event_t *) { media_volume_hide_modal(); },
@@ -4148,16 +4268,39 @@ inline void media_volume_open_modal(MediaVolumeCtx *ctx) {
   lv_obj_set_style_text_color(ui.title_lbl, lv_color_hex(0xA0A0A0), LV_PART_MAIN);
   lv_obj_set_style_text_align(ui.title_lbl, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
   if (ctx->label_font) lv_obj_set_style_text_font(ui.title_lbl, ctx->label_font, LV_PART_MAIN);
+  apply_width_compensation(ui.title_lbl, ctx->width_compensation_percent);
 
-  ui.pct_lbl = lv_label_create(ui.panel);
+  ui.pct_row = lv_obj_create(ui.panel);
+  lv_obj_set_size(ui.pct_row, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+  lv_obj_clear_flag(ui.pct_row, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_clear_flag(ui.pct_row, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_set_style_bg_opa(ui.pct_row, LV_OPA_TRANSP, LV_PART_MAIN);
+  lv_obj_set_style_border_width(ui.pct_row, 0, LV_PART_MAIN);
+  lv_obj_set_style_pad_all(ui.pct_row, 0, LV_PART_MAIN);
+  lv_obj_set_style_pad_column(ui.pct_row, 4, LV_PART_MAIN);
+  lv_obj_set_layout(ui.pct_row, LV_LAYOUT_FLEX);
+  lv_obj_set_style_flex_flow(ui.pct_row, LV_FLEX_FLOW_ROW, LV_PART_MAIN);
+  lv_obj_set_style_flex_main_place(ui.pct_row, LV_FLEX_ALIGN_CENTER, LV_PART_MAIN);
+  lv_obj_set_style_flex_cross_place(ui.pct_row, LV_FLEX_ALIGN_END, LV_PART_MAIN);
+
+  ui.pct_lbl = lv_label_create(ui.pct_row);
   lv_obj_set_style_text_color(ui.pct_lbl, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
   lv_obj_set_style_text_align(ui.pct_lbl, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
-  if (ctx->value_font) lv_obj_set_style_text_font(ui.pct_lbl, ctx->value_font, LV_PART_MAIN);
+  if (ctx->number_font) lv_obj_set_style_text_font(ui.pct_lbl, ctx->number_font, LV_PART_MAIN);
+  apply_width_compensation(ui.pct_lbl, ctx->width_compensation_percent);
+
+  ui.pct_unit_lbl = lv_label_create(ui.pct_row);
+  lv_label_set_text(ui.pct_unit_lbl, "%");
+  lv_obj_set_style_text_color(ui.pct_unit_lbl, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+  lv_obj_set_style_text_align(ui.pct_unit_lbl, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
+  if (ctx->unit_font) lv_obj_set_style_text_font(ui.pct_unit_lbl, ctx->unit_font, LV_PART_MAIN);
+  lv_obj_set_style_translate_y(ui.pct_unit_lbl, -15, LV_PART_MAIN);
+  apply_width_compensation(ui.pct_unit_lbl, ctx->width_compensation_percent);
 
   ui.minus_btn = media_volume_create_round_button(ui.panel, 72, find_icon("Minus"),
-    ctx->icon_font, 0xBDBDBD, 0x252525);
+    ctx->icon_font, 0xBDBDBD, 0x252525, ctx->width_compensation_percent);
   ui.plus_btn = media_volume_create_round_button(ui.panel, 72, find_icon("Plus"),
-    ctx->icon_font, 0xBDBDBD, 0x252525);
+    ctx->icon_font, 0xBDBDBD, 0x252525, ctx->width_compensation_percent);
   lv_obj_add_event_cb(ui.minus_btn, [](lv_event_t *) {
     MediaVolumeModalUi &ui = media_volume_modal_ui();
     if (ui.active) media_volume_apply_percent(ui.active, ui.active->current_pct - 1, true, true);
@@ -4270,39 +4413,53 @@ inline void setup_media_now_playing_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
                                            lv_obj_t *title_lbl,
                                            lv_obj_t *artist_lbl,
                                            const lv_font_t *title_font,
-                                           lv_coord_t pad) {
+                                           lv_coord_t pad,
+                                           bool limit_title_lines) {
   lv_obj_clear_flag(btn, LV_OBJ_FLAG_CLICKABLE);
   if (icon_lbl) lv_obj_add_flag(icon_lbl, LV_OBJ_FLAG_HIDDEN);
   if (title_lbl) {
     if (title_font) lv_obj_set_style_text_font(title_lbl, title_font, LV_PART_MAIN);
     lv_label_set_long_mode(title_lbl, LV_LABEL_LONG_WRAP);
     lv_obj_set_width(title_lbl, lv_pct(100));
+    if (limit_title_lines) {
+      const lv_font_t *font = title_font ? title_font : lv_obj_get_style_text_font(title_lbl, LV_PART_MAIN);
+      if (font && font->line_height > 0) lv_obj_set_height(title_lbl, font->line_height * 2);
+    }
+    lv_obj_align(title_lbl, LV_ALIGN_TOP_LEFT, 0, 0);
     lv_label_set_text(title_lbl, "--");
     lv_obj_move_foreground(title_lbl);
   }
   if (artist_lbl) {
     lv_label_set_text(artist_lbl, "--");
-    lv_obj_align(artist_lbl, LV_ALIGN_BOTTOM_LEFT, pad, -pad);
+    lv_obj_align(artist_lbl, LV_ALIGN_BOTTOM_LEFT, 0, 0);
     configure_button_label_wrap(artist_lbl);
     lv_obj_move_foreground(artist_lbl);
   }
 }
 
 inline void setup_media_volume_button(lv_obj_t *btn, lv_obj_t *icon_lbl,
+                                      lv_obj_t *sensor_container,
+                                      lv_obj_t *sensor_lbl,
+                                      lv_obj_t *unit_lbl,
                                       lv_obj_t *text_lbl,
                                       const ParsedCfg &p) {
-  lv_coord_t pad_left = lv_obj_get_style_pad_left(btn, LV_PART_MAIN);
-  lv_coord_t pad_top = lv_obj_get_style_pad_top(btn, LV_PART_MAIN);
-  lv_coord_t pad_bottom = lv_obj_get_style_pad_bottom(btn, LV_PART_MAIN);
   if (icon_lbl) {
-    lv_obj_clear_flag(icon_lbl, LV_OBJ_FLAG_HIDDEN);
-    lv_label_set_text(icon_lbl, media_default_icon("volume", p.icon));
-    lv_obj_align(icon_lbl, LV_ALIGN_TOP_LEFT, pad_left, pad_top);
-    lv_obj_move_foreground(icon_lbl);
+    lv_obj_add_flag(icon_lbl, LV_OBJ_FLAG_HIDDEN);
+  }
+  if (sensor_container) {
+    lv_obj_clear_flag(sensor_container, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_align(sensor_container, LV_ALIGN_TOP_LEFT, 0, 0);
+    lv_obj_move_foreground(sensor_container);
+  }
+  if (sensor_lbl) {
+    lv_label_set_text(sensor_lbl, "--");
+  }
+  if (unit_lbl) {
+    lv_label_set_text(unit_lbl, " %");
   }
   if (text_lbl) {
     lv_label_set_text(text_lbl, media_label(p).c_str());
-    lv_obj_align(text_lbl, LV_ALIGN_BOTTOM_LEFT, pad_left, -pad_bottom);
+    lv_obj_align(text_lbl, LV_ALIGN_BOTTOM_LEFT, 0, 0);
     configure_button_label_wrap(text_lbl);
     lv_obj_move_foreground(text_lbl);
   }
@@ -4414,10 +4571,12 @@ inline lv_obj_t *setup_media_position_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
                                              uint32_t track_color,
                                              const lv_font_t *value_font,
                                              lv_color_t text_color,
-                                             lv_coord_t pad) {
+                                             lv_coord_t pad,
+                                             int width_compensation_percent = 100) {
   lv_obj_t *value_lbl = lv_label_create(btn);
   if (value_font) lv_obj_set_style_text_font(value_lbl, value_font, LV_PART_MAIN);
   lv_obj_set_style_text_color(value_lbl, text_color, LV_PART_MAIN);
+  apply_width_compensation(value_lbl, width_compensation_percent);
   lv_label_set_text(value_lbl, "0:00");
   lv_obj_align(value_lbl, LV_ALIGN_TOP_LEFT, pad, pad);
   return setup_media_slider_layout(
@@ -4426,7 +4585,11 @@ inline lv_obj_t *setup_media_position_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
 
 inline void setup_media_card(BtnSlot &s, const ParsedCfg &p, uint32_t on_color,
                              uint32_t tertiary_color,
-                             const lv_font_t *value_font) {
+                             const lv_font_t *sensor_font,
+                             const lv_font_t *media_title_font,
+                             int width_compensation_percent = 100,
+                             int /*row_span*/ = 1,
+                             int col_span = 1) {
   lv_obj_add_flag(s.sensor_container, LV_OBJ_FLAG_HIDDEN);
   lv_coord_t pad = lv_obj_get_style_radius(s.btn, LV_PART_MAIN) + 4;
   std::string mode = media_card_mode(p.sensor);
@@ -4435,23 +4598,27 @@ inline void setup_media_card(BtnSlot &s, const ParsedCfg &p, uint32_t on_color,
     return;
   }
   if (mode == "volume") {
-    setup_media_volume_button(s.btn, s.icon_lbl, s.text_lbl, p);
+    setup_media_volume_button(
+      s.btn, s.icon_lbl, s.sensor_container, s.sensor_lbl, s.unit_lbl, s.text_lbl, p);
     return;
   }
   if (mode == "now_playing") {
-    lv_obj_clear_flag(s.sensor_container, LV_OBJ_FLAG_HIDDEN);
-    lv_obj_set_width(s.sensor_container, lv_pct(100));
-    lv_label_set_text(s.unit_lbl, "");
+    lv_obj_add_flag(s.sensor_container, LV_OBJ_FLAG_HIDDEN);
+    lv_color_t text_color = lv_obj_get_style_text_color(s.sensor_lbl, LV_PART_MAIN);
+    lv_obj_t *title_lbl = lv_label_create(s.btn);
+    lv_obj_set_style_text_color(title_lbl, text_color, LV_PART_MAIN);
+    apply_width_compensation(title_lbl, width_compensation_percent);
+    s.sensor_lbl = title_lbl;
     setup_media_now_playing_layout(
-      s.btn, s.icon_lbl, s.sensor_lbl, s.text_lbl, value_font, pad);
+      s.btn, s.icon_lbl, s.sensor_lbl, s.text_lbl, media_title_font, pad, col_span == 1);
     return;
   }
   if (mode == "position") {
     lv_coord_t position_pad = lv_obj_get_style_pad_top(s.btn, LV_PART_MAIN);
     lv_color_t text_color = lv_obj_get_style_text_color(s.sensor_lbl, LV_PART_MAIN);
     lv_obj_t *slider = setup_media_position_layout(
-      s.btn, s.icon_lbl, s.text_lbl, p, on_color, tertiary_color,
-      value_font, text_color, position_pad);
+      s.btn, s.icon_lbl, s.text_lbl, p, 0xFFFFFF, tertiary_color,
+      sensor_font, text_color, position_pad, width_compensation_percent);
     lv_obj_set_user_data(s.sensor_container, (void *)slider);
     return;
   }
@@ -4504,17 +4671,31 @@ inline MediaVolumeCtx *create_media_volume_context(lv_obj_t *btn,
                                                    const ParsedCfg &p,
                                                    uint32_t accent_color,
                                                    const lv_font_t *value_font,
+                                                   const lv_font_t *number_font,
+                                                   const lv_font_t *unit_font,
                                                    const lv_font_t *label_font,
-                                                   const lv_font_t *icon_font) {
+                                                   const lv_font_t *icon_font,
+                                                   int width_compensation_percent = 100,
+                                                   lv_obj_t *pct_lbl = nullptr,
+                                                   lv_obj_t *unit_lbl = nullptr,
+                                                   std::function<void()> pause_home_idle = nullptr,
+                                                   std::function<void()> resume_home_idle = nullptr) {
   MediaVolumeCtx *ctx = new MediaVolumeCtx();
   ctx->entity_id = p.entity;
   ctx->label = media_label(p);
   ctx->accent_color = accent_color;
   ctx->btn = btn;
   ctx->label_lbl = label_lbl;
+  ctx->pct_lbl = pct_lbl;
+  ctx->unit_lbl = unit_lbl;
+  ctx->width_compensation_percent = normalize_width_compensation_percent(width_compensation_percent);
   ctx->value_font = value_font;
+  ctx->number_font = number_font ? number_font : value_font;
+  ctx->unit_font = unit_font;
   ctx->label_font = label_font;
   ctx->icon_font = icon_font;
+  ctx->pause_home_idle = pause_home_idle;
+  ctx->resume_home_idle = resume_home_idle;
   if (btn) lv_obj_set_user_data(btn, ctx);
   return ctx;
 }
@@ -4540,6 +4721,7 @@ inline void subscribe_media_volume_state(MediaVolumeCtx *ctx) {
           ctx->pending_until_ms = 0;
         }
         ctx->current_pct = pct;
+        media_volume_set_card_value(ctx, pct);
         media_volume_set_modal_value(ctx, pct);
       })
   );
@@ -4951,13 +5133,18 @@ struct GridConfig {
   int cols;
   bool color_correction;
   bool wrap_tall_labels;
+  int width_compensation_percent = 100;
   const lv_font_t *icon_font;
   const lv_font_t *climate_control_icon_font;
   const lv_font_t *sp_sensor_font;
+  const lv_font_t *media_title_font;
+  const lv_font_t *volume_number_font;
   const lv_font_t *climate_target_font;
   std::string temperature_unit;
   std::string timezone;
   bool developer_experimental_features;
+  std::function<void()> pause_home_idle;
+  std::function<void()> resume_home_idle;
 };
 
 inline bool experimental_card_enabled(const ParsedCfg &p, bool developer_experimental_features) {
@@ -4980,7 +5167,9 @@ struct CardPalette {
 
 inline void setup_card_visual(BtnSlot &s, const ParsedCfg &p,
                               const GridConfig &cfg,
-                              const CardPalette &palette) {
+                              const CardPalette &palette,
+                              int row_span = 1,
+                              int col_span = 1) {
   apply_button_colors(s.btn, palette.has_on, palette.on_val,
     palette.has_off, palette.off_val);
 
@@ -5006,7 +5195,8 @@ inline void setup_card_visual(BtnSlot &s, const ParsedCfg &p,
     return;
   }
   if (weather_card_shows_tomorrow(p)) {
-    setup_weather_forecast_card(s, p, palette.has_sensor_color, palette.sensor_val);
+    setup_weather_forecast_card(s, p, palette.has_sensor_color, palette.sensor_val,
+      cfg.width_compensation_percent);
     return;
   }
   if (p.type == "weather") {
@@ -5050,7 +5240,10 @@ inline void setup_card_visual(BtnSlot &s, const ParsedCfg &p,
     setup_media_card(s, p,
       palette.has_on ? palette.on_val : DEFAULT_SLIDER_COLOR,
       palette.has_sensor_color ? palette.sensor_val : DEFAULT_TERTIARY_COLOR,
-      cfg.sp_sensor_font);
+      cfg.sp_sensor_font,
+      cfg.media_title_font ? cfg.media_title_font : cfg.sp_sensor_font,
+      cfg.width_compensation_percent,
+      row_span, col_span);
     return;
   }
   if (p.type == "slider" || p.type == "cover") {
@@ -5142,7 +5335,9 @@ inline void grid_phase1(
     }
 
     ParsedCfg p = parse_cfg(scfg);
-    setup_card_visual(s, p, cfg, palette);
+    apply_width_compensation(s.icon_lbl, cfg.width_compensation_percent);
+    apply_slot_text_width_compensation(s, cfg.width_compensation_percent);
+    setup_card_visual(s, p, cfg, palette, row_span, col_span);
   }
   ESP_LOGI("sensors", "Phase 1: done (%lu ms)", esphome::millis());
 }
@@ -5257,7 +5452,8 @@ inline void grid_phase2(
           cfg.sp_sensor_font,
           cfg.climate_target_font ? cfg.climate_target_font : cfg.sp_sensor_font,
           cfg.icon_font,
-          cfg.climate_control_icon_font ? cfg.climate_control_icon_font : cfg.icon_font);
+          cfg.climate_control_icon_font ? cfg.climate_control_icon_font : cfg.icon_font,
+          cfg.width_compensation_percent);
         subscribe_climate_card(climate_ctx);
       }
       continue;
@@ -5357,8 +5553,13 @@ inline void grid_phase2(
         } else if (mode == "volume") {
           MediaVolumeCtx *ctx = create_media_volume_context(
             s.btn, s.text_lbl, p, has_on ? on_val : DEFAULT_SLIDER_COLOR,
-            cfg.sp_sensor_font, lv_obj_get_style_text_font(s.text_lbl, LV_PART_MAIN),
-            cfg.icon_font);
+            cfg.sp_sensor_font,
+            cfg.volume_number_font ? cfg.volume_number_font : cfg.sp_sensor_font,
+            lv_obj_get_style_text_font(s.unit_lbl, LV_PART_MAIN),
+            lv_obj_get_style_text_font(s.text_lbl, LV_PART_MAIN),
+            cfg.icon_font, cfg.width_compensation_percent,
+            s.sensor_lbl, s.unit_lbl,
+            cfg.pause_home_idle, cfg.resume_home_idle);
           subscribe_media_volume_state(ctx);
           if (p.label.empty()) subscribe_friendly_name(s.text_lbl, p.entity);
         } else if (mode == "now_playing") {
@@ -5523,6 +5724,8 @@ inline void grid_phase2(
       LV_GRID_ALIGN_STRETCH, sp_ord.back_pos / COLS, sp_ord.back_dbl ? 2 : 1);
     BtnSlot back_slot = create_dynamic_card_slot(
       back_btn, sp_icon_fnt, cfg.sp_sensor_font, sp_btn_fnt, sp_txt_color);
+    apply_width_compensation(back_slot.icon_lbl, cfg.width_compensation_percent);
+    apply_slot_text_width_compensation(back_slot, cfg.width_compensation_percent);
     lv_label_set_text(back_slot.icon_lbl, "\U000F0141");
     lv_label_set_text(back_slot.text_lbl, "Back");
 
@@ -5594,7 +5797,9 @@ inline void grid_phase2(
       lv_obj_set_grid_cell(sb_btn, LV_GRID_ALIGN_STRETCH, col, cs, LV_GRID_ALIGN_STRETCH, row, rs);
       BtnSlot sub_slot = create_dynamic_card_slot(
         sb_btn, sp_icon_fnt, cfg.sp_sensor_font, sp_btn_fnt, sp_txt_color);
-      setup_card_visual(sub_slot, sb_cfg, cfg, palette);
+      apply_width_compensation(sub_slot.icon_lbl, cfg.width_compensation_percent);
+      apply_slot_text_width_compensation(sub_slot, cfg.width_compensation_percent);
+      setup_card_visual(sub_slot, sb_cfg, cfg, palette, rs, cs);
 
       if (is_text_sensor_card(sb_cfg)) {
         if (!sb_cfg.sensor.empty())
@@ -5630,7 +5835,8 @@ inline void grid_phase2(
             cfg.sp_sensor_font,
             cfg.climate_target_font ? cfg.climate_target_font : cfg.sp_sensor_font,
             cfg.icon_font,
-            cfg.climate_control_icon_font ? cfg.climate_control_icon_font : cfg.icon_font);
+            cfg.climate_control_icon_font ? cfg.climate_control_icon_font : cfg.icon_font,
+            cfg.width_compensation_percent);
           subscribe_climate_card(climate_ctx);
           add_parent_indicator(sb_cfg.entity, true);
           lv_obj_add_event_cb(sb_btn, [](lv_event_t *e) {
@@ -5743,8 +5949,13 @@ inline void grid_phase2(
             MediaVolumeCtx *ctx = create_media_volume_context(
               sub_slot.btn, sub_slot.text_lbl, sb_cfg,
               has_on ? on_val : DEFAULT_SLIDER_COLOR,
-              cfg.sp_sensor_font, lv_obj_get_style_text_font(sub_slot.text_lbl, LV_PART_MAIN),
-              cfg.icon_font);
+              cfg.sp_sensor_font,
+              cfg.volume_number_font ? cfg.volume_number_font : cfg.sp_sensor_font,
+              lv_obj_get_style_text_font(sub_slot.unit_lbl, LV_PART_MAIN),
+              lv_obj_get_style_text_font(sub_slot.text_lbl, LV_PART_MAIN),
+              cfg.icon_font, cfg.width_compensation_percent,
+              sub_slot.sensor_lbl, sub_slot.unit_lbl,
+              cfg.pause_home_idle, cfg.resume_home_idle);
             subscribe_media_volume_state(ctx);
             if (sb_cfg.label.empty()) subscribe_friendly_name(sub_slot.text_lbl, sb_cfg.entity);
             lv_obj_add_event_cb(sb_btn, [](lv_event_t *e) {

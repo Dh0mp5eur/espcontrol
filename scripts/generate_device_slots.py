@@ -81,15 +81,30 @@ def cfg_lines(device: dict) -> list[str]:
         lines.append("            cfg.color_correction = true;")
     if device["wrap_tall_labels"]:
         lines.append("            cfg.wrap_tall_labels = true;")
+    if device.get("width_compensation_percent", 100) != 100:
+        lines.append(f"            cfg.width_compensation_percent = {device['width_compensation_percent']};")
     lines.append(f"            cfg.icon_font = id({device['icon_font']})->get_lv_font();")
     lines.append(
         f"            cfg.climate_control_icon_font = id({device['climate_control_icon_font']})->get_lv_font();"
     )
     lines.append(f"            cfg.sp_sensor_font = id({device['sensor_font']})->get_lv_font();")
+    lines.append(f"            cfg.media_title_font = id({device['media_title_font']})->get_lv_font();")
+    lines.append("            cfg.volume_number_font = id(volume_modal_number_font)->get_lv_font();")
     lines.append(f"            cfg.climate_target_font = id({device['climate_target_font']})->get_lv_font();")
     lines.append("            cfg.temperature_unit = id(temperature_unit_select).current_option();")
     lines.append("            cfg.timezone = id(timezone_select).current_option();")
     lines.append("            cfg.developer_experimental_features = id(developer_experimental_features).state;")
+    lines.append("            cfg.pause_home_idle = []() {")
+    lines.append("              id(home_screen_idle_suspended) = true;")
+    lines.append("              id(home_screen_idle_check).stop();")
+    lines.append("            };")
+    lines.append("            cfg.resume_home_idle = []() {")
+    lines.append("              id(home_screen_idle_suspended) = false;")
+    lines.append("              id(home_screen_idle_check).execute();")
+    lines.append("            };")
+    lines.append("            apply_width_compensation(id(display_time), cfg.width_compensation_percent);")
+    lines.append("            apply_width_compensation(id(temperatures), cfg.width_compensation_percent);")
+    lines.append("            apply_width_compensation(id(clock_label), cfg.width_compensation_percent);")
     return lines
 
 
