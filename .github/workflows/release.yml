@@ -37,9 +37,6 @@ jobs:
           - device: sunton-esp32-s3-8048s043c
             slug: sunton-esp32-s3-8048s043c
             chip: ESP32-S3
-          - device: esp32-2432s028r
-            slug: esp32-2432s028r
-            chip: ESP32
     steps:
       - uses: actions/checkout@v6
 

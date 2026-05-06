@@ -384,7 +384,6 @@ export default defineConfig({
           { text: '4.3-inch 8048S043C', link: '/screens/8048s043c' },
           { text: '4-inch Waveshare P4 86 Panel', link: '/screens/p4-86' },
           { text: '4-inch 4848S040', link: '/screens/4848s040' },
-          { text: '2.8-inch 2432S028R', link: '/screens/2432s028r' },
         ],
       },
       {

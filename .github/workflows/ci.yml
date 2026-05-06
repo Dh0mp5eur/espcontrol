@@ -93,7 +93,6 @@ jobs:
           - esp32-p4-86
           - guition-esp32-s3-4848s040
           - sunton-esp32-s3-8048s043c
-          - esp32-2432s028r
     steps:
       - uses: actions/checkout@v6
 
