@@ -226,19 +226,19 @@
     "display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--btn-lines);" +
     "overflow:hidden;word-break:break-word;min-height:0}" +
     ".sp-sensor-badge{position:absolute;top:var(--sensor-top);right:var(--sensor-right);font-size:var(--sensor-fs);opacity:.5}" +
-    ".sp-sensor-preview{display:flex;align-items:baseline;gap:0;color:#fff}" +
+    ".sp-sensor-preview{display:flex;align-items:baseline;gap:.18em;color:#fff}" +
     ".sp-forecast-preview{white-space:nowrap;gap:0}" +
     ".sp-sensor-value{font-size:var(--btn-icon);line-height:1;font-weight:300}" +
     ".sp-sensor-unit{font-size:var(--btn-label);line-height:1;color:#fff}" +
     ".sp-slider-preview{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;pointer-events:none}" +
     ".sp-slider-track{width:100%;height:100%;position:relative}" +
-    ".sp-slider-fill{position:absolute;left:0;bottom:0;width:100%;height:80%;background:#fff;" +
+    ".sp-slider-fill{position:absolute;left:0;bottom:0;width:100%;height:80%;background:var(--accent);" +
     "border-radius:var(--r)}" +
     ".sp-media-h-slider{position:absolute;left:8%;right:8%;bottom:10%;height:7.5%;border-radius:999px;" +
     "background:#212121;overflow:hidden;pointer-events:none}" +
     ".sp-media-h-slider span{display:block;width:62%;height:100%;background:#fff;border-radius:999px}" +
     ".sp-media-position-time{z-index:1}" +
-    ".sp-media-now-title{font-size:var(--media-title);line-height:1;color:#fff;font-weight:300;z-index:1;" +
+    ".sp-media-now-title{font-size:var(--btn-icon);line-height:1;color:#fff;font-weight:300;z-index:1;" +
     "display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;word-break:break-word}" +
     ".sp-media-now-artist{font-size:var(--btn-label);line-height:1.2;color:#fff}" +
     ".sp-btn-double{grid-row:span 2}" +
@@ -1836,6 +1836,7 @@
     if (b && b.type === "weather_forecast") {
       b.type = "weather";
       b.precision = "tomorrow";
+      if (b.label === "Weather") b.label = "";
     }
     if (b && b.type === "text_sensor") {
       b.type = "sensor";
@@ -2340,7 +2341,6 @@
     r.setProperty("--btn-pad", CFG.btn.padding + "cqw");
     r.setProperty("--btn-icon", CFG.btn.iconSize + "cqw");
     r.setProperty("--btn-label", CFG.btn.labelSize + "cqw");
-    r.setProperty("--media-title", (CFG.btn.mediaTitleSize || (CFG.btn.iconSize * 0.75)) + "cqw");
     r.setProperty("--btn-lines", String(CFG.btn.labelLines || 1));
     r.setProperty("--btn-lines-dbl", String(CFG.btn.labelLinesDouble || CFG.btn.labelLines || 1));
     r.setProperty("--sensor-top", CFG.sensorBadge.top + "cqw");

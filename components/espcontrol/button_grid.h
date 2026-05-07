@@ -112,6 +112,7 @@ inline ParsedCfg normalize_parsed_cfg(ParsedCfg p) {
   if (p.type == "weather_forecast") {
     p.type = "weather";
     p.precision = "tomorrow";
+    if (p.label == "Weather") p.label.clear();
   }
   if (p.type == "media") {
     if (p.sensor == "controls") {
@@ -326,6 +327,8 @@ struct WeatherForecastCardRef {
   lv_obj_t *unit_lbl;
   lv_obj_t *label_lbl;
   std::string entity_id;
+  std::string day;
+  std::string label;
   bool valid = false;
   int high = 0;
   int low = 0;
@@ -356,7 +359,12 @@ inline std::string weather_forecast_unit_symbol(const std::string &unit) {
 inline void apply_weather_forecast_card_text(const WeatherForecastCardRef &ref,
                                              bool valid, int high, int low,
                                              const std::string &unit) {
-  if (ref.label_lbl) lv_label_set_text(ref.label_lbl, "Tomorrow");
+  if (ref.label_lbl) {
+    std::string label = ref.label.empty()
+      ? (ref.day == "today" ? "Today" : "Tomorrow")
+      : ref.label;
+    lv_label_set_text(ref.label_lbl, label.c_str());
+  }
   if (!ref.value_lbl || !ref.unit_lbl) return;
   if (!valid) {
     lv_label_set_text(ref.value_lbl, "--/--");
@@ -377,12 +385,13 @@ inline void apply_weather_forecast_card_text(const WeatherForecastCardRef &ref,
 }
 
 inline void apply_weather_forecast_to_entity(const std::string &entity_id,
+                                             const std::string &day,
                                              bool valid, int high, int low,
                                              const std::string &unit) {
   WeatherForecastCardRef *refs = weather_forecast_card_refs();
   int count = weather_forecast_card_count();
   for (int i = 0; i < count; i++) {
-    if (refs[i].entity_id == entity_id) {
+    if (refs[i].entity_id == entity_id && refs[i].day == day) {
       refs[i].valid = valid;
       refs[i].high = high;
       refs[i].low = low;
@@ -394,13 +403,17 @@ inline void apply_weather_forecast_to_entity(const std::string &entity_id,
 
 inline void register_weather_forecast_card(lv_obj_t *value_lbl, lv_obj_t *unit_lbl,
                                            lv_obj_t *label_lbl,
-                                           const std::string &entity_id) {
+                                           const std::string &entity_id,
+                                           const std::string &day,
+                                           const std::string &label) {
   int &count = weather_forecast_card_count();
   if (count >= MAX_GRID_SLOTS + MAX_SUBPAGE_ITEMS) {
     ESP_LOGW("weather_forecast", "Too many forecast cards; skipping updates");
     return;
   }
-  weather_forecast_card_refs()[count++] = {value_lbl, unit_lbl, label_lbl, entity_id, false, 0, 0, ""};
+  weather_forecast_card_refs()[count++] = {
+    value_lbl, unit_lbl, label_lbl, entity_id, day, label, false, 0, 0, ""
+  };
   apply_weather_forecast_card_text(weather_forecast_card_refs()[count - 1], false, 0, 0, "");
 }
 
@@ -438,17 +451,22 @@ inline bool parse_weather_forecast_payload(const std::string &payload,
   return has_high || has_low;
 }
 
-inline std::string weather_forecast_response_template(const std::string &entity_id) {
+inline std::string weather_forecast_response_template(const std::string &entity_id,
+                                                      const std::string &day) {
+  const char *target_date_template = day == "today"
+    ? "now().date().isoformat()"
+    : "(now().date() + timedelta(days=1)).isoformat()";
   return std::string("{% set entity = '") + entity_id + "' %}"
     "{% set forecasts = response.get(entity, {}).get('forecast', []) %}"
-    "{% set tomorrow = (now().date() + timedelta(days=1)).isoformat() %}"
+    "{% set target_date = " + target_date_template + " %}"
     "{% set ns = namespace(forecast=none) %}"
     "{% for item in forecasts %}"
-    "{% if ns.forecast is none and item.datetime is defined and item.datetime[:10] == tomorrow %}"
+    "{% if ns.forecast is none and item.datetime is defined and item.datetime[:10] == target_date %}"
     "{% set ns.forecast = item %}"
     "{% endif %}"
     "{% endfor %}"
-    "{% set f = ns.forecast if ns.forecast is not none else (forecasts[1] if forecasts|length > 1 else (forecasts[0] if forecasts|length > 0 else none)) %}"
+    "{% set fallback_index = 0 if target_date == now().date().isoformat() else 1 %}"
+    "{% set f = ns.forecast if ns.forecast is not none else (forecasts[fallback_index] if forecasts|length > fallback_index else (forecasts[0] if forecasts|length > 0 else none)) %}"
     "{% set high = f.temperature if f is not none and f.temperature is defined else (f.temperature_high if f is not none and f.temperature_high is defined else (f.high_temperature if f is not none and f.high_temperature is defined else (f.high if f is not none and f.high is defined else ''))) %}"
     "{% set low = f.templow if f is not none and f.templow is defined else (f.temperature_low if f is not none and f.temperature_low is defined else (f.low_temperature if f is not none and f.low_temperature is defined else (f.low if f is not none and f.low is defined else ''))) %}"
     "{{ high }}|{{ low }}|"
@@ -460,9 +478,10 @@ inline uint32_t next_weather_forecast_call_id() {
   return call_id++;
 }
 
-inline void request_weather_forecast_entity(const std::string &entity_id) {
+inline void request_weather_forecast_entity(const std::string &entity_id,
+                                            const std::string &day) {
   if (!weather_forecast_entity_id_safe(entity_id) || esphome::api::global_api_server == nullptr) {
-    apply_weather_forecast_to_entity(entity_id, false, 0, 0, "");
+    apply_weather_forecast_to_entity(entity_id, day, false, 0, 0, "");
     return;
   }
 
@@ -471,7 +490,7 @@ inline void request_weather_forecast_entity(const std::string &entity_id) {
   req.is_event = false;
   req.call_id = next_weather_forecast_call_id();
   req.wants_response = true;
-  std::string response_template = weather_forecast_response_template(entity_id);
+  std::string response_template = weather_forecast_response_template(entity_id, day);
   req.response_template = decltype(req.response_template)(response_template);
   req.data.init(2);
   auto &entity_kv = req.data.emplace_back();
@@ -483,17 +502,17 @@ inline void request_weather_forecast_entity(const std::string &entity_id) {
 
   esphome::api::global_api_server->register_action_response_callback(
     req.call_id,
-    [entity_id](const esphome::api::ActionResponse &response) {
+    [entity_id, day](const esphome::api::ActionResponse &response) {
       if (!response.is_success()) {
         ESP_LOGW("weather_forecast", "Forecast request failed for %s: %s",
           entity_id.c_str(), response.get_error_message().c_str());
-        apply_weather_forecast_to_entity(entity_id, false, 0, 0, "");
+        apply_weather_forecast_to_entity(entity_id, day, false, 0, 0, "");
         return;
       }
       auto json = response.get_json();
       const char *payload = json["response"].as<const char *>();
       if (payload == nullptr) {
-        apply_weather_forecast_to_entity(entity_id, false, 0, 0, "");
+        apply_weather_forecast_to_entity(entity_id, day, false, 0, 0, "");
         return;
       }
       int high = 0;
@@ -503,7 +522,7 @@ inline void request_weather_forecast_entity(const std::string &entity_id) {
       if (!valid) {
         ESP_LOGW("weather_forecast", "No usable forecast temperatures for %s", entity_id.c_str());
       }
-      apply_weather_forecast_to_entity(entity_id, valid, high, low, unit);
+      apply_weather_forecast_to_entity(entity_id, day, valid, high, low, unit);
     });
   esphome::api::global_api_server->send_homeassistant_action(req);
 }
@@ -517,16 +536,18 @@ inline void refresh_weather_forecast_cards() {
   for (int i = 0; i < count; i++) {
     const std::string &entity_id = refs[i].entity_id;
     if (entity_id.empty()) continue;
+    const std::string &day = refs[i].day;
+    std::string request_key = entity_id + "|" + day;
     bool already_requested = false;
     for (const auto &existing : requested) {
-      if (existing == entity_id) {
+      if (existing == request_key) {
         already_requested = true;
         break;
       }
     }
     if (already_requested) continue;
-    requested.push_back(entity_id);
-    request_weather_forecast_entity(entity_id);
+    requested.push_back(request_key);
+    request_weather_forecast_entity(entity_id, day);
   }
 }
 
@@ -1009,6 +1030,7 @@ inline void reset_climate_contexts() {
 
 struct ClimateHomeGridMetrics {
   lv_obj_t *page = nullptr;
+  lv_obj_t *first_card = nullptr;
   int cols = 3;
   int rows = 3;
 };
@@ -1018,9 +1040,11 @@ inline ClimateHomeGridMetrics &climate_home_grid_metrics() {
   return metrics;
 }
 
-inline void set_climate_home_grid_metrics(lv_obj_t *page, int cols, int rows) {
+inline void set_climate_home_grid_metrics(lv_obj_t *page, int cols, int rows,
+                                          lv_obj_t *first_card = nullptr) {
   ClimateHomeGridMetrics &metrics = climate_home_grid_metrics();
   metrics.page = page;
+  metrics.first_card = first_card;
   metrics.cols = cols > 0 ? cols : 3;
   metrics.rows = rows > 0 ? rows : 3;
 }
@@ -2653,8 +2677,13 @@ inline void setup_weather_card(BtnSlot &s, bool has_sensor_color, uint32_t senso
   lv_label_set_text(s.text_lbl, "Weather");
 }
 
-inline bool weather_card_shows_tomorrow(const ParsedCfg &p) {
-  return p.type == "weather_forecast" || (p.type == "weather" && p.precision == "tomorrow");
+inline bool weather_card_shows_forecast(const ParsedCfg &p) {
+  return p.type == "weather_forecast" ||
+    (p.type == "weather" && (p.precision == "today" || p.precision == "tomorrow"));
+}
+
+inline std::string weather_card_forecast_day(const ParsedCfg &p) {
+  return p.precision == "today" ? "today" : "tomorrow";
 }
 
 inline void setup_weather_forecast_card(BtnSlot &s, const ParsedCfg &p,
@@ -2669,10 +2698,14 @@ inline void setup_weather_forecast_card(BtnSlot &s, const ParsedCfg &p,
   lv_obj_clear_flag(s.sensor_container, LV_OBJ_FLAG_HIDDEN);
   lv_label_set_text(s.sensor_lbl, "--/--");
   lv_label_set_text(s.unit_lbl, "");
-  lv_label_set_text(s.text_lbl, "Tomorrow");
+  std::string day = weather_card_forecast_day(p);
+  std::string label = p.label.empty()
+    ? (day == "today" ? "Today" : "Tomorrow")
+    : p.label;
+  lv_label_set_text(s.text_lbl, label.c_str());
   apply_width_compensation(s.sensor_container, width_compensation_percent);
   apply_width_compensation(s.text_lbl, width_compensation_percent);
-  register_weather_forecast_card(s.sensor_lbl, s.unit_lbl, s.text_lbl, p.entity);
+  register_weather_forecast_card(s.sensor_lbl, s.unit_lbl, s.text_lbl, p.entity, day, p.label);
 }
 
 inline void setup_garage_card(BtnSlot &s, const ParsedCfg &p) {
@@ -3448,6 +3481,8 @@ struct SliderCtx {
   float media_duration = 0.0f;
   float media_position_seconds = 0.0f;
   uint32_t media_position_updated_ms = 0;
+  bool media_position_updated_at_known = false;
+  uint32_t media_position_updated_at_ms = 0;
   bool media_seek_pending = false;
   float media_seek_target_seconds = 0.0f;
   uint32_t media_seek_pending_ms = 0;
@@ -3498,6 +3533,7 @@ struct MediaVolumeCtx {
 struct MediaVolumeModalUi {
   lv_obj_t *overlay = nullptr;
   lv_obj_t *panel = nullptr;
+  lv_obj_t *back_btn = nullptr;
   lv_obj_t *arc = nullptr;
   lv_obj_t *title_lbl = nullptr;
   lv_obj_t *pct_row = nullptr;
@@ -3594,8 +3630,8 @@ inline void slider_update_horizontal_track_fill(lv_obj_t *fill, lv_obj_t *btn, i
 
 inline void slider_update_ctx_fill(SliderCtx *c, lv_obj_t *btn, int pct) {
   if (!c || !c->fill || !btn) return;
-  if (c->media_position) {
-    if (c->media_track_bg) slider_update_horizontal_track_bg(c->media_track_bg, btn);
+  if (c->media_position && c->media_track_bg) {
+    slider_update_horizontal_track_bg(c->media_track_bg, btn);
     slider_update_horizontal_track_fill(c->fill, btn, pct);
   } else {
     slider_update_fill(c->fill, btn, pct, c->horizontal, c->inverted, c->radius);
@@ -4041,6 +4077,10 @@ inline bool media_play_pause_show_state(const ParsedCfg &p) {
   return media_card_mode(p.sensor) == "play_pause" && p.precision == "state";
 }
 
+inline bool media_position_show_state(const ParsedCfg &p) {
+  return media_card_mode(p.sensor) == "position" && p.precision == "state";
+}
+
 inline void media_format_time(float seconds, char *buf, size_t size) {
   if (!buf || size == 0) return;
   if (seconds < 0.0f || !std::isfinite(seconds)) seconds = 0.0f;
@@ -4102,6 +4142,7 @@ inline void media_volume_hide_modal() {
   if (ui.overlay) lv_obj_del(ui.overlay);
   ui.overlay = nullptr;
   ui.panel = nullptr;
+  ui.back_btn = nullptr;
   ui.arc = nullptr;
   ui.title_lbl = nullptr;
   ui.pct_row = nullptr;
@@ -4138,6 +4179,48 @@ inline lv_obj_t *media_volume_create_round_button(lv_obj_t *parent, lv_coord_t s
   return btn;
 }
 
+inline void media_volume_grid_card_rect(lv_coord_t sw, lv_coord_t sh,
+                                        lv_coord_t &x, lv_coord_t &y,
+                                        lv_coord_t &w, lv_coord_t &h) {
+  ClimateHomeGridMetrics &metrics = climate_home_grid_metrics();
+  lv_obj_t *home = metrics.page;
+  int cols = metrics.cols > 0 ? metrics.cols : 3;
+  int rows = metrics.rows > 0 ? metrics.rows : 3;
+  x = 0;
+  y = 0;
+  w = sw / cols;
+  h = sh / rows;
+  if (!home) return;
+
+  lv_obj_update_layout(home);
+  lv_coord_t pad_left = lv_obj_get_style_pad_left(home, LV_PART_MAIN);
+  lv_coord_t pad_right = lv_obj_get_style_pad_right(home, LV_PART_MAIN);
+  lv_coord_t pad_top = lv_obj_get_style_pad_top(home, LV_PART_MAIN);
+  lv_coord_t pad_bottom = lv_obj_get_style_pad_bottom(home, LV_PART_MAIN);
+  lv_coord_t gap_col = lv_obj_get_style_pad_column(home, LV_PART_MAIN);
+  lv_coord_t gap_row = lv_obj_get_style_pad_row(home, LV_PART_MAIN);
+  int span_cols = cols < 3 ? cols : 3;
+  int span_rows = rows < 3 ? rows : 3;
+  if (metrics.first_card) {
+    lv_area_t card_area;
+    lv_obj_get_coords(metrics.first_card, &card_area);
+    x = 10;
+    y = card_area.y1;
+    w = lv_obj_get_width(metrics.first_card) * span_cols + gap_col * (span_cols - 1);
+    h = lv_obj_get_height(metrics.first_card) * span_rows + gap_row * (span_rows - 1);
+    return;
+  }
+
+  lv_coord_t usable_w = sw - pad_left - pad_right - gap_col * (cols - 1);
+  lv_coord_t usable_h = sh - pad_top - pad_bottom - gap_row * (rows - 1);
+  lv_coord_t cell_w = usable_w > 0 ? usable_w / cols : w;
+  lv_coord_t cell_h = usable_h > 0 ? usable_h / rows : h;
+  w = cell_w * span_cols + gap_col * (span_cols - 1);
+  h = cell_h * span_rows + gap_row * (span_rows - 1);
+  x = 10;
+  y = pad_top;
+}
+
 inline void media_volume_layout_modal(MediaVolumeCtx *ctx) {
   MediaVolumeModalUi &ui = media_volume_modal_ui();
   if (!ctx || !ui.overlay || !ui.panel) return;
@@ -4145,45 +4228,48 @@ inline void media_volume_layout_modal(MediaVolumeCtx *ctx) {
   lv_coord_t sw = disp ? lv_disp_get_hor_res(disp) : 480;
   lv_coord_t sh = disp ? lv_disp_get_ver_res(disp) : 480;
   lv_coord_t short_side = sw < sh ? sw : sh;
-  lv_coord_t panel_side = short_side * 88 / 100;
-  if (panel_side > 680) panel_side = 680;
-  if (panel_side < short_side * 78 / 100) panel_side = short_side * 78 / 100;
-  lv_coord_t btn_size = short_side * 15 / 100;
-  if (btn_size < 54) btn_size = 54;
-  if (btn_size > 108) btn_size = 108;
-  lv_coord_t arc_stroke = short_side < 520 ? 12 : 18;
-  lv_coord_t controls_gap = btn_size / 4;
-  if (controls_gap < 12) controls_gap = 12;
-  lv_coord_t bottom_pad = short_side * 5 / 100;
-  if (bottom_pad < 18) bottom_pad = 18;
-  lv_coord_t top_pad = short_side * 4 / 100;
-  if (top_pad < 16) top_pad = 16;
-  lv_coord_t max_arc_h = panel_side - top_pad - bottom_pad - btn_size - controls_gap;
-  lv_coord_t max_arc_w = panel_side - 24;
-  lv_coord_t arc_size = panel_side * 90 / 100;
-  if (arc_size > max_arc_h) arc_size = max_arc_h;
-  if (arc_size > max_arc_w) arc_size = max_arc_w;
-  if (arc_size < 180) arc_size = 180;
-  lv_coord_t visible_arc_w = compensated_width(arc_size, ctx->width_compensation_percent);
-  lv_coord_t panel_side_pad = short_side * 10 / 100;
-  if (panel_side_pad < 42) panel_side_pad = 42;
-  if (panel_side_pad > 70) panel_side_pad = 70;
-  lv_coord_t min_panel_side = visible_arc_w + panel_side_pad * 2;
-  lv_coord_t min_button_w = (btn_size + 18) + compensated_width(btn_size, ctx->width_compensation_percent) + panel_side_pad;
-  if (min_panel_side < min_button_w) min_panel_side = min_button_w;
-  if (min_panel_side < short_side * 72 / 100) min_panel_side = short_side * 72 / 100;
-  if (panel_side < min_panel_side) panel_side = min_panel_side;
-  if (panel_side > short_side) panel_side = short_side;
+  lv_coord_t panel_x, panel_y, panel_w, panel_h;
+  media_volume_grid_card_rect(sw, sh, panel_x, panel_y, panel_w, panel_h);
+  int width_percent = normalize_width_compensation_percent(ctx->width_compensation_percent);
+  lv_coord_t min_side = panel_w < panel_h ? panel_w : panel_h;
+  lv_coord_t back_size = min_side * 22 / 100;
+  if (back_size < 28) back_size = 28;
+  if (back_size > 46) back_size = 46;
+  lv_coord_t btn_size = min_side * 28 / 100;
+  if (btn_size < 36) btn_size = 36;
+  if (btn_size > 62) btn_size = 62;
+  lv_coord_t inset = min_side * 6 / 100;
+  if (inset < 8) inset = 8;
+  lv_coord_t arc_stroke = min_side * 8 / 100;
+  if (arc_stroke < 8) arc_stroke = 8;
+  if (arc_stroke > 14) arc_stroke = 14;
+  lv_coord_t controls_gap = btn_size / 5;
+  if (controls_gap < 8) controls_gap = 8;
+  lv_coord_t arc_size = panel_w < panel_h ? panel_w : panel_h;
+  arc_size -= inset * 2;
+  lv_coord_t reserved_bottom = btn_size + inset * 2;
+  lv_coord_t available_h = panel_h - inset * 2;
+  if (available_h > reserved_bottom) {
+    lv_coord_t fit_h = available_h - reserved_bottom + arc_stroke;
+    if (arc_size > fit_h) arc_size = fit_h;
+  }
+  if (arc_size < 74) arc_size = 74;
+  lv_coord_t visible_arc_w = compensated_width(arc_size, width_percent);
+  if (visible_arc_w > panel_w - inset * 2) {
+    arc_size = (panel_w - inset * 2) * 100 / width_percent;
+    visible_arc_w = compensated_width(arc_size, width_percent);
+  }
 
   lv_obj_set_size(ui.overlay, lv_pct(100), lv_pct(100));
-  lv_obj_set_size(ui.panel, panel_side, panel_side);
-  lv_obj_align(ui.panel, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_set_size(ui.panel, panel_w, panel_h);
+  lv_obj_set_pos(ui.panel, panel_x, panel_y);
   lv_coord_t arc_center_x = (arc_size - visible_arc_w) / 2;
-  lv_coord_t vertical_nudge = short_side * 4 / 100;
-  if (vertical_nudge < 14) vertical_nudge = 14;
-  lv_coord_t arc_center_y = (top_pad + arc_size / 2) - panel_side / 2 + vertical_nudge;
-  lv_coord_t controls_center_y = panel_side / 2 - bottom_pad - btn_size / 2 - vertical_nudge;
+  lv_coord_t arc_center_y = inset + arc_size / 2 - panel_h / 2 + (short_side < 520 ? 6 : 10);
+  lv_coord_t controls_center_y = panel_h / 2 - inset - btn_size / 2;
 
+  lv_obj_set_size(ui.back_btn, back_size, back_size);
+  lv_obj_set_style_radius(ui.back_btn, back_size / 2, LV_PART_MAIN);
+  lv_obj_align(ui.back_btn, LV_ALIGN_TOP_LEFT, inset, inset);
   lv_obj_set_size(ui.arc, arc_size, arc_size);
   apply_width_compensation(ui.arc, ctx->width_compensation_percent);
   lv_obj_align(ui.arc, LV_ALIGN_CENTER, arc_center_x, arc_center_y);
@@ -4194,10 +4280,11 @@ inline void media_volume_layout_modal(MediaVolumeCtx *ctx) {
   lv_obj_set_style_radius(ui.minus_btn, btn_size / 2, LV_PART_MAIN);
   lv_obj_set_size(ui.plus_btn, btn_size, btn_size);
   lv_obj_set_style_radius(ui.plus_btn, btn_size / 2, LV_PART_MAIN);
-  lv_obj_align(ui.title_lbl, LV_ALIGN_CENTER, 0, arc_center_y - arc_size / 7);
+  lv_obj_align(ui.title_lbl, LV_ALIGN_TOP_MID, 0, inset);
   lv_obj_align(ui.pct_row, LV_ALIGN_CENTER, 0, arc_center_y + arc_stroke);
-  lv_obj_align(ui.minus_btn, LV_ALIGN_CENTER, -(btn_size + 18) / 2, controls_center_y);
-  lv_obj_align(ui.plus_btn, LV_ALIGN_CENTER, (btn_size + 18) / 2, controls_center_y);
+  lv_obj_align(ui.minus_btn, LV_ALIGN_CENTER, -(btn_size + controls_gap) / 2, controls_center_y);
+  lv_obj_align(ui.plus_btn, LV_ALIGN_CENTER, (btn_size + controls_gap) / 2, controls_center_y);
+  lv_obj_move_foreground(ui.back_btn);
 }
 
 inline void media_volume_set_modal_value(MediaVolumeCtx *ctx, int pct) {
@@ -4228,8 +4315,9 @@ inline void media_volume_open_modal(MediaVolumeCtx *ctx) {
   ui.overlay = lv_obj_create(parent);
   lv_obj_set_size(ui.overlay, lv_pct(100), lv_pct(100));
   lv_obj_set_style_bg_color(ui.overlay, lv_color_hex(0x000000), LV_PART_MAIN);
-  lv_obj_set_style_bg_opa(ui.overlay, LV_OPA_40, LV_PART_MAIN);
+  lv_obj_set_style_bg_opa(ui.overlay, LV_OPA_60, LV_PART_MAIN);
   lv_obj_set_style_border_width(ui.overlay, 0, LV_PART_MAIN);
+  lv_obj_set_style_pad_all(ui.overlay, 0, LV_PART_MAIN);
   lv_obj_clear_flag(ui.overlay, LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_add_event_cb(ui.overlay, [](lv_event_t *) { media_volume_hide_modal(); },
     LV_EVENT_CLICKED, nullptr);
@@ -4240,7 +4328,14 @@ inline void media_volume_open_modal(MediaVolumeCtx *ctx) {
   lv_obj_set_style_border_width(ui.panel, 0, LV_PART_MAIN);
   lv_obj_set_style_shadow_width(ui.panel, 0, LV_PART_MAIN);
   lv_obj_set_style_radius(ui.panel, 18, LV_PART_MAIN);
+  lv_obj_set_style_pad_all(ui.panel, 0, LV_PART_MAIN);
   lv_obj_clear_flag(ui.panel, LV_OBJ_FLAG_SCROLLABLE);
+
+  ui.back_btn = media_volume_create_round_button(ui.panel, 32, "\U000F0141",
+    ctx->icon_font, 0x454545, 0x252525, ctx->width_compensation_percent);
+  lv_obj_add_event_cb(ui.back_btn, [](lv_event_t *) {
+    media_volume_hide_modal();
+  }, LV_EVENT_CLICKED, nullptr);
 
   ui.arc = lv_arc_create(ui.panel);
   lv_arc_set_bg_angles(ui.arc, 135, 45);
@@ -4339,8 +4434,85 @@ inline bool media_seek_pending_active(SliderCtx *ctx) {
          (esphome::millis() - ctx->media_seek_pending_ms) < MEDIA_SEEK_PENDING_TIMEOUT_MS;
 }
 
+inline bool media_parse_fixed_int(const char *text, size_t len, size_t pos,
+                                  size_t digits, int &out) {
+  if (!text || pos + digits > len) return false;
+  int value = 0;
+  for (size_t i = 0; i < digits; i++) {
+    char c = text[pos + i];
+    if (c < '0' || c > '9') return false;
+    value = value * 10 + (c - '0');
+  }
+  out = value;
+  return true;
+}
+
+inline int64_t media_days_from_civil(int year, unsigned month, unsigned day) {
+  year -= month <= 2;
+  const int era = (year >= 0 ? year : year - 399) / 400;
+  const unsigned yoe = static_cast<unsigned>(year - era * 400);
+  const unsigned doy = (153 * (month + (month > 2 ? -3 : 9)) + 2) / 5 + day - 1;
+  const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+  return static_cast<int64_t>(era) * 146097 + static_cast<int64_t>(doe) - 719468;
+}
+
+inline bool media_parse_ha_timestamp(esphome::StringRef value, time_t &epoch) {
+  std::string text = string_ref_limited(value, 40);
+  const char *s = text.c_str();
+  size_t len = text.size();
+  if (len < 19 || s[4] != '-' || s[7] != '-' || (s[10] != 'T' && s[10] != ' ')) return false;
+  int year, month, day, hour, minute, second;
+  if (!media_parse_fixed_int(s, len, 0, 4, year) ||
+      !media_parse_fixed_int(s, len, 5, 2, month) ||
+      !media_parse_fixed_int(s, len, 8, 2, day) ||
+      !media_parse_fixed_int(s, len, 11, 2, hour) ||
+      !media_parse_fixed_int(s, len, 14, 2, minute) ||
+      !media_parse_fixed_int(s, len, 17, 2, second)) {
+    return false;
+  }
+  if (month < 1 || month > 12 || day < 1 || day > 31 ||
+      hour < 0 || hour > 23 || minute < 0 || minute > 59 ||
+      second < 0 || second > 60) {
+    return false;
+  }
+
+  size_t tz_pos = 19;
+  while (tz_pos < len && s[tz_pos] != 'Z' && s[tz_pos] != '+' && s[tz_pos] != '-') tz_pos++;
+  int offset_seconds = 0;
+  if (tz_pos < len && (s[tz_pos] == '+' || s[tz_pos] == '-')) {
+    int offset_hour, offset_minute;
+    if (!media_parse_fixed_int(s, len, tz_pos + 1, 2, offset_hour) ||
+        tz_pos + 3 >= len || s[tz_pos + 3] != ':' ||
+        !media_parse_fixed_int(s, len, tz_pos + 4, 2, offset_minute) ||
+        offset_hour > 23 || offset_minute > 59) {
+      return false;
+    }
+    offset_seconds = (offset_hour * 60 + offset_minute) * 60;
+    if (s[tz_pos] == '-') offset_seconds = -offset_seconds;
+  }
+
+  int64_t days = media_days_from_civil(year, static_cast<unsigned>(month),
+                                       static_cast<unsigned>(day));
+  int64_t seconds_since_epoch = days * 86400 + hour * 3600 + minute * 60 + second;
+  seconds_since_epoch -= offset_seconds;
+  if (seconds_since_epoch < 0) return false;
+  epoch = static_cast<time_t>(seconds_since_epoch);
+  return true;
+}
+
+inline bool media_position_timestamp_ms(esphome::StringRef value, uint32_t &updated_ms) {
+  time_t updated_epoch;
+  if (!media_parse_ha_timestamp(value, updated_epoch)) return false;
+  time_t now_epoch = std::time(nullptr);
+  if (now_epoch <= 0 || updated_epoch <= 0 || updated_epoch > now_epoch) return false;
+  uint64_t elapsed_ms = static_cast<uint64_t>(now_epoch - updated_epoch) * 1000ULL;
+  if (elapsed_ms > 0xFFFFFFFFULL) elapsed_ms = 0xFFFFFFFFULL;
+  updated_ms = esphome::millis() - static_cast<uint32_t>(elapsed_ms);
+  return true;
+}
+
 inline void media_apply_position(SliderCtx *ctx) {
-  if (!ctx || !ctx->media_slider) return;
+  if (!ctx) return;
   float seconds = ctx->media_position_seconds;
   if (ctx->media_playing && ctx->media_position_updated_ms > 0) {
     uint32_t elapsed_ms = esphome::millis() - ctx->media_position_updated_ms;
@@ -4362,8 +4534,8 @@ inline void media_apply_position(SliderCtx *ctx) {
     if (pct < 0) pct = 0;
     if (pct > 100) pct = 100;
   }
-  lv_slider_set_value(ctx->media_slider, pct, LV_ANIM_OFF);
-  if (ctx->fill) {
+  if (ctx->media_slider) lv_slider_set_value(ctx->media_slider, pct, LV_ANIM_OFF);
+  if (ctx->media_slider && ctx->fill) {
     lv_obj_t *btn = lv_obj_get_parent(ctx->media_slider);
     int fill_pct = ctx->inverted ? 100 - pct : pct;
     slider_update_ctx_fill(ctx, btn, fill_pct);
@@ -4419,11 +4591,14 @@ inline void setup_media_now_playing_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
   if (icon_lbl) lv_obj_add_flag(icon_lbl, LV_OBJ_FLAG_HIDDEN);
   if (title_lbl) {
     if (title_font) lv_obj_set_style_text_font(title_lbl, title_font, LV_PART_MAIN);
-    lv_label_set_long_mode(title_lbl, LV_LABEL_LONG_WRAP);
-    lv_obj_set_width(title_lbl, lv_pct(100));
     if (limit_title_lines) {
       const lv_font_t *font = title_font ? title_font : lv_obj_get_style_text_font(title_lbl, LV_PART_MAIN);
-      if (font && font->line_height > 0) lv_obj_set_height(title_lbl, font->line_height * 2);
+      lv_label_set_long_mode(title_lbl, LV_LABEL_LONG_DOT);
+      if (font && font->line_height > 0) lv_obj_set_size(title_lbl, lv_pct(100), font->line_height * 2);
+      else lv_obj_set_width(title_lbl, lv_pct(100));
+    } else {
+      lv_label_set_long_mode(title_lbl, LV_LABEL_LONG_WRAP);
+      lv_obj_set_width(title_lbl, lv_pct(100));
     }
     lv_obj_align(title_lbl, LV_ALIGN_TOP_LEFT, 0, 0);
     lv_label_set_text(title_lbl, "--");
@@ -4470,7 +4645,7 @@ inline lv_obj_t *setup_media_slider_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
                                            lv_obj_t *text_lbl, lv_obj_t *value_lbl,
                                            const ParsedCfg &p,
                                            uint32_t on_color,
-                                           uint32_t track_color,
+                                           uint32_t /*track_color*/,
                                            lv_coord_t pad) {
   std::string mode = media_card_mode(p.sensor);
   bool position = mode == "position";
@@ -4483,8 +4658,11 @@ inline lv_obj_t *setup_media_slider_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
       lv_obj_move_foreground(value_lbl);
     }
     if (text_lbl) {
-      lv_label_set_text(text_lbl, "");
-      lv_obj_add_flag(text_lbl, LV_OBJ_FLAG_HIDDEN);
+      lv_obj_clear_flag(text_lbl, LV_OBJ_FLAG_HIDDEN);
+      lv_label_set_text(text_lbl, media_position_show_state(p) ? "Paused" : (p.label.empty() ? "Track" : p.label.c_str()));
+      lv_obj_align(text_lbl, LV_ALIGN_BOTTOM_LEFT, pad, -pad);
+      configure_button_label_wrap(text_lbl);
+      lv_obj_move_foreground(text_lbl);
     }
   } else {
     if (icon_lbl) {
@@ -4504,18 +4682,6 @@ inline lv_obj_t *setup_media_slider_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
   lv_obj_t *slider = setup_slider_widget(btn, on_color, horizontal);
   lv_obj_t *fill = lv_obj_get_child(btn, 0);
   lv_obj_t *track = nullptr;
-  if (position) {
-    track = lv_obj_create(btn);
-    lv_obj_set_style_bg_color(track, lv_color_hex(track_color), LV_PART_MAIN);
-    lv_obj_set_style_bg_opa(track, LV_OPA_COVER, LV_PART_MAIN);
-    lv_obj_set_style_border_width(track, 0, LV_PART_MAIN);
-    lv_obj_set_style_pad_all(track, 0, LV_PART_MAIN);
-    lv_obj_clear_flag(track, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_clear_flag(track, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_move_to_index(track, 0);
-    lv_obj_move_to_index(fill, 1);
-    lv_obj_move_to_index(slider, 2);
-  }
 
   SliderCtx *ctx = new SliderCtx();
   ctx->entity_id = p.entity;
@@ -4528,7 +4694,7 @@ inline lv_obj_t *setup_media_slider_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
   ctx->media_slider = slider;
   ctx->media_track_bg = track;
   ctx->media_value_lbl = value_lbl;
-  ctx->media_status_lbl = nullptr;
+  ctx->media_status_lbl = position && media_position_show_state(p) ? text_lbl : nullptr;
   lv_obj_set_user_data(slider, (void *)ctx);
   slider_bind_geometry_refresh(btn, slider);
 
@@ -4567,8 +4733,8 @@ inline lv_obj_t *setup_media_slider_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
 inline lv_obj_t *setup_media_position_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
                                              lv_obj_t *text_lbl,
                                              const ParsedCfg &p,
-                                             uint32_t on_color,
-                                             uint32_t track_color,
+                                             uint32_t progress_color,
+                                             uint32_t background_color,
                                              const lv_font_t *value_font,
                                              lv_color_t text_color,
                                              lv_coord_t pad,
@@ -4579,11 +4745,17 @@ inline lv_obj_t *setup_media_position_layout(lv_obj_t *btn, lv_obj_t *icon_lbl,
   apply_width_compensation(value_lbl, width_compensation_percent);
   lv_label_set_text(value_lbl, "0:00");
   lv_obj_align(value_lbl, LV_ALIGN_TOP_LEFT, pad, pad);
+  lv_obj_set_style_bg_color(btn, lv_color_hex(background_color), LV_PART_MAIN);
+  lv_obj_set_style_bg_color(
+    btn, lv_color_hex(background_color),
+    static_cast<lv_style_selector_t>(LV_PART_MAIN) |
+      static_cast<lv_style_selector_t>(LV_STATE_CHECKED));
   return setup_media_slider_layout(
-    btn, icon_lbl, text_lbl, value_lbl, p, on_color, track_color, pad);
+    btn, icon_lbl, text_lbl, value_lbl, p, progress_color, background_color, pad);
 }
 
 inline void setup_media_card(BtnSlot &s, const ParsedCfg &p, uint32_t on_color,
+                             uint32_t secondary_color,
                              uint32_t tertiary_color,
                              const lv_font_t *sensor_font,
                              const lv_font_t *media_title_font,
@@ -4609,6 +4781,7 @@ inline void setup_media_card(BtnSlot &s, const ParsedCfg &p, uint32_t on_color,
     lv_obj_set_style_text_color(title_lbl, text_color, LV_PART_MAIN);
     apply_width_compensation(title_lbl, width_compensation_percent);
     s.sensor_lbl = title_lbl;
+    lv_obj_set_user_data(s.sensor_container, (void *)title_lbl);
     setup_media_now_playing_layout(
       s.btn, s.icon_lbl, s.sensor_lbl, s.text_lbl, media_title_font, pad, col_span == 1);
     return;
@@ -4617,7 +4790,7 @@ inline void setup_media_card(BtnSlot &s, const ParsedCfg &p, uint32_t on_color,
     lv_coord_t position_pad = lv_obj_get_style_pad_top(s.btn, LV_PART_MAIN);
     lv_color_t text_color = lv_obj_get_style_text_color(s.sensor_lbl, LV_PART_MAIN);
     lv_obj_t *slider = setup_media_position_layout(
-      s.btn, s.icon_lbl, s.text_lbl, p, 0xFFFFFF, tertiary_color,
+      s.btn, s.icon_lbl, s.text_lbl, p, secondary_color, tertiary_color,
       sensor_font, text_color, position_pad, width_compensation_percent);
     lv_obj_set_user_data(s.sensor_container, (void *)slider);
     return;
@@ -4779,7 +4952,9 @@ inline void subscribe_media_slider_state(lv_obj_t *btn_ptr,
           ctx->media_seek_pending = false;
         }
         ctx->media_position_seconds = pos;
-        ctx->media_position_updated_ms = esphome::millis();
+        ctx->media_position_updated_ms = ctx->media_position_updated_at_known
+          ? ctx->media_position_updated_at_ms
+          : esphome::millis();
         media_apply_position(ctx);
       })
   );
@@ -4787,13 +4962,22 @@ inline void subscribe_media_slider_state(lv_obj_t *btn_ptr,
   esphome::api::global_api_server->subscribe_home_assistant_state(
     entity_id, std::string("media_position_updated_at"),
     std::function<void(esphome::StringRef)>(
-      [ctx](esphome::StringRef) {
+      [ctx](esphome::StringRef val) {
         if (media_seek_pending_active(ctx)) {
           media_apply_position(ctx);
           return;
         }
         ctx->media_seek_pending = false;
-        ctx->media_position_updated_ms = esphome::millis();
+        uint32_t updated_ms = 0;
+        if (media_position_timestamp_ms(val, updated_ms)) {
+          ctx->media_position_updated_at_known = true;
+          ctx->media_position_updated_at_ms = updated_ms;
+          ctx->media_position_updated_ms = updated_ms;
+        } else {
+          ctx->media_position_updated_at_known = false;
+          ctx->media_position_updated_at_ms = 0;
+          ctx->media_position_updated_ms = esphome::millis();
+        }
         media_apply_position(ctx);
       })
   );
@@ -4854,6 +5038,7 @@ inline SubpageBtn normalize_subpage_btn(SubpageBtn b) {
   if (b.type == "weather_forecast") {
     b.type = "weather";
     b.precision = "tomorrow";
+    if (b.label == "Weather") b.label.clear();
   }
   if (b.type == "media") {
     if (b.sensor == "controls") {
@@ -5194,7 +5379,7 @@ inline void setup_card_visual(BtnSlot &s, const ParsedCfg &p,
     setup_timezone_card(s, p, palette.has_sensor_color, palette.sensor_val);
     return;
   }
-  if (weather_card_shows_tomorrow(p)) {
+  if (weather_card_shows_forecast(p)) {
     setup_weather_forecast_card(s, p, palette.has_sensor_color, palette.sensor_val,
       cfg.width_compensation_percent);
     return;
@@ -5239,6 +5424,7 @@ inline void setup_card_visual(BtnSlot &s, const ParsedCfg &p,
   if (p.type == "media") {
     setup_media_card(s, p,
       palette.has_on ? palette.on_val : DEFAULT_SLIDER_COLOR,
+      palette.has_off ? palette.off_val : CLIMATE_NEUTRAL_COLOR,
       palette.has_sensor_color ? palette.sensor_val : DEFAULT_TERTIARY_COLOR,
       cfg.sp_sensor_font,
       cfg.media_title_font ? cfg.media_title_font : cfg.sp_sensor_font,
@@ -5367,7 +5553,6 @@ inline void grid_phase2(
       cfg.num_slots, MAX_GRID_SLOTS);
   }
   int ROWS = (NS + COLS - 1) / COLS;
-  set_climate_home_grid_metrics(main_page_obj, COLS, ROWS);
 
   static bool has_sensor[MAX_GRID_SLOTS] = {};
   static bool sensor_text_mode[MAX_GRID_SLOTS] = {};
@@ -5407,6 +5592,13 @@ inline void grid_phase2(
 
   OrderResult parsed;
   parse_order_string(order_str, NS, parsed);
+  lv_obj_t *first_card = nullptr;
+  if (parsed.positions[0] >= 1 && parsed.positions[0] <= NS) {
+    first_card = slots[parsed.positions[0] - 1].btn;
+  } else if (NS > 0) {
+    first_card = slots[0].btn;
+  }
+  set_climate_home_grid_metrics(main_page_obj, COLS, ROWS, first_card);
 
   for (int pos = 0; pos < NS; pos++) {
     int idx = parsed.positions[pos];
@@ -5435,7 +5627,7 @@ inline void grid_phase2(
     if (p.type == "timezone") {
       continue;
     }
-    if (weather_card_shows_tomorrow(p)) {
+    if (weather_card_shows_forecast(p)) {
       continue;
     }
     if (p.type == "weather") {
@@ -5563,7 +5755,8 @@ inline void grid_phase2(
           subscribe_media_volume_state(ctx);
           if (p.label.empty()) subscribe_friendly_name(s.text_lbl, p.entity);
         } else if (mode == "now_playing") {
-          subscribe_media_now_playing_state(s.sensor_lbl, s.text_lbl, p.entity);
+          lv_obj_t *title_lbl = (lv_obj_t *)lv_obj_get_user_data(s.sensor_container);
+          subscribe_media_now_playing_state(title_lbl ? title_lbl : s.sensor_lbl, s.text_lbl, p.entity);
         } else {
           lv_obj_t *slider = (lv_obj_t *)lv_obj_get_user_data(s.sensor_container);
           if (slider) subscribe_media_slider_state(s.btn, slider, p.entity);
@@ -5817,7 +6010,7 @@ inline void grid_phase2(
         subscribe_calendar_date_source(sb_cfg.entity);
         continue;
       }
-      if (sb_cfg.type == "timezone" || weather_card_shows_tomorrow(sb_cfg)) {
+      if (sb_cfg.type == "timezone" || weather_card_shows_forecast(sb_cfg)) {
         continue;
       }
       if (sb_cfg.type == "weather") {
@@ -5963,7 +6156,8 @@ inline void grid_phase2(
               if (ctx) media_volume_open_modal(ctx);
             }, LV_EVENT_CLICKED, ctx);
           } else if (mode == "now_playing") {
-            subscribe_media_now_playing_state(sub_slot.sensor_lbl, sub_slot.text_lbl, sb_cfg.entity);
+            lv_obj_t *title_lbl = (lv_obj_t *)lv_obj_get_user_data(sub_slot.sensor_container);
+            subscribe_media_now_playing_state(title_lbl ? title_lbl : sub_slot.sensor_lbl, sub_slot.text_lbl, sb_cfg.entity);
           } else {
             lv_obj_t *media_slider = (lv_obj_t *)lv_obj_get_user_data(sub_slot.sensor_container);
             if (media_slider) subscribe_media_slider_state(sub_slot.btn, media_slider, sb_cfg.entity);
