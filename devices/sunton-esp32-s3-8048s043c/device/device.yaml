@@ -18,6 +18,9 @@ esp32:
   flash_size: 16MB
   framework:
     type: esp-idf
+    version: 5.5.2
+    source: https://github.com/pioarduino/esp-idf/releases/download/v5.5.2/esp-idf-v5.5.2.tar.xz
+    platform_version: 55.03.37
     sdkconfig_options:
       # Allocate mbedTLS buffers from PSRAM so firmware downloads can connect.
       CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC: "y"
